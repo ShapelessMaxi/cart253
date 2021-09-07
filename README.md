@@ -3,3 +3,9 @@
 Maxi's course work for CART253!
 
 Very excited about programming!
+
+[Check out my instagram pages!]
+
+(https://www.instagram.com/maxi_handpoke/?hl=fr)
+
+(https://www.instagram.com/shapeless_maxi/)
