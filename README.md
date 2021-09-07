@@ -1,2 +1,3 @@
-# cart253
-Maxi's course work for cart253 - creative computation 1
+# CART253 - Creative Computation 1
+
+Maxi's course work for CART253!
