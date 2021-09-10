@@ -1,38 +1,29 @@
 /**
-Title of Project
-Author Name
+Frist drawing experiment
+Maxime Perreault
 
-This is a template. You must fill in the title,
-author, and this description to match your project!
+Experimenting with limited variety of shapes (only squares or rectangles) and limited color palette (light blue, orange, pink and purple).
+Trying to represent some kind of depth using accumulation of shapes, colors and transparency levels.
+Playing with adding the right amount of chaos in a very stiff, grid-like method.
 */
 
 "use strict";
-
-
-/**
-Description of preload
-*/
 function preload() {
   }
 
-
-/**
-Description of setup
-*/
+// Drawing series of blue squares in columns, starting from the middle, growing in size as they approch the limits of the canvas.
 function setup() {
+  // creating an orange canvas
   createCanvas(500, 500);
   background(237, 200, 157);
 
+  // Deleting the outline for the next shapes
   noStroke();
-// atmos
-  rectMode(CENTER);
-  fill(255, 158, 218, 90);
-  rect(250, 250, 50)
-  rect(250, 250, 100)
-  rect(250, 250, 150)
-  rect(250, 250, 200)
 
+  // Drawing pink rectangles in the lower part to add depth and to break symmetry.
+  fill(255, 158, 218, 90);
   rectMode(CORNER);
+
   rect(0, 250, 400);
   rect(250, 250, 400);
   rect(20, 100, 400);
@@ -40,10 +31,18 @@ function setup() {
   rect(220, 0, 60, 500);
   rect(220, 0, 750, 500);
 
-
+  // Drawing pink rectangles in the center part to add depth.
   rectMode(CENTER);
-  fill(199, 246, 255, 110);
-// middle
+
+  rect(250, 250, 50)
+  rect(250, 250, 100)
+  rect(250, 250, 150)
+  rect(250, 250, 200)
+
+  // Drawing light blue squares in the middle column (step 0), repeating and overlapping some to break the stiffness of the grid.
+  // smaller size, very transparent
+  fill(199, 246, 255, 30);
+
   square(250, 10, 10);
   square(250, 10, 10);
   square(250, 10, 10);
@@ -85,7 +84,10 @@ function setup() {
   square(250, 470, 10);
   square(250, 490, 10);
 
-// 2nd level
+  // Drawing light blue squares in the next columns (step 1), repeating and overlapping some to break the stiffness of the grid.
+  // slightly less smaller size, very transparent
+  fill(199, 246, 255, 35);
+
   square(270, 15, 20);
   square(270, 45, 20);
   square(270, 75, 20);
@@ -113,7 +115,10 @@ function setup() {
   square(230, 315, 20);
   square(230, 345, 20);
 
-// 3rd
+  // Drawing light blue squares in the next columns (step 2), repeating and overlapping some to break the stiffness of the grid.
+  // small size, a bit less than very transparent
+  fill(199, 246, 255, 40);
+
   square(303, 20, 30);
   square(303, 20, 30);
   square(303, 20, 30);
@@ -145,7 +150,10 @@ function setup() {
   square(197, 400, 30);
   square(197, 440, 30);
 
-// 4th
+  // Drawing light blue squares in the next columns (step 3), repeating and overlapping some to break the stiffness of the grid.
+  // medium size, medium transparent
+  fill(199, 246, 255, 100);
+
   square(352, 30, 50);
   square(352, 90, 50);
   square(352, 120, 50);
@@ -168,7 +176,10 @@ function setup() {
   square(148, 370, 50);
   square(148, 430, 50);
 
-// 5th
+  // Drawing light blue squares in the next columns (step 4), repeating and overlapping some to break the stiffness of the grid.
+  // big size, less transparent
+  fill(199, 246, 255, 110);
+
   square(417, 35, 60);
   square(417, 35, 60);
   square(417, 105, 60);
@@ -186,7 +197,10 @@ function setup() {
   square(83, 315, 60);
   square(83, 385, 60);
 
-// last
+  // Drawing light blue squares in the last columns (step 5), repeating and overlapping some to break the stiffness of the grid.
+  // bigger size, almost not transparent
+  fill(199, 246, 255, 180);
+
   square(491, 40, 70);
   square(491, 120, 70);
   square(491, 200, 70);
@@ -203,23 +217,13 @@ function setup() {
   square(9, 360, 70);
   square(9, 440, 70);
 
-// top layer
-  fill(128, 4, 35, 25);
+// Drawing very transparent purple rectangles on top of everything to harmonize the whole picture and add depth.
+  fill(128, 4, 35, 20);
   rectMode(CORNER);
+
   rect(243, 0, 15, 500);
   rect(213, 0, 70, 500);
   rect(243, 45, 15, 500);
-  fill(28, 17, 150, 10);
   rect(100, 0, 300, 500);
-
-
-
-}
-
-
-/**
-Description of draw()
-*/
-function draw() {
 
 }
