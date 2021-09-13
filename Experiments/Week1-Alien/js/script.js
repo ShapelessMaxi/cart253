@@ -5,16 +5,6 @@ Maxime Perreault
 Activity 2: Draw an alien
 */
 
-"use strict";
-
-
-/**
-Description of preload
-*/
-function preload() {
-}
-
-
 /**
 Draw an alien
 */
@@ -50,8 +40,7 @@ function setup() {
 
 
 /**
-Description of draw()
+Nothing
 */
 function draw() {
-
 }
