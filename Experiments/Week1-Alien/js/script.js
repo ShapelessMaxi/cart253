@@ -14,16 +14,16 @@ function setup() {
 
   //Draw the body
   noStroke();
-  fill(125);
+  fill(184, 75, 105);
   rect(275, 180, 180, 400, 90);
-  fill(100);
+  fill(89, 32, 48);
   rect(300, 300, 15, 100, 90);
   rect(340, 300, 15, 100, 90);
   rect(300, 399, 15, 15, 15);
   rect(340, 399, 15, 15, 15);
 
   //Draw the head
-  fill(180);
+  fill(237, 145, 171);
   rect(190, 110, 180, 70, 50);
   rect(180, 200, 200, 70, 50);
   rect(200, 170, 160, 40);
@@ -45,7 +45,7 @@ function setup() {
   ellipse(235, 200, 6, 8);
 
   //Draw the mouth
-  stroke(200, 15, 15);
+  stroke(125, 17, 35);
   strokeWeight(9);
   rect(190, 226, 130, 20, 5);
 
