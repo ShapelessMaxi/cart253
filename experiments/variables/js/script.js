@@ -4,27 +4,30 @@ Maxime Perreault
 
 
 */
-let background_rgba = [150, 220, 150, 20];
-let ratio;
-let circle_size;
 
+// setup of variables
+let backgroundRgba = [150, 220, 150, 10];
+let circleSize = 50;
+let circleSpeed = 0.15;
+let circleX = 75;
+let circleY = 75;
 /**
-Description of setup
+canvas
 */
 function setup() {
   createCanvas(500, 500);
 }
 
-
 /**
-Description of draw()
+trying variables stuff here
 */
 function draw() {
-  background(background_rgba);
+  background(backgroundRgba);
+  // background color change
+  // background_rgba += 1
 
-  // How to invert?
-  ratio = mouseX / 25;
-  circle_size = ratio * 10;
+  circle(circleX, circleY, circleSize);
+  circleX += circleSpeed;
 
-  circle(mouseX, mouseY, circle_size);
+  //
 }
