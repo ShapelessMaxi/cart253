@@ -4,9 +4,9 @@ Maxime Perreault
 
 
 */
-
-let circle_size = 10;
+let background_rgba = [150, 220, 150, 20];
 let ratio;
+let circle_size;
 
 /**
 Description of setup
@@ -20,7 +20,11 @@ function setup() {
 Description of draw()
 */
 function draw() {
-  background(40, 100, 100, 20);
-  ratio = mouseX;
-  circle(mouseX, mouseY, circle_size*ratio);
+  background(background_rgba);
+
+  // How to invert?
+  ratio = mouseX / 25;
+  circle_size = ratio * 10;
+
+  circle(mouseX, mouseY, circle_size);
 }
