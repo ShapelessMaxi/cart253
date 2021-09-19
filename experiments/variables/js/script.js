@@ -4,7 +4,7 @@ Maxime Perreault
 */
 
 // setup of variables
-let backgroundRgba = [150, 220, 150, 10];
+let backgroundRgba = 150, 220, 150, 10;
 let circle = {
   size: 50,
   speed: 1,

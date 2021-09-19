@@ -27,6 +27,7 @@ Description of draw()
 function draw() {
   background(200);
   // Rainbow stripe
+  rectMode(CORNER);
   noStroke();
   // basic colors
   fill(228,2,3);
@@ -61,7 +62,7 @@ function draw() {
   fill(150, 147, 116, 80);
   rect(0, 0, width, 400);
 
-  // Selection bar basic shape
+  // S\selection bar basic shape
   fill(0);
   rect(0, 800, 1200, 100, 50);
   fill(200);
@@ -84,7 +85,45 @@ function draw() {
   circle(selection.circlePosition, 850, 40);
   selection.circlePosition = mouseX;
   selection.circlePosition = constrain(selection.circlePosition, selection.rightLimit, selection.leftLimit);
-  fill(255);
+
+
+  console.log('mouseX value is: ' + mouseX);
+  //
+  // let position = mouseX;
+  // if (position <= 100){
+  //   rainbowColor = [227, 64, 64];
+  // } else {
+  //   rainbowcolor = 255;
+  // }
+
+  let rainbowColor = color(0, 0, 0);
+  if (mouseX <= 100){
+    rainbowColor = color(227, 64, 64);
+  } else if (mouseX > 100 && mouseX <= 200){
+    rainbowColor = color(217, 98, 13);
+  } else if (mouseX > 200 && mouseX <= 300){
+    rainbowColor = color(222, 115, 33);
+  } else if (mouseX > 300 && mouseX <= 400){
+    rainbowColor = color(245, 179, 37);
+  } else if (mouseX > 400 && mouseX <= 500){
+    rainbowColor = color(232, 220, 51);
+  } else if (mouseX > 500 && mouseX <= 600){
+    rainbowColor = color(151, 212, 38);
+  } else if (mouseX > 600 && mouseX <= 700){
+    rainbowColor = color(30, 179, 40);
+  } else if (mouseX > 700 && mouseX <= 800){
+    rainbowColor = color(32, 158, 129);
+  } else if (mouseX > 800 && mouseX <= 900){
+    rainbowColor = color(33, 146, 166);
+  } else if (mouseX > 900 && mouseX <= 1000){
+    rainbowColor = color(30, 93, 176);
+  } else if (mouseX > 1000 && mouseX <= 1100){
+    rainbowColor = color(101, 30, 176);
+  } else if (mouseX > 1100){
+    rainbowColor = color(214, 66, 194);
+  }
+
+  fill(rainbowColor);
   circle(selection.circlePosition, 850, 40);
 
   // main block pointing shape
@@ -245,4 +284,14 @@ function draw() {
   line(selection.aimingPosition - 1095, 405, selection.aimingPosition - 1055, 405);
   line(selection.aimingPosition - 1155, 405, selection.aimingPosition - 1105, 405);
 
+  // overlays
+  fill(0, 0, 0, 100);
+  noStroke();
+  rect(selection.aimingPosition - 1200, 200, 985, 300);
+  rect(selection.aimingPosition - 1200, 200, 750, 300);
+  rect(selection.aimingPosition - 1200, 200, 505, 300);
+
+  rect(selection.aimingPosition + 215, 200, 985, 300);
+  rect(selection.aimingPosition + 450, 200, 750, 300);
+  rect(selection.aimingPosition + 695, 200, 505, 300);
 }
