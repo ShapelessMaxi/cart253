@@ -7,8 +7,8 @@ Maxime Perreault
 let backgroundRgba = [150, 220, 150, 10];
 let circle = {
   size: 50,
-  speed: 0.15,
-  x: 75,
+  speed: 1,
+  x:75,
   y:75,
 };
 
@@ -25,7 +25,8 @@ function draw() {
 
   ellipse(circle.x, circle.y, circle.size);
   circle.x += circle.speed;
-
-  console.log(`circle.x = ${circle.x}`)
+  circle.y += random(0, 2);
+  // let randomNumber = random();
+  // console.log(randomNumber);
   //
 }
