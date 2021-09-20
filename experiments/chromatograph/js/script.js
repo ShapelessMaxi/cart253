@@ -8,168 +8,233 @@ Maxime Perreault
 creating bakcground
 */
 function setup() {
-  createCanvas(1200, 925);
-  background(255);
-
+  // createCanvas(1200, 925);
+  createCanvas(1200, 650);
 }
 
 // setting up variables
-let randomAlpha;
 let selection = {
   aimingPosition: 0,
   circlePosition: 0,
   rightLimit : 50,
   leftLimit : 1150,
 };
+
 /**
 Description of draw()
 */
 function draw() {
+
   background(200);
-  // Rainbow stripe
+
   rectMode(CORNER);
   noStroke();
-  // basic colors
-  fill(228,2,3);
+
+  // rainbow stripes basic colors
+  let red = color(228,2,3);
+  fill(red);
   rect(0, 0, 200, 400);
-  fill(255,140,1);
+
+  let orange = color(255,140,1);
+  fill(orange);
   rect(200, 0, 200, 400);
-  fill(254,237,1);
+
+  let yellow = color(254,237,1);
+  fill(yellow);
   rect(400, 0, 200, 400);
-  fill(0,129,39);
+
+  let green = color(0,129,39);
+  fill(green);
   rect(600, 0, 200, 400);
-  fill(0,77,255);
+
+  let blue = color(0,77,255);
+  fill(blue);
   rect(800, 0, 200, 400);
-  fill(118,7,135);
+
+  let purple = color(118,7,135);
+  fill(purple);
   rect(1000, 0, 200, 400);
+
   // in-between-rainbow-flickering-transparent colors
-  randomAlpha = random(120, 250);
-  fill(201, 0, 57, randomAlpha);
+  let randomAlpha = random(120, 250);
+
+  let rainbowPink = color(201 ,0 , 57, randomAlpha);
+  fill(rainbowPink);
   rect(0, 0, 100, 400);
-  fill(255, 60, 0, randomAlpha);
+
+  let rainbowRedOrange = color(255, 60, 0, randomAlpha);
+  fill(rainbowRedOrange);
   rect(100, 0, 200, 400);
-  fill(255, 187, 0, randomAlpha);
+
+  let rainbowYellowOrange = color(255, 187, 0, randomAlpha);
+  fill(rainbowYellowOrange);
   rect(300, 0, 200, 400);
-  fill(133, 222, 0, randomAlpha);
+
+  let rainbowYellowGreen = color(133, 222, 0, randomAlpha);
+  fill(rainbowYellowGreen);
   rect(500, 0, 200, 400);
-  fill(0, 188, 201, randomAlpha);
+
+  let rainbowAqua = color(0, 188, 201, randomAlpha);
+  fill(rainbowAqua);
   rect(700, 0, 200, 400);
-  fill(78, 0, 212, randomAlpha);
+
+  let rainbowPurpleBlue = color(78, 0, 212, randomAlpha);
+  fill(rainbowPurpleBlue);
   rect(900, 0, 200, 400);
-  fill(207, 19, 203, randomAlpha);
+
+  let rainbowMagenta = color(207, 19, 203, randomAlpha);
+  fill(rainbowMagenta);
   rect(1100, 0, 100, 400);
+
   // toning down the colors a bit
   fill(150, 147, 116, 80);
   rect(0, 0, width, 400);
 
-  // S\selection bar basic shape
+  // selection bar color change function
+  let rainbowColor;
+  function rainbowColorChange(){
+    if (mouseX <= 100){
+      rainbowColor = color(227, 64, 64);
+      return rainbowColor;
+
+    } else if (mouseX > 100 && mouseX <= 200){
+      rainbowColor = color(217, 98, 13);
+      return rainbowColor;
+
+    } else if (mouseX > 200 && mouseX <= 300){
+      rainbowColor = color(222, 115, 33);
+      return rainbowColor;
+
+    } else if (mouseX > 300 && mouseX <= 400){
+      rainbowColor = color(245, 179, 37);
+      return rainbowColor;
+
+    } else if (mouseX > 400 && mouseX <= 500){
+      rainbowColor = color(232, 220, 51);
+      return rainbowColor;
+
+    } else if (mouseX > 500 && mouseX <= 600){
+      rainbowColor = color(151, 212, 38);
+      return rainbowColor;
+
+    } else if (mouseX > 600 && mouseX <= 700){
+      rainbowColor = color(30, 179, 40);
+      return rainbowColor;
+
+    } else if (mouseX > 700 && mouseX <= 800){
+      rainbowColor = color(32, 158, 129);
+      return rainbowColor;
+
+    } else if (mouseX > 800 && mouseX <= 900){
+      rainbowColor = color(33, 146, 166);
+      return rainbowColor;
+
+    } else if (mouseX > 900 && mouseX <= 1000){
+      rainbowColor = color(30, 93, 176);
+      return rainbowColor;
+
+    } else if (mouseX > 1000 && mouseX <= 1100){
+      rainbowColor = color(101, 30, 176);
+      return rainbowColor;
+
+    } else if (mouseX > 1100){
+      rainbowColor = color(214, 66, 194);
+      return rainbowColor;
+    };
+  };
+
+  // selection bar basic shape
   fill(0);
-  rect(0, 800, 1200, 100, 50);
-  fill(200);
-  rect(10, 810, 1180, 80, 40);
+  rect(0, 525, 1200, 100, 50);
+
+  rainbowColorChange();
+  fill(rainbowColor);
+  rect(10, 535, 1180, 80, 40);
+
   fill(0);
-  rect(20, 820, 1160, 60, 30);
+  rect(20, 545, 1160, 60, 30);
+
   // selection bar interactive circle
   fill(255, 255, 255, 75);
   selection.circlePosition = mouseX - 30;
   selection.circlePosition = constrain(selection.circlePosition, selection.rightLimit, selection.leftLimit);
-  circle(selection.circlePosition, 850, 40);
+  circle(selection.circlePosition, 575, 40);
+
   selection.circlePosition = mouseX + 30;
   selection.circlePosition = constrain(selection.circlePosition, selection.rightLimit, selection.leftLimit);
-  circle(selection.circlePosition, 850, 40);
+  circle(selection.circlePosition, 575, 40);
+
   selection.circlePosition = mouseX - 15;
   selection.circlePosition = constrain(selection.circlePosition, selection.rightLimit, selection.leftLimit);
-  circle(selection.circlePosition, 850, 40);
+  circle(selection.circlePosition, 575, 40);
+
   selection.circlePosition = mouseX + 15;
   selection.circlePosition = constrain(selection.circlePosition, selection.rightLimit, selection.leftLimit);
-  circle(selection.circlePosition, 850, 40);
+
+  circle(selection.circlePosition, 575, 40);
   selection.circlePosition = mouseX;
   selection.circlePosition = constrain(selection.circlePosition, selection.rightLimit, selection.leftLimit);
 
-
-  console.log('mouseX value is: ' + mouseX);
-  //
-  // let position = mouseX;
-  // if (position <= 100){
-  //   rainbowColor = [227, 64, 64];
-  // } else {
-  //   rainbowcolor = 255;
-  // }
-
-  let rainbowColor = color(0, 0, 0);
-  if (mouseX <= 100){
-    rainbowColor = color(227, 64, 64);
-  } else if (mouseX > 100 && mouseX <= 200){
-    rainbowColor = color(217, 98, 13);
-  } else if (mouseX > 200 && mouseX <= 300){
-    rainbowColor = color(222, 115, 33);
-  } else if (mouseX > 300 && mouseX <= 400){
-    rainbowColor = color(245, 179, 37);
-  } else if (mouseX > 400 && mouseX <= 500){
-    rainbowColor = color(232, 220, 51);
-  } else if (mouseX > 500 && mouseX <= 600){
-    rainbowColor = color(151, 212, 38);
-  } else if (mouseX > 600 && mouseX <= 700){
-    rainbowColor = color(30, 179, 40);
-  } else if (mouseX > 700 && mouseX <= 800){
-    rainbowColor = color(32, 158, 129);
-  } else if (mouseX > 800 && mouseX <= 900){
-    rainbowColor = color(33, 146, 166);
-  } else if (mouseX > 900 && mouseX <= 1000){
-    rainbowColor = color(30, 93, 176);
-  } else if (mouseX > 1000 && mouseX <= 1100){
-    rainbowColor = color(101, 30, 176);
-  } else if (mouseX > 1100){
-    rainbowColor = color(214, 66, 194);
-  }
-
+  rainbowColorChange();
   fill(rainbowColor);
-  circle(selection.circlePosition, 850, 40);
+  circle(selection.circlePosition, 575, 40);
 
   // main block pointing shape
-  fill(0);
+  fill(20);
   beginShape();
   selection.aimingPosition = mouseX + 2400;
   selection.aimingPosition = constrain(selection.aimingPosition, selection.rightLimit + 2400, selection.leftLimit + 2400);
   vertex(selection.aimingPosition, 0);
+
   selection.aimingPosition = mouseX + 600;
   selection.aimingPosition = constrain(selection.aimingPosition, selection.rightLimit + 600, selection.leftLimit + 600);
   vertex(selection.aimingPosition, 0);
+
   selection.aimingPosition = mouseX + 500;
   selection.aimingPosition = constrain(selection.aimingPosition, selection.rightLimit + 500, selection.leftLimit + 500);
   vertex(selection.aimingPosition, 0);
   vertex(selection.aimingPosition, 20);
+
   selection.aimingPosition = mouseX;
   selection.aimingPosition = constrain(selection.aimingPosition, selection.rightLimit, selection.leftLimit);
   vertex(selection.aimingPosition, 285);
+
   selection.aimingPosition = mouseX - 500;
   selection.aimingPosition = constrain(selection.aimingPosition, selection.rightLimit - 500, selection.leftLimit - 500);
   vertex(selection.aimingPosition, 20);
   vertex(selection.aimingPosition, 0);
+
   selection.aimingPosition = mouseX - 600;
   selection.aimingPosition = constrain(selection.aimingPosition, selection.rightLimit - 600, selection.leftLimit - 600);
   vertex(selection.aimingPosition, 0);
+
   selection.aimingPosition = mouseX - 1200;
   selection.aimingPosition = constrain(selection.aimingPosition, selection.rightLimit - 1200, selection.leftLimit - 1200);
   vertex(selection.aimingPosition, 0);
   vertex(selection.aimingPosition, 750);
+
   selection.aimingPosition = mouseX - 600;
   selection.aimingPosition = constrain(selection.aimingPosition, selection.rightLimit - 600, selection.leftLimit - 600);
   vertex(selection.aimingPosition, 750);
+
   selection.aimingPosition = mouseX - 150;
   selection.aimingPosition = constrain(selection.aimingPosition, selection.rightLimit - 150, selection.leftLimit - 150);
   vertex(selection.aimingPosition, 750);
   vertex(selection.aimingPosition, 500);
+
   selection.aimingPosition = mouseX;
   selection.aimingPosition = constrain(selection.aimingPosition, selection.rightLimit, selection.leftLimit);
   vertex(selection.aimingPosition, 405);
+
   selection.aimingPosition = mouseX + 150;
   selection.aimingPosition = constrain(selection.aimingPosition, selection.rightLimit + 150, selection.leftLimit + 150);
   vertex(selection.aimingPosition, 500);
   vertex(selection.aimingPosition, 750);
+
   selection.aimingPosition = mouseX + 600;
   selection.aimingPosition = constrain(selection.aimingPosition, selection.rightLimit + 600, selection.leftLimit + 600);
   vertex(selection.aimingPosition, 750);
+
   selection.aimingPosition = mouseX + 1200;
   selection.aimingPosition = constrain(selection.aimingPosition, selection.rightLimit + 1200, selection.leftLimit + 1200);
   vertex(selection.aimingPosition, 750);
@@ -179,8 +244,10 @@ function draw() {
   strokeCap(SQUARE);
   strokeWeight(6);
   stroke(252, 5, 5);
+
   selection.aimingPosition = mouseX;
   selection.aimingPosition = constrain(selection.aimingPosition, selection.rightLimit, selection.leftLimit);
+
   line(selection.aimingPosition, 740, selection.aimingPosition, 790);
   line(selection.aimingPosition, 680, selection.aimingPosition, 730);
   line(selection.aimingPosition, 620, selection.aimingPosition, 670);
