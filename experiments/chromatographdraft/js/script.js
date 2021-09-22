@@ -2,6 +2,7 @@
 chromatograph
 Maxime Perreault
 
+this is the first draft of the chromatograph
 */
 
 /**
@@ -20,6 +21,10 @@ let selection = {
   leftLimit : 1150,
 };
 
+
+  // drawingContext.setLineDash([20, 5, 5, 5, 5, 5, 5, 5]);
+
+//
 /**
 Description of draw()
 */
@@ -31,6 +36,7 @@ function draw() {
   noStroke();
 
   // rainbow stripes basic colors
+  // make color class varibales
   let red = color(228,2,3);
   fill(red);
   rect(0, 0, 200, 400);
@@ -56,6 +62,7 @@ function draw() {
   rect(1000, 0, 200, 400);
 
   // in-between-rainbow-flickering-transparent colors
+  // *************make rainbow colors class object
   let randomAlpha = random(120, 250);
 
   let rainbowPink = color(201 ,0 , 57, randomAlpha);
@@ -87,10 +94,12 @@ function draw() {
   rect(1100, 0, 100, 400);
 
   // toning down the colors a bit
+  // tone down the colors before... then  reuse the colors for the interactive bar
   fill(150, 147, 116, 80);
   rect(0, 0, width, 400);
 
   // selection bar color change function
+  // rainbowColor = rainbowOrange (from the colors class object)
   let rainbowColor;
   function rainbowColorChange(){
     if (mouseX <= 100){
@@ -180,6 +189,7 @@ function draw() {
   circle(selection.circlePosition, 575, 40);
 
   // main block pointing shape
+  // dont need class for aiming position (just define mouseX + n before each vertex)
   fill(20);
   beginShape();
   selection.aimingPosition = mouseX + 2400;
@@ -197,7 +207,10 @@ function draw() {
 
   selection.aimingPosition = mouseX;
   selection.aimingPosition = constrain(selection.aimingPosition, selection.rightLimit, selection.leftLimit);
-  vertex(selection.aimingPosition, 285);
+  mouseY = constrain(mouseY, 200, 850);
+  vertex(selection.aimingPosition, mouseY);
+
+
 
   selection.aimingPosition = mouseX - 500;
   selection.aimingPosition = constrain(selection.aimingPosition, selection.rightLimit - 500, selection.leftLimit - 500);
