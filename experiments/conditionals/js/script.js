@@ -7,6 +7,11 @@ Maxime Perreault
 
 let angle = 0;
 let rectScale = 0;
+let clownImg;
+
+function preload() {
+  clownImg = loadImage("assets/images/clown.png");
+}
 
 function setup() {
   createCanvas(500, 500);
@@ -14,6 +19,9 @@ function setup() {
 }
 
 function draw() {
+  imageMode(CENTER);
+  image(clownImg, 0, 0);
+
   push();
   fill(200, 20, 20, 5);
   rectMode(CENTER);
