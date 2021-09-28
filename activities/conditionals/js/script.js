@@ -35,5 +35,10 @@ function draw() {
   background(0);
 
   imageMode(CENTER);
-  image(happyCat, width / 2, height / 2);
+
+  if (mouseX < width / 2) {
+    image(happyCat, width / 2, height / 2, 500, 500);
+  } else {
+    image(scaredCat, width / 2, height / 2, 500, 500);
+  }
 }
