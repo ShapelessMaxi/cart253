@@ -13,10 +13,10 @@ a soft and dark color palette and some slightly uncomfortable dialogues.
 "use strict";
 
 let ghost = {
-  pos: { x: undefined, y: undefined },
-  bod: { w: 20, h: 50 },
-  arm: { angle: 0, length: 10 },
-  color: { r: 240, g: 240, b: 140, a: 80 },
+  pos: { x: 200, y: undefined },
+  bod: { w: 40, h: 100 },
+  top: { x: undefined, y: undefined },
+  color: { r: 240, g: 240, b: 140, a: 100 },
 };
 
 let cat = {
@@ -30,19 +30,10 @@ Description of preload
 function preload() {}
 
 /**
-Description of setup
+creating the canvas
 */
 function setup() {
   createCanvas(windowWidth, windowHeight);
-  background(92, 138, 126);
-  noStroke();
-  fill(63, 92, 99);
-  ellipse(width / 2, height, 1200, 100);
-  rectMode(CENTER);
-  fill(63, 92, 99, 100);
-  rect(width / 2, 0, width, 900);
-  rect(width / 2, 0, width, 600);
-  rect(width / 2, 0, width, 300);
 }
 
 /**
@@ -50,13 +41,42 @@ Description of draw()
 */
 function draw() {
   // draw ghost
-  ghost.pos.x = 100;
-  ghost.pos.y = windowHeight - 100;
-  rectMode(CORNER);
+  // ghost.pos.x = 100;
+  // ghost.pos.y = windowHeight - 100;
+
+  //drawing the background
+  background(92, 138, 126);
+  noStroke();
+  fill(63, 92, 99);
+  ellipse(width / 2, height, 1300, 200);
+  rectMode(CENTER);
+  fill(63, 92, 99, 100);
+  rect(width / 2, 0, width, 800);
+  rect(width / 2, 0, width, 500);
+  rect(width / 2, 0, width, 200);
+
+  // moving the ghost with arrow keys
+  if (keyIsDown(UP_ARROW)) {
+    ghost.bod.h -= 10;
+  } else if (keyIsDown(DOWN_ARROW)) {
+    ghost.bod.h += 10;
+  }
+  if (keyIsDown(LEFT_ARROW)) {
+    ghost.pos.x -= 5;
+  } else if (keyIsDown(RIGHT_ARROW)) {
+    ghost.pos.x += 5;
+  }
+
+  // drawing the ghost
+  rectMode(CENTER);
   fill(ghost.color.r, ghost.color.g, ghost.color.b, ghost.color.a);
+
+  ghost.pos.y = height - 100;
   rect(ghost.pos.x, ghost.pos.y, ghost.bod.w, ghost.bod.h);
+
+  ghost.top.x = ghost.pos.x;
+  ghost.top.y = ghost.pos.y - ghost.bod.h / 2;
+  arc(ghost.top.x, ghost.top.y, ghost.bod.w, ghost.bod.w, PI, TWO_PI);
 }
 
-function keyIsPressed() {
-  ghost.pos.x += 5;
-}
+function keyIsDown() {}
