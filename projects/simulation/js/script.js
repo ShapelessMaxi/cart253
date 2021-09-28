@@ -14,7 +14,7 @@ a soft and dark color palette and some slightly uncomfortable dialogues.
 
 let cloudA = { img: undefined, x: 0, y: 20, vx: 0.2 };
 let cloudB = { img: undefined, x: 200, y: 380, vx: 0.5 };
-let cloudC = { img: undefined, x: 500, y: 160, vx: 0.2 };
+let cloudC = { img: undefined, x: 500, y: 160, vx: 0.4 };
 
 let ghost = {
   pos: { x: 200, y: undefined },
@@ -59,7 +59,7 @@ drawing fun stuff
 */
 function draw() {
   //DRAWING THE BACKGROUND
-  background(92, 138, 126);
+  background(101, 150, 138);
   noStroke();
   rectMode(CENTER);
   // drawing the sky
@@ -67,27 +67,9 @@ function draw() {
   rect(width / 2, 0, width, 800);
   rect(width / 2, 0, width, 500);
   rect(width / 2, 0, width, 200);
-  // drawing the clouds and adding movement to them
-  tint(102, 113, 138, 200);
-  cloudA.x -= cloudA.vx;
-  if (cloudA.x < -1001) {
-    cloudA.x = width;
-  }
-  image(cloudA.img, cloudA.x, cloudA.y, 1001, 167);
 
-  cloudB.x -= cloudB.vx;
-  if (cloudB.x < -275) {
-    cloudB.x = width;
-  }
-  image(cloudB.img, cloudB.x, cloudB.y, 1037.5, 131.5);
-
-  cloudC.x -= cloudC.vx;
-  if (cloudC.x < -491) {
-    cloudC.x = width;
-  }
-  image(cloudC.img, cloudC.x, cloudC.y, 490.5, 84);
   // drawing the frame
-  fill(237, 230, 242);
+  fill(169, 180, 199);
   beginShape();
   vertex(0, height);
   vertex(0, 0);
@@ -101,6 +83,24 @@ function draw() {
   // drawing the ground
   fill(63, 73, 94);
   ellipse(width / 2, height, 1400, 180);
+
+  // drawing the clouds and adding movement to them
+  tint(102, 113, 138, 200);
+  cloudA.x -= cloudA.vx;
+  if (cloudA.x < -1001) {
+    cloudA.x = width;
+  }
+  image(cloudA.img, cloudA.x, cloudA.y, 1001, 167);
+  cloudB.x -= cloudB.vx;
+  if (cloudB.x < -1037.5) {
+    cloudB.x = width;
+  }
+  image(cloudB.img, cloudB.x, cloudB.y, 1037.5, 131.5);
+  cloudC.x -= cloudC.vx;
+  if (cloudC.x < -490.5) {
+    cloudC.x = width;
+  }
+  image(cloudC.img, cloudC.x, cloudC.y, 490.5, 84);
 
   // moving the ghost and flipping the eyes with arrow keys
   ghost.pos.x = constrain(ghost.pos.x, 62, width - 62);
