@@ -12,12 +12,15 @@ a soft and dark color palette and some slightly uncomfortable dialogues.
 
 "use strict";
 
-let cloudA = undefined;
+let cloudA = { img: undefined, x: 0, y: 20, vx: 0.2 };
+let cloudB = { img: undefined, x: 200, y: 380, vx: 0.5 };
+let cloudC = { img: undefined, x: 500, y: 160, vx: 0.2 };
 
 let ghost = {
   pos: { x: 200, y: undefined },
   bod: { w: 40, h: 100 },
   top: { x: undefined, y: undefined },
+  color: { r: 240, g: 240, b: 140, a: 100 },
   eyes: {
     x1: undefined,
     y1: undefined,
@@ -27,8 +30,8 @@ let ghost = {
     h: 17,
     color: { r: 50, g: 10, b: 10, a: 200 },
   },
-  color: { r: 240, g: 240, b: 140, a: 100 },
 };
+
 let cat = {
   x: undefined,
   y: undefined,
@@ -46,7 +49,9 @@ creating the canvas and preloading images
 function setup() {
   createCanvas(windowWidth, windowHeight);
 
-  cloudA = image(`assets/images/could1.png`);
+  cloudA.img = loadImage(`assets/images/cloud1.png`);
+  cloudB.img = loadImage(`assets/images/cloud2.png`);
+  cloudC.img = loadImage(`assets/images/cloud3.png`);
 }
 
 /**
@@ -62,8 +67,25 @@ function draw() {
   rect(width / 2, 0, width, 800);
   rect(width / 2, 0, width, 500);
   rect(width / 2, 0, width, 200);
-  // drwaing the clouds
+  // drawing the clouds and adding movement to them
+  tint(102, 113, 138, 200);
+  cloudA.x -= cloudA.vx;
+  if (cloudA.x < -1001) {
+    cloudA.x = width;
+  }
+  image(cloudA.img, cloudA.x, cloudA.y, 1001, 167);
 
+  cloudB.x -= cloudB.vx;
+  if (cloudB.x < -275) {
+    cloudB.x = width;
+  }
+  image(cloudB.img, cloudB.x, cloudB.y, 1037.5, 131.5);
+
+  cloudC.x -= cloudC.vx;
+  if (cloudC.x < -491) {
+    cloudC.x = width;
+  }
+  image(cloudC.img, cloudC.x, cloudC.y, 490.5, 84);
   // drawing the frame
   fill(237, 230, 242);
   beginShape();
@@ -77,7 +99,7 @@ function draw() {
   vertex(30, height);
   endShape(CLOSE);
   // drawing the ground
-  fill(63, 92, 99);
+  fill(63, 73, 94);
   ellipse(width / 2, height, 1400, 180);
 
   // moving the ghost and flipping the eyes with arrow keys
@@ -126,8 +148,6 @@ function draw() {
   cat.x = width - 200;
   cat.y = height - 100;
   rect(cat.x, cat.y, cat.size);
-
-  rect(0, 0, 500, 200);
 }
 
 function keyIsDown() {}
