@@ -3,21 +3,37 @@ live session conditionals
 Maxime Perreault
 */
 
+// multiple images (happy vs scared)
+// for loops
+// push pop
+//
+
 "use strict";
 
+let happyCat = undefined;
+let scaredCat = undefined;
+
 /**
-Description of preload
+loading images
 */
-function preload() {}
+function preload() {
+  happyCat = loadImage(`assets/images/happy.jfif`);
+  scaredCat = loadImage(`assets/images/scared.jfif`);
+}
 
 /**
 Description of setup
 */
 function setup() {
-  background(255, 255, 55);
+  createCanvas(windowWidth, windowHeight);
 }
 
 /**
 Description of draw()
 */
-function draw() {}
+function draw() {
+  background(0);
+
+  imageMode(CENTER);
+  image(happyCat, width / 2, height / 2);
+}
