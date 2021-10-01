@@ -1,54 +1,26 @@
-let circle = {
-  x: 0,
-  y: 250,
-  size: 100,
-  vx: 0,
-  vy: 0,
-  speed: 2,
-};
-
-let state = `title`; // possible states: title, animation, ending
+let bg = 0;
 
 function setup() {
   createCanvas(500, 500);
-  circle.vx = circle.speed;
-
-  textSize(32);
-  textAlign(CENTER, CENTER);
 }
 
 function draw() {
-  background(20);
+  background(bg);
 
-  if (state === `title`) {
-    title();
-  } else if (state === `animation`) {
-    animation();
-  } else if (state === `ending`) {
-    ending();
+  textAlign(CENTER, CENTER);
+  textSize(64);
+  fill(255);
+  text(key, width / 2, height / 2);
+
+  if (keyIsDown(65)) {
+    rect(200, 200, 200, 200);
   }
 }
 
 function keyPressed() {
-  if (state === `title`) {
-    state = `animation`;
+  if (keyCode === 32) {
+    bg = 127;
+  } else {
+    bg = 0;
   }
-  // animation
-  else if (circle.x > width) {
-    state = `ending`;
-  }
-}
-
-function title() {
-  fill(255);
-  text(`life lol`, width / 2, height / 2);
-}
-function animation() {
-  circle.x += circle.vx;
-  circle.y += circle.vy;
-  ellipse(circle.x, circle.y, circle.size);
-}
-function ending() {
-  fill(127);
-  text(`its all over lol`, width / 2, height / 2);
 }
