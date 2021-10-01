@@ -1,25 +1,54 @@
-function setup() {
-  createCanvas(500, 500);
-}
-
-let hello = {
-  string: `hi tis is maxi`,
+let circle = {
   x: 0,
   y: 250,
-  vx: 5,
-  vy: 1,
+  size: 100,
+  vx: 0,
+  vy: 0,
+  speed: 2,
 };
+
+let state = `title`; // possible states: title, animation, ending
+
+function setup() {
+  createCanvas(500, 500);
+  circle.vx = circle.speed;
+
+  textSize(32);
+  textAlign(CENTER, CENTER);
+}
 
 function draw() {
   background(20);
 
-  hello.x += hello.vx;
-  hello.y += hello.vy;
+  if (state === `title`) {
+    title();
+  } else if (state === `animation`) {
+    animation();
+  } else if (state === `ending`) {
+    ending();
+  }
+}
 
-  fill(255, 145, 12);
-  textAlign(CENTER, CENTER);
-  textSize(64);
-  stroke(255, 0, 0);
-  strokeWeight(3);
-  text(hello.string, hello.x, hello.y);
+function keyPressed() {
+  if (state === `title`) {
+    state = `animation`;
+  }
+  // animation
+  else if (circle.x > width) {
+    state = `ending`;
+  }
+}
+
+function title() {
+  fill(255);
+  text(`life lol`, width / 2, height / 2);
+}
+function animation() {
+  circle.x += circle.vx;
+  circle.y += circle.vy;
+  ellipse(circle.x, circle.y, circle.size);
+}
+function ending() {
+  fill(127);
+  text(`its all over lol`, width / 2, height / 2);
 }
