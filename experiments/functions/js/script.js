@@ -1,15 +1,25 @@
 function setup() {
   createCanvas(500, 500);
-
-  let hotCelsius = toCelsius(100);
-  console.log(`100 degress Farenheit is ${hotCelsius} degrees celius`);
 }
+
+let hello = {
+  string: `hi tis is maxi`,
+  x: 0,
+  y: 250,
+  vx: 5,
+  vy: 1,
+};
 
 function draw() {
-  background(0);
-}
+  background(20);
 
-function toCelsius(fahrenheit) {
-  let celsius = ((fahrenheit - 32) * 5) / 9;
-  return celsius;
+  hello.x += hello.vx;
+  hello.y += hello.vy;
+
+  fill(255, 145, 12);
+  textAlign(CENTER, CENTER);
+  textSize(64);
+  stroke(255, 0, 0);
+  strokeWeight(3);
+  text(hello.string, hello.x, hello.y);
 }
