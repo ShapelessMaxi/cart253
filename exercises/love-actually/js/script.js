@@ -31,11 +31,35 @@ let lover = {
   size: 100,
 };
 
-let newLover = {
+let newLover1 = {
   x: undefined,
   y: undefined,
-  size: 120,
+  size: 100,
+  display: false,
 };
+
+let newLover2 = {
+  x: undefined,
+  y: undefined,
+  size: 100,
+  display: false,
+};
+
+let newLover3 = {
+  x: undefined,
+  y: undefined,
+  size: 100,
+  display: false,
+};
+
+let newLover4 = {
+  x: undefined,
+  y: undefined,
+  size: 100,
+  display: false,
+};
+
+let currentLoverNumber = 0;
 
 let state = `title`; // possible states: title, simulation, love, multipeLovers, sadness
 let spawnState = false; // possible states: true or false
@@ -81,10 +105,37 @@ function draw() {
   } else if (state === `simulation`) {
     simulation();
 
+    if (newLover1.display) {
+      drawNewLover(newLover1, random(0, width), random(0, height));
+    } else if (newLover2.display) {
+      drawNewLover(newLover2, random(0, width), random(0, height));
+    } else if (newLover3.display) {
+      drawNewLover(newLover3, random(0, width), random(0, height));
+    } else if (newLover4.display) {
+      drawNewLover(newLover4, random(0, width), random(0, height));
+    }
+
     if (spawnState === true) {
-      newLover.x = random(0, width);
-      newLover.y = random(0, height);
-      ellipse(newLover.x, newLover.y, newLover.size);
+      if (!newLover1.display) {
+        newLover1.display = true;
+        currentLoverNumber = 1;
+      } else if (newLover1.display && currentLoverNumber === 1) {
+        newLover2.display = true;
+        currentLoverNumber = 2;
+      } else if (newLover2.display && currentLoverNumber === 2) {
+        newLover3.display = true;
+        currentLoverNumber = 3;
+      } else if (newLover3.display && currentLoverNumber === 3) {
+        newLover4.display = true;
+      }
+
+      console.log(
+        newLover1.display,
+        newLover2.display,
+        newLover3.display,
+        newLover4.display
+      );
+
       spawnState = false;
     }
   } else if (state === `love`) {
@@ -94,13 +145,18 @@ function draw() {
   }
 }
 
+function drawNewLover(currentLover, randomX, randomY) {
+  currentLover.x = randomX;
+  currentLover.y = randomY;
+  ellipse(currentLover.x, currentLover.y, currentLover.size);
+}
+
 // decrease the size of the lovers
 // change the user's color
 function mousePressed() {
   if (state === `title`) {
     state = `simulation`;
   }
-
   // this caps the amount of lovers to 4
   if (lover.size === 100) {
     lover.size -= 20;
@@ -114,7 +170,6 @@ function mousePressed() {
     lover.x = -5000;
     lover.y = -5000;
   }
-
   // create a new lover
   spawnState = true;
   // spawnState = false;

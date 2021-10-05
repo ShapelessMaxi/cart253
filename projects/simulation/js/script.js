@@ -33,7 +33,6 @@ let ghost = {
     color: { r: 50, g: 10, b: 10, a: 200 },
   },
 };
-
 let cat = {
   pos: { x: undefined, y: undefined },
   bod: { w: 50, h: 50 },
@@ -81,15 +80,16 @@ let cat = {
 function preload() {
   cloudA.img = loadImage(`assets/images/cloud1.png`);
   cloudB.img = loadImage(`assets/images/cloud2.png`);
-  cloudC.img = loadImage(`assets/images/cloud1.png`);
+  cloudC.img = loadImage(`assets/images/cloud2.png`);
 }
 
 // creating the canvas
 function setup() {
   createCanvas(windowWidth, windowHeight);
+  setInterval(drawStars, 3000);
 }
 
-// drawing fun stuff
+// drawing game elements and setting up states
 function draw() {
   drawBackground();
   movement();
@@ -131,20 +131,21 @@ function stillBackground() {
 }
 // defining movemements for background elements
 function animatedBackground() {
-  stars();
+  // drawStars();
   clouds();
 }
-function stars() {
+function drawStars() {
   let numOfStars = 50;
   for (let i = 0; i < numOfStars; i++) {
     push();
-    stroke(54, 143, 153, 300);
+    stroke(54, 143, 153);
     strokeWeight(5);
     let x = random(30, width - 30);
     let y = random(30, height - 100);
     point(x, y);
     pop();
   }
+  console.log(`draw stars`);
 }
 function clouds() {
   // drawing the clouds and adding movement to them
