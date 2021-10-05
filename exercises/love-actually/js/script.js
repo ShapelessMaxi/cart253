@@ -25,44 +25,14 @@ let user = {
   size: 100,
 };
 
-let lover = {
-  x: undefined,
-  y: undefined,
-  size: 100,
-};
-
-let newLover1 = {
-  x: undefined,
-  y: undefined,
-  size: 100,
-  display: false,
-};
-
-let newLover2 = {
-  x: undefined,
-  y: undefined,
-  size: 100,
-  display: false,
-};
-
-let newLover3 = {
-  x: undefined,
-  y: undefined,
-  size: 100,
-  display: false,
-};
-
-let newLover4 = {
-  x: undefined,
-  y: undefined,
-  size: 100,
-  display: false,
-};
-
-let currentLoverNumber = 0;
+// storing lover objects
+let lovers = [];
+// total number of lovers
+let numLovers = 4;
+// keeps track of which lover is shown next
+let numLoversToShow = 0;
 
 let state = `title`; // possible states: title, simulation, love, multipeLovers, sadness
-let spawnState = false; // possible states: true or false
 
 // creating possible colors for the user and the lovers
 let red = { r: 186, g: 58, b: 25 };
@@ -75,69 +45,38 @@ let colors = [];
 let randomColorUser = undefined;
 let randomColorLover = undefined;
 
-// setting up the first lover's speed and position
+// setting up the canvas, the colors and the starting lovers
 function setup() {
-  createCanvas(750, 750);
-  setupLover();
+  createCanvas(800, 800);
   setupColors();
+  setupOriginLovers();
 }
-
-// set random locaton for the first lover
-function setupLover() {
-  lover.x = random(0, width);
-  lover.y = random(0, height);
-}
-
-// store the different possible colors
-// assign a random color to the user and the first lover
+// store the different possible colors and assign them to the lovers and user
 function setupColors() {
   colors.push(red, green, blue, pink, aqua);
+  // assign a random color to the user and the first lover
   randomColorUser = random(colors);
   randomColorLover = random(colors);
 }
+// creating and adding 4 lovers to the lovers array
+function setupOriginLovers() {
+  // create 4 new lovers
+  for (let i = 0; i < numLovers; i++) {
+    // setting a random position for each lovers
+    let tempLover = new Lover(random(0, width), random(0, height));
+    // add this temporary lover to lovers array
+    lovers.push(tempLover);
+  }
+}
 
-// running the program ????
+// changing the state of the program and displaying the lovers
 function draw() {
   background(209, 186, 123);
-
+  // changing the program's states
   if (state === `title`) {
     title();
   } else if (state === `simulation`) {
     simulation();
-
-    if (newLover1.display) {
-      drawNewLover(newLover1, random(0, width), random(0, height));
-    } else if (newLover2.display) {
-      drawNewLover(newLover2, random(0, width), random(0, height));
-    } else if (newLover3.display) {
-      drawNewLover(newLover3, random(0, width), random(0, height));
-    } else if (newLover4.display) {
-      drawNewLover(newLover4, random(0, width), random(0, height));
-    }
-
-    if (spawnState === true) {
-      if (!newLover1.display) {
-        newLover1.display = true;
-        currentLoverNumber = 1;
-      } else if (newLover1.display && currentLoverNumber === 1) {
-        newLover2.display = true;
-        currentLoverNumber = 2;
-      } else if (newLover2.display && currentLoverNumber === 2) {
-        newLover3.display = true;
-        currentLoverNumber = 3;
-      } else if (newLover3.display && currentLoverNumber === 3) {
-        newLover4.display = true;
-      }
-
-      console.log(
-        newLover1.display,
-        newLover2.display,
-        newLover3.display,
-        newLover4.display
-      );
-
-      spawnState = false;
-    }
   } else if (state === `love`) {
     love();
   } else if (state === `sadness`) {
@@ -145,34 +84,52 @@ function draw() {
   }
 }
 
-function drawNewLover(currentLover, randomX, randomY) {
-  currentLover.x = randomX;
-  currentLover.y = randomY;
-  ellipse(currentLover.x, currentLover.y, currentLover.size);
-}
-
-// decrease the size of the lovers
-// change the user's color
 function mousePressed() {
+  // starting the simulation
   if (state === `title`) {
     state = `simulation`;
   }
-  // this caps the amount of lovers to 4
-  if (lover.size === 100) {
-    lover.size -= 20;
-  } else if (lover.size === 80) {
-    lover.size -= 20;
-  } else if (lover.size === 60) {
-    lover.size -= 20;
-  } else if (lover.size === 40) {
-    lover.size -= 20;
-  } else if (lover.size === 20) {
-    lover.x = -5000;
-    lover.y = -5000;
+  // adding new lovers to the array
+  addingLovers();
+  // keeping track of which numLovers to show
+  numLoversToShow += 1;
+  // decreasing the size of every lovers
+  loversDecreasingSize();
+  // changing colors
+  loversChangeColor();
+}
+
+// adding new lovers to the array
+function addingLovers() {
+  if (lovers.length >= numLovers) {
+    let tempNewLover = new Lover(random(0, width), random(0, height));
+    lovers.push(tempNewLover);
   }
-  // create a new lover
-  spawnState = true;
-  // spawnState = false;
+}
+// decreasing the size of every lovers
+function loversDecreasingSize() {
+  for (let i = 0; i < numLoversToShow; i++) {
+    if (lovers[i].size >= 120) {
+      lovers[i].size -= 20;
+    } else if (lovers[i].size >= 100) {
+      lovers[i].size -= 20;
+    } else if (lovers[i].size >= 80) {
+      lovers[i].size -= 20;
+    } else if (lovers[i].size >= 60) {
+      lovers[i].size -= 20;
+    } else if (lovers[i].size >= 40) {
+      lovers[i].size -= 20;
+    } else if (lovers[i].size >= 20) {
+      // deactivating the lovers that has become too small
+      lovers[i].active = false;
+    }
+  }
+}
+// changing color of individual loversChangeColor
+function loversChangeColor() {
+  for (let i = 0; i < numLoversToShow; i++) {
+    lovers[i].color = random(colors);
+  }
 }
 
 // drawing the title screen
@@ -192,9 +149,33 @@ function title() {
 
 // start the simulation part
 function simulation() {
-  move();
+  // controlling user circle with the mouse
+  moveUser();
+  // siplaying the user and the lovers
+  displayUser();
+  displayLovers();
+  // check if there's a match (color + distance)
   checkMatch();
-  display();
+}
+
+// controlling the user circle with the mouse
+function moveUser() {
+  user.x = mouseX;
+  user.y = mouseY;
+}
+
+// checking if there's a match
+function checkMatch() {
+  for (let i = 0; i < numLoversToShow; i++) {
+    // checking if the colors match
+    if (randomColorUser.r === lovers[i].color.r) {
+      // checking if the user is touching the lover
+      let d = dist(user.x, user.y, lovers[i].x, lovers[i].y);
+      if (d < user.size / 2 + lovers[i].size / 2) {
+        state = `love`;
+      }
+    }
+  }
 }
 
 // drawing the love end screen
@@ -218,32 +199,21 @@ function multipeLovers() {
   pop();
 }
 
-// setting the user's movement
-function move() {
-  user.x = mouseX;
-  user.y = mouseY;
-}
-
-// drawing the user and the lovers
-function display() {
+// drawing the user
+function displayUser() {
   noStroke();
   push();
   fill(randomColorUser.r, randomColorUser.g, randomColorUser.b);
   ellipse(user.x, user.y, user.size);
   pop();
-  push();
-  fill(randomColorLover.r, randomColorLover.g, randomColorLover.b);
-  ellipse(lover.x, lover.y, lover.size);
-  pop();
 }
 
-// checking if the colors match
-// checking if the user is touching the lover
-function checkMatch() {
-  if (randomColorUser === randomColorLover) {
-    let d = dist(user.x, user.y, lover.x, lover.y);
-    if (d < user.size / 2 + lover.size / 2) {
-      state = `love`;
+function displayLovers() {
+  // Display all lovers
+  for (let i = 0; i < numLoversToShow; i++) {
+    if (lovers[i].active === true) {
+      fill(lovers[i].color.r, lovers[i].color.g, lovers[i].color.b);
+      lovers[i].display();
     }
   }
 }
