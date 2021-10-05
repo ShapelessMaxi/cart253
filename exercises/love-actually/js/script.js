@@ -141,8 +141,11 @@ function title() {
   text(`LOVE???????`, width / 2, 75);
   textSize(24);
   text(`control your circle with the mouse`, width / 2, 120);
-  text(`press the left mouse button to change color!`, width / 2, 140);
-  text(`fin your perfect match (or matches!)`, width / 2, height / 2);
+  text(
+    `press the left mouse button to find your perfect match (or matches!)`,
+    width / 2,
+    height / 2
+  );
   text(`click to start...`, width / 2, 700);
   pop();
 }
@@ -178,19 +181,23 @@ function checkMatch() {
   }
 }
 
-// drawing the love end screen
-function love() {
-  push();
-  textSize(62);
-  fill(92, 35, 4);
-  textAlign(CENTER, CENTER);
-  text(`LOVE!`, width / 2, height / 2);
-  pop();
+function checkNumMatches(numMatches) {
+  for (let i = 0; i < numLoversToShow; i++) {
+    if (randomColorUser.r === lovers[i].color.r) {
+      numMatches += 1;
+    }
+  }
 }
 
 // drawing the multiple lovers end screen
-function multipeLovers() {
-  // show homw many lovers were a match  on screen
+function love() {
+  // displaying matching lovers
+  for (let i = 0; i < numLoversToShow; i++) {
+    if (randomColorUser.r === lovers[i].color.r) {
+      lovers[i].display();
+      noLoop();
+    }
+  } // basic end text
   push();
   textSize(62);
   fill(92, 35, 4);

@@ -15,6 +15,7 @@ class Lover {
   }
   // Display my lover as a circle
   display() {
+    fill(this.color.r, this.color.g, this.color.b);
     ellipse(this.x, this.y, this.size);
   }
 }
