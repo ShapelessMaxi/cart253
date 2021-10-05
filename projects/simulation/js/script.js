@@ -96,6 +96,7 @@ function draw() {
   drawCharacters();
 }
 
+// drawing background
 function drawBackground() {
   // still part of the background
   stillBackground();
@@ -128,6 +129,7 @@ function stillBackground() {
   fill(63, 73, 94);
   ellipse(width / 2, height, width + 400, 180);
 }
+// defining movemements for background elements
 function animatedBackground() {
   stars();
   clouds();
@@ -151,6 +153,7 @@ function clouds() {
   if (cloudA.x < -1001) {
     cloudA.x = width;
   }
+  // change size of the clouds bigger if screen is bigger
   image(cloudA.img, cloudA.x, cloudA.y, 1001, 167);
   cloudB.x -= cloudB.vx;
   if (cloudB.x < -1037.5) {
@@ -164,6 +167,7 @@ function clouds() {
   image(cloudC.img, cloudC.x, cloudC.y, 490.5, 84);
 }
 
+// drawing characters
 function drawCharacters() {
   // defining the ground level
   groundLevel = height - 50;
@@ -268,6 +272,7 @@ function drawCat() {
   pop();
 }
 
+// defining movemements of the characters
 function movement() {
   ghostMovement();
   catMovement();
