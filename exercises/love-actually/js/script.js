@@ -8,13 +8,11 @@ of fish in the sea... but let's be realistic here. In this simulation, I want to
 the idea that not every 'love interest' is a good one. I also want to add the idea that
 there isn't just one perfect match.
 
-As the player, you control a circle that starts grey. There's another circle at the start,
-it's your first love interest. Every time yo click the left-mouse button, you change color randomly.
-Every time you click, another randomly colored circle appears, but the other circles shrink in size.
-There will be a maximum nuber of circles on the screen, the smaller circles get eliminated.
-You have to find the color to match the another circle.
-
-Easter egg: if there is more than one matching circle, you can go around and love them all!
+As the player, you control a circle that starts with a random color. There's another circle
+at the start, it's your first love interest. Don't be sad if it's not a match yet! Every
+time you click the left-mouse button, another randomly colored circle appears, but the other
+circles shrink in size. If the color is the same as yours, it's a match! There will be a
+maximum number of circles on the screen, the smaller circles eventualy vanish.
 */
 
 "use strict";
@@ -79,8 +77,6 @@ function draw() {
     simulation();
   } else if (state === `love`) {
     love();
-  } else if (state === `sadness`) {
-    sadness();
   }
 }
 
