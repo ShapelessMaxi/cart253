@@ -8,15 +8,19 @@ has a different effect, see what each one of them do!
 
 I want this game to have a spooky but cute atmosphere, complete with simple graphics,
 a soft and dark color palette and some slightly uncomfortable dialogues.
+
+ps: sorry to whoever sees this code, the 'drawing the cat' portion of the code is very messy. I will
+probably never draw a triangle in p5.js ever again :).
 */
 
 "use strict";
 
 let cloudA = { img: undefined, x: 0, y: 20, vx: 0.2 };
-let cloudB = { img: undefined, x: 200, y: 380, vx: 0.5 };
-let cloudC = { img: undefined, x: 500, y: 160, vx: 0.4 };
+let cloudB = { img: undefined, x: 100, y: 380, vx: 0.6 };
+let cloudC = { img: undefined, x: 800, y: 200, vx: 0.3 };
 
 let groundLevel = undefined;
+let starSeed = 0;
 
 let ghost = {
   pos: { x: 200, y: undefined },
@@ -76,17 +80,18 @@ let cat = {
   },
 };
 
-// preloading images
+// preloading the cloud images
 function preload() {
   cloudA.img = loadImage(`assets/images/cloud1.png`);
   cloudB.img = loadImage(`assets/images/cloud2.png`);
-  cloudC.img = loadImage(`assets/images/cloud2.png`);
+  cloudC.img = loadImage(`assets/images/cloud3.png`);
 }
 
 // creating the canvas
+// defining an interval to change the position of the stars every few seconds
 function setup() {
   createCanvas(windowWidth, windowHeight);
-  setInterval(drawStars, 3000);
+  setInterval(changeStarSeed, 2500);
 }
 
 // drawing game elements and setting up states
@@ -96,13 +101,14 @@ function draw() {
   drawCharacters();
 }
 
-// drawing background
+// DRAWING BACKGROUND ELEMENTS
 function drawBackground() {
   // still part of the background
   stillBackground();
   // animated part of the background
   animatedBackground();
 }
+// drawing the gradient sky, the hill and the frame
 function stillBackground() {
   //DRAWING THE BACKGROUND
   background(101, 150, 138);
@@ -129,54 +135,68 @@ function stillBackground() {
   fill(63, 73, 94);
   ellipse(width / 2, height, width + 400, 180);
 }
-// defining movemements for background elements
+// drwaing the stars and the clouds
 function animatedBackground() {
-  // drawStars();
-  clouds();
+  // drawing the stars
+  drawStars();
+  // drawing the clouds
+  drawClouds();
 }
+// drawing the stars with a loop
 function drawStars() {
-  let numOfStars = 50;
+  randomSeed(starSeed);
+  let numOfStars = 100;
   for (let i = 0; i < numOfStars; i++) {
     push();
-    stroke(54, 143, 153);
+    stroke(54, 143, 153, 200);
     strokeWeight(5);
     let x = random(30, width - 30);
     let y = random(30, height - 100);
     point(x, y);
     pop();
   }
-  console.log(`draw stars`);
 }
-function clouds() {
-  // drawing the clouds and adding movement to them
+// changing the random seed every few seconds, linked with setInterval() function in Setup()
+function changeStarSeed() {
+  starSeed = random(0, 20000);
+}
+// drawing the clouds and defining how they move
+function drawClouds() {
+  // define a ratio to adjust the cloud size to screen size and define a tint
+  let cloudRatio = windowWidth / 1000;
   tint(102, 113, 138, 200);
+  // drawing Cloud A and resetting position when off-screen
   cloudA.x -= cloudA.vx;
-  if (cloudA.x < -1001) {
+  if (cloudA.x < -1001 * cloudRatio) {
     cloudA.x = width;
   }
-  // change size of the clouds bigger if screen is bigger
-  image(cloudA.img, cloudA.x, cloudA.y, 1001, 167);
+  image(cloudA.img, cloudA.x, cloudA.y, 1001 * cloudRatio, 167 * cloudRatio);
+  // drawing Cloud B and resetting position when off-screen
   cloudB.x -= cloudB.vx;
-  if (cloudB.x < -1037.5) {
+  if (cloudB.x < -1037.5 * cloudRatio) {
     cloudB.x = width;
   }
-  image(cloudB.img, cloudB.x, cloudB.y, 1037.5, 131.5);
+  image(cloudB.img, cloudB.x, cloudB.y, 1037 * cloudRatio, 131 * cloudRatio);
+  // drawing Cloud C and resetting position when off-screen
   cloudC.x -= cloudC.vx;
-  if (cloudC.x < -490.5) {
+  if (cloudC.x < -490.5 * cloudRatio) {
     cloudC.x = width;
   }
-  image(cloudC.img, cloudC.x, cloudC.y, 490.5, 84);
+  image(cloudC.img, cloudC.x, cloudC.y, 550 * cloudRatio, 84 * cloudRatio);
 }
 
-// drawing characters
+// DRAWING CHARACTERS
 function drawCharacters() {
   // defining the ground level
   groundLevel = height - 50;
+  // drawing the ghost (user)
   drawGhost();
+  // drawing the cat (entity to interact with)
   drawCat();
 }
+// drawing the ghot (user)
 function drawGhost() {
-  // DRAWING THE GHOST
+  push();
   rectMode(CENTER);
   fill(ghost.color.r, ghost.color.g, ghost.color.b, ghost.color.a);
   // drawing main rectangle
@@ -186,6 +206,7 @@ function drawGhost() {
   ghost.top.x = ghost.pos.x;
   ghost.top.y = ghost.pos.y - ghost.bod.h;
   arc(ghost.top.x, ghost.top.y, ghost.bod.w, ghost.bod.w, PI, TWO_PI);
+  pop();
   // drawing ghost eyes
   push();
   fill(
@@ -199,20 +220,20 @@ function drawGhost() {
   ellipse(ghost.eyes.x2, ghost.eyes.y, ghost.eyes.w2, ghost.eyes.h);
   pop();
 }
+// drawing the cat (entity to interact with)
 function drawCat() {
-  // DRAWING THE CAT
+  push();
   rectMode(CENTER);
   fill(cat.color.r, cat.color.g, cat.color.b, cat.color.a);
-  // drawing main rectangle
+  // drawing the cat's body (main rectangle)
   cat.pos.y = groundLevel;
   cat.pos.x = width - 350;
   rect(cat.pos.x, cat.pos.y - cat.bod.h / 2, cat.bod.w, cat.bod.h);
-  // drawing top half circle
+  // drawing the cat's head (top half circle)
   cat.top.x = cat.pos.x;
   cat.top.y = cat.pos.y - cat.bod.h;
   arc(cat.top.x, cat.top.y, cat.bod.w, cat.bod.h, PI, TWO_PI);
-  // drawing the ears
-  push();
+  // drawing the cat's right ear
   cat.ear1.x1 = cat.pos.x - 15;
   cat.ear1.x2 = cat.ear1.x1 + 13;
   cat.ear1.x3 = cat.ear1.x2 + 3;
@@ -227,6 +248,7 @@ function drawCat() {
     cat.ear1.x3,
     cat.ear1.y3
   );
+  // drawing the cats's left ear
   cat.ear2.x1 = cat.ear1.x1 + 20;
   cat.ear2.x2 = cat.ear2.x1 + 13;
   cat.ear2.x3 = cat.ear2.x2 + 3;
@@ -242,20 +264,20 @@ function drawCat() {
     cat.ear2.y3
   );
   pop();
-  // drawing cat eyes
+  // drawing the cat's eyes
   cat.eyes.y = cat.pos.y - cat.bod.h + 5;
   push();
   fill(cat.eyes.color.r, cat.eyes.color.g, cat.eyes.color.b, cat.eyes.color.a);
   ellipse(cat.eyes.x1, cat.eyes.y, cat.eyes.w1, cat.eyes.h);
   ellipse(cat.eyes.x2, cat.eyes.y, cat.eyes.w2, cat.eyes.h);
   pop();
-  // drawing the pupils
+  // drawing the cat's pupils
   push();
   fill(0);
   ellipse(cat.pupil.x1, cat.eyes.y, cat.pupil.w, cat.pupil.h);
   ellipse(cat.pupil.x2, cat.eyes.y, cat.pupil.w, cat.pupil.h);
   pop();
-  // drawing the tail
+  // drawing the cat's tail
   push();
   noFill();
   stroke(cat.color.r, cat.color.g, cat.color.b, cat.color.a);
@@ -275,13 +297,17 @@ function drawCat() {
 
 // defining movemements of the characters
 function movement() {
+  // defining movemements for the ghost (user)
   ghostMovement();
+  // defining movemements for the cat
   catMovement();
 }
+// controlling the movement of the ghost (user) with arrow keys
 function ghostMovement() {
-  // moving the ghost and flipping the eyes with arrow keys
+  // constraining the ghost's position to a bit less than the frame
   ghost.pos.x = constrain(ghost.pos.x, 62, width - 62);
   ghost.bod.h = constrain(ghost.bod.h, 80, height - 110);
+  // controlling the ghost and flipping the eyes with arrow keys and
   if (keyIsDown(UP_ARROW)) {
     ghost.bod.h += height / 90;
   } else if (keyIsDown(DOWN_ARROW)) {
@@ -297,15 +323,16 @@ function ghostMovement() {
     ghost.eyes.x2 = ghost.eyes.x1 + 15;
   }
 }
+// flipping the cat according to the ghost's position
 function catMovement() {
-  // moving the cat's eyes and tail with ghost position
-  if (ghost.pos.x < cat.pos.x) {
-    // eyes and pupils
+  // flipping the cat's eyes and tail with ghost position
+  if (ghost.pog.x < cat.pos.x) {
+    // flipping the eyes and pupils
     cat.eyes.x1 = cat.pos.x - 5;
     cat.eyes.x2 = cat.pos.x - 25;
     cat.pupil.x1 = cat.eyes.x1 - 2;
     cat.pupil.x2 = cat.eyes.x2 - 2;
-    // tail
+    // flipping the tail
     cat.tail.x1 = cat.pos.x + 100;
     cat.tail.x2 = cat.tail.x1 - 78;
     cat.tail.x3 = cat.tail.x1 + 10;
@@ -315,12 +342,12 @@ function catMovement() {
     cat.tail.y3 = cat.tail.y1 + 50;
     cat.tail.y4 = cat.tail.y3 - 5;
   } else if (ghost.pos.x > cat.pos.x) {
-    // eyes and pupils
+    // flipping the eyes and pupils
     cat.eyes.x1 = cat.pos.x + 5;
     cat.eyes.x2 = cat.pos.x + 25;
     cat.pupil.x1 = cat.eyes.x1 + 2;
     cat.pupil.x2 = cat.eyes.x2 + 2;
-    // tail
+    // flipping the tail
     cat.tail.x1 = cat.pos.x - 100;
     cat.tail.x2 = cat.tail.x1 + 78;
     cat.tail.x3 = cat.tail.x1 - 10;
