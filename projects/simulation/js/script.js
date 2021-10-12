@@ -79,6 +79,24 @@ let cat = {
     x4: undefined,
     y4: undefined,
   },
+  rightWings: {
+    active: false,
+    img: undefined,
+    x: undefined,
+    y: undefined,
+    w: 100,
+    h: 80,
+    offset: 30,
+  },
+  leftWings: {
+    active: false,
+    img: undefined,
+    x: undefined,
+    y: undefined,
+    w: 100,
+    h: 80,
+    offset: 130,
+  },
 };
 
 // store item object here
@@ -87,8 +105,11 @@ let butterflyIcon = undefined;
 let potionIcon = undefined;
 let flowerIcon = undefined;
 
-// preloading the cloud and icon images
+// preloading the cloud, icon images and wings image
 function preload() {
+  cat.rightWings.img = loadImage(`assets/images/wings_right.png`);
+  cat.leftWings.img = loadImage(`assets/images/wings_left.png`);
+
   cloudA.img = loadImage(`assets/images/cloud1.png`);
   cloudB.img = loadImage(`assets/images/cloud2.png`);
   cloudC.img = loadImage(`assets/images/cloud3.png`);
@@ -358,6 +379,21 @@ function catMovement() {
     cat.tail.y2 = cat.tail.y1;
     cat.tail.y3 = cat.tail.y1 + 50;
     cat.tail.y4 = cat.tail.y3 - 5;
+    // drawing the wings on the left side (deactivated until fed the butterfly)
+    if (cat.rightWings.active) {
+      push();
+      cat.rightWings.x = cat.pos.x + cat.rightWings.offset;
+      cat.rightWings.y = cat.ear1.y1 - 25;
+      tint(cat.color.r, cat.color.g, cat.color.b, cat.color.a);
+      image(
+        cat.rightWings.img,
+        cat.rightWings.x,
+        cat.rightWings.y,
+        cat.rightWings.w,
+        cat.rightWings.h
+      );
+      pop();
+    }
   } else if (ghost.pos.x > cat.pos.x) {
     // flipping the eyes and pupils
     cat.eyes.x1 = cat.pos.x + 5;
@@ -373,6 +409,21 @@ function catMovement() {
     cat.tail.y2 = cat.tail.y1;
     cat.tail.y3 = cat.tail.y1 + 50;
     cat.tail.y4 = cat.tail.y3 - 5;
+    // drawing the wings on the left side (deactivated until fed the butterfly)
+    if (cat.leftWings.active) {
+      push();
+      cat.leftWings.x = cat.pos.x - cat.leftWings.offset;
+      cat.leftWings.y = cat.ear1.y1 - 25;
+      tint(cat.color.r, cat.color.g, cat.color.b, cat.color.a);
+      image(
+        cat.leftWings.img,
+        cat.leftWings.x,
+        cat.leftWings.y,
+        cat.leftWings.w,
+        cat.leftWings.h
+      );
+      pop();
+    }
   }
 }
 // picked item movement controlled byt the user
@@ -453,9 +504,31 @@ function deleteItem(item) {
 // respawn some items after being fed depending on item type
 function respawnFedItems(item) {
   if (item.img === potionIcon) {
-    createPotion();
+    if (cat.bod.w < 2000) {
+      createPotion();
+    }
   } else if (item.img === flowerIcon) {
     createFlower();
+  }
+}
+// cat reacting differetnyl depending on item being fed
+function catReactions(item) {
+  if (item.img === butterflyIcon) {
+    cat.rightWings.active = true;
+    cat.leftWings.active = true;
+  } else if (item.img === potionIcon) {
+    cat.bod.w *= 1.5;
+    cat.bod.h *= 1.5;
+    cat.rightWings.w *= 1.3;
+    cat.rightWings.h *= 1.3;
+    cat.rightWings.offset *= 1.4;
+    cat.leftWings.w *= 1.3;
+    cat.leftWings.h *= 1.3;
+    cat.leftWings.offset *= 1.3;
+  } else if (item.img === flowerIcon) {
+    cat.color.r = random(0, 255);
+    cat.color.g = random(0, 255);
+    cat.color.b = random(0, 255);
   }
 }
 
@@ -496,7 +569,7 @@ function itemIsPickable(item) {
 // check if the user has picked an item and is close to cat
 function itemIsFeedable(item) {
   let d = dist(ghost.eyes.x1, ghost.eyes.y, cat.pos.x, cat.pos.y);
-  if (d < ghost.bod.w / 2 + cat.bod.w + 70 && item.picked) {
+  if (d < ghost.bod.w / 2 + cat.bod.w + 20 && item.picked) {
     return true;
   }
 }
@@ -541,13 +614,7 @@ function feedItem() {
         // deactivate (delete) current item
         deleteItem(items[i]);
         // have the cat react to the items
-        if (items[i].img === butterflyIcon) {
-        } else if (items[i].img === potionIcon) {
-        } else if (items[i].img === flowerIcon) {
-          cat.color.r = random(0, 255);
-          cat.color.g = random(0, 255);
-          cat.color.b = random(0, 255);
-        }
+        catReactions(items[i]);
       }
     }
   }
@@ -577,10 +644,9 @@ function displayText() {
       push();
       fill(255);
       textSize(18);
-      text(`'X' to feed`, cat.pos.x, cat.pos.y);
+      textAlign(CENTER);
+      text(`'X' to feed`, cat.pos.x, cat.pos.y + 20);
       pop();
     }
   }
 }
-// display 'X' to pick, when close to items
-function displayPickText() {}
