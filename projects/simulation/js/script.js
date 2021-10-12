@@ -21,6 +21,7 @@ let cloudC = { img: undefined, x: 800, y: 200, vx: 0.3 };
 
 let groundLevel = undefined;
 let starSeed = 0;
+let n = 0;
 
 let ghost = {
   pos: { x: 200, y: undefined },
@@ -85,8 +86,9 @@ let items = [];
 
 let butterflyIcon = undefined;
 let potionIcon = undefined;
+let flowerIcon = undefined;
 
-// preloading the cloud images
+// preloading the cloud and icon images
 function preload() {
   cloudA.img = loadImage(`assets/images/cloud1.png`);
   cloudB.img = loadImage(`assets/images/cloud2.png`);
@@ -94,6 +96,7 @@ function preload() {
 
   butterflyIcon = loadImage(`assets/images/item_butterfly.png`);
   potionIcon = loadImage(`assets/images/item_potion.png`);
+  flowerIcon = loadImage(`assets/images/item_flower.png`);
 }
 
 // creating the canvas
@@ -111,6 +114,7 @@ function draw() {
   drawCharacters();
   movement();
   displayItems();
+  displayText();
 }
 
 // DRAWING BACKGROUND ELEMENTS
@@ -388,24 +392,36 @@ function pickedItemMovement() {
       } else if (keyIsDown(RIGHT_ARROW)) {
         items[i].x = ghost.pos.x + 40;
       }
+    } else if (!items[i].picked) {
+      items[i].x = items[i].x;
+      items[i].y = items[i].y;
     }
   }
 }
 
 // CREATING ITEMS
 function createItems() {
+  // this item gives the cat wings
   let butterfly = new Item(
     butterflyIcon,
-    random(40, width - 40),
-    random(40, height - 110)
+    random(100, width - 100),
+    random(100, height - 160)
   );
   items.push(butterfly);
+  // this item makes the cat grow bigger
   let potion = new Item(
     potionIcon,
-    random(40, width - 40),
-    random(40, height - 110)
+    random(100, width - 100),
+    random(100, height - 160)
   );
   items.push(potion);
+  // this item changes the cat's color
+  let flower = new Item(
+    flowerIcon,
+    random(100, width - 100),
+    random(100, height - 160)
+  );
+  items.push(flower);
 }
 // displaying items
 function displayItems() {
@@ -415,40 +431,113 @@ function displayItems() {
     }
   }
 }
-// picking up an item as user with 'x' key
+// pressing 'x' to pick, drop or feed and item
 function keyPressed() {
-  pickUpItem();
-  // putDownItem();
+  console.log(`n is =`, n);
+  if (!isOdd(n)) {
+    pickUpItem();
+  } else if (isOdd(n)) {
+    if (catIsClose()) {
+      feedItem();
+    } else {
+      putDownItem();
+    }
+  }
+}
+// check if n number is odd or not
+function isOdd(n) {
+  return n % 2;
 }
 // picking up an item
 function pickUpItem() {
-  for (let i = 0; i <= items.length; i++) {
-    if (key == "x") {
-      if (itemIsPickable()) {
+  for (let i = 0; i < items.length; i++) {
+    if (key === "x") {
+      if (itemIsPickable(items[i])) {
         items[i].picked = true;
+        n += 1;
+        return n;
       }
     }
   }
 }
 // putting down an item
-// function putDownItem() {
-// for (let i = 0; i < items.length; i++) {
-//   if (key == "x") {
-//     if (items[i].picked) {
-//       items[i].picked = false;
-//     }
-//   }
-// }
-// }
-// check if the user is close enough to an item to pick it up (returns true or false)
-function itemIsPickable() {
-  for (let i = 0; i <= items.length; i++) {
-    let d = dist(ghost.eyes.x1, ghost.eyes.y, items[i].x, items[i].y);
-    if (d < ghost.bod.w / 2 + items[i].size / 2 + 10) {
-      return true;
+function putDownItem() {
+  for (let i = 0; i < items.length; i++) {
+    if (key === "x") {
+      if (items[i].picked) {
+        items[i].picked = false;
+        n += 1;
+        return n;
+      }
     }
   }
 }
+// feeding an item
+function feedItem() {
+  for (let i = 0; i < items.length; i++) {
+    if (key === "x") {
+      if (itemIsFeedable(items[i])) {
+        items[i].active = false;
+        items[i].picked = false;
+        n += 1;
+        return n;
+      }
+    }
+  }
+}
+// check if the user is close enough to an item to pick it up (returns true or false)
+function itemIsPickable(item) {
+  let d = dist(ghost.eyes.x1, ghost.eyes.y, item.x, item.y);
+  if (item.active && d < ghost.bod.w / 2 + item.size / 2 + 5) {
+    return true;
+  }
+}
+// check if the user has picked an item and is close to cat
+function itemIsFeedable(item) {
+  let d = dist(ghost.eyes.x1, ghost.eyes.y, cat.pos.x, cat.pos.y);
+  if (d < ghost.bod.w / 2 + cat.bod.w + 70 && item.picked) {
+    return true;
+  }
+}
+// check if the ghost is close to the cat
+function catIsClose() {
+  let d = dist(ghost.eyes.x1, ghost.eyes.y, cat.pos.x, cat.pos.y);
+  if (d < ghost.bod.w / 2 + cat.bod.w + 70) {
+    return true;
+  }
+}
+
+// display 'X' to drop or 'X' to pick
+function displayText() {
+  for (let i = 0; i < items.length; i++) {
+    if (itemIsPickable(items[i])) {
+      // `'X' to pick` when item is close to ghost and no item in hand
+      if (!items[i].picked) {
+        push();
+        fill(255);
+        textSize(18);
+        text(`'X' to pick`, items[i].x, items[i].y - 25);
+        pop();
+        // `'X' to drop` when item iis in hand
+      } else if (items[i].picked) {
+        push();
+        fill(255);
+        textSize(32);
+        text(`'X' to drop`, 100, 100);
+        pop();
+      }
+    }
+    if (itemIsFeedable(items[i])) {
+      push();
+      fill(255);
+      textSize(18);
+      text(`'X' to feed`, cat.pos.x, cat.pos.y);
+      pop();
+    }
+  }
+}
+// display 'X' to pick, when close to items
+function displayPickText() {}
 // check the item is to the left of the ghost (user) or not (to the right)
 function isLeft() {
   for (let i = 0; i < items.length; i++) {
