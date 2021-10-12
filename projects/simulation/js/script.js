@@ -83,7 +83,6 @@ let cat = {
 
 // store item object here
 let items = [];
-
 let butterflyIcon = undefined;
 let potionIcon = undefined;
 let flowerIcon = undefined;
@@ -332,11 +331,11 @@ function ghostMovement() {
     ghost.bod.h -= height / 90;
   }
   if (keyIsDown(LEFT_ARROW)) {
-    ghost.pos.x -= width / 180;
+    ghost.pos.x -= width / 120;
     ghost.eyes.x1 = ghost.pos.x - 5;
     ghost.eyes.x2 = ghost.eyes.x1 - 15;
   } else if (keyIsDown(RIGHT_ARROW)) {
-    ghost.pos.x += width / 180;
+    ghost.pos.x += width / 120;
     ghost.eyes.x1 = ghost.pos.x + 5;
     ghost.eyes.x2 = ghost.eyes.x1 + 15;
   }
@@ -402,20 +401,32 @@ function pickedItemMovement() {
 // CREATING ITEMS
 function createItems() {
   // this item gives the cat wings
+  createButterfly();
+  // this item makes the cat grow bigger
+  createPotion();
+  // this item changes the cat's color
+  createFlower();
+}
+// creating a butterfly item
+function createButterfly() {
   let butterfly = new Item(
     butterflyIcon,
     random(100, width - 100),
     random(100, height - 160)
   );
   items.push(butterfly);
-  // this item makes the cat grow bigger
+}
+// creating a potion item
+function createPotion() {
   let potion = new Item(
     potionIcon,
     random(100, width - 100),
     random(100, height - 160)
   );
   items.push(potion);
-  // this item changes the cat's color
+}
+// creating a flower item
+function createFlower() {
   let flower = new Item(
     flowerIcon,
     random(100, width - 100),
@@ -423,6 +434,7 @@ function createItems() {
   );
   items.push(flower);
 }
+
 // displaying items
 function displayItems() {
   for (let i = 0; i < items.length; i++) {
@@ -431,9 +443,24 @@ function displayItems() {
     }
   }
 }
+// delete (deactivate) item being fed
+function deleteItem(item) {
+  item.active = false;
+  item.picked = false;
+  n += 1;
+  return n;
+}
+// respawn some items after being fed depending on item type
+function respawnFedItems(item) {
+  if (item.img === potionIcon) {
+    createPotion();
+  } else if (item.img === flowerIcon) {
+    createFlower();
+  }
+}
+
 // pressing 'x' to pick, drop or feed and item
 function keyPressed() {
-  console.log(`n is =`, n);
   if (!isOdd(n)) {
     pickUpItem();
   } else if (isOdd(n)) {
@@ -444,9 +471,41 @@ function keyPressed() {
     }
   }
 }
-// check if n number is odd or not
+// check if n number is odd or not (determines if you pickup or putdown/feed an item)
 function isOdd(n) {
   return n % 2;
+}
+
+// check the item is to the left of the ghost (user) or not (to the right)
+function isLeft() {
+  for (let i = 0; i < items.length; i++) {
+    if (items[i].x < ghost.pos.x) {
+      return true;
+    } else if (items[i].x > ghost.pos.x) {
+      return false;
+    }
+  }
+}
+// check if the user is close enough to an item to pick it up (returns true or false)
+function itemIsPickable(item) {
+  let d = dist(ghost.eyes.x1, ghost.eyes.y, item.x, item.y);
+  if (item.active && d < ghost.bod.w / 2 + item.size / 2 + 5) {
+    return true;
+  }
+}
+// check if the user has picked an item and is close to cat
+function itemIsFeedable(item) {
+  let d = dist(ghost.eyes.x1, ghost.eyes.y, cat.pos.x, cat.pos.y);
+  if (d < ghost.bod.w / 2 + cat.bod.w + 70 && item.picked) {
+    return true;
+  }
+}
+// check if the ghost is close to the cat
+function catIsClose() {
+  let d = dist(ghost.eyes.x1, ghost.eyes.y, cat.pos.x, cat.pos.y);
+  if (d < ghost.bod.w / 2 + cat.bod.w + 70) {
+    return true;
+  }
 }
 // picking up an item
 function pickUpItem() {
@@ -477,33 +536,20 @@ function feedItem() {
   for (let i = 0; i < items.length; i++) {
     if (key === "x") {
       if (itemIsFeedable(items[i])) {
-        items[i].active = false;
-        items[i].picked = false;
-        n += 1;
-        return n;
+        // respawns some item based on item types
+        respawnFedItems(items[i]);
+        // deactivate (delete) current item
+        deleteItem(items[i]);
+        // have the cat react to the items
+        if (items[i].img === butterflyIcon) {
+        } else if (items[i].img === potionIcon) {
+        } else if (items[i].img === flowerIcon) {
+          cat.color.r = random(0, 255);
+          cat.color.g = random(0, 255);
+          cat.color.b = random(0, 255);
+        }
       }
     }
-  }
-}
-// check if the user is close enough to an item to pick it up (returns true or false)
-function itemIsPickable(item) {
-  let d = dist(ghost.eyes.x1, ghost.eyes.y, item.x, item.y);
-  if (item.active && d < ghost.bod.w / 2 + item.size / 2 + 5) {
-    return true;
-  }
-}
-// check if the user has picked an item and is close to cat
-function itemIsFeedable(item) {
-  let d = dist(ghost.eyes.x1, ghost.eyes.y, cat.pos.x, cat.pos.y);
-  if (d < ghost.bod.w / 2 + cat.bod.w + 70 && item.picked) {
-    return true;
-  }
-}
-// check if the ghost is close to the cat
-function catIsClose() {
-  let d = dist(ghost.eyes.x1, ghost.eyes.y, cat.pos.x, cat.pos.y);
-  if (d < ghost.bod.w / 2 + cat.bod.w + 70) {
-    return true;
   }
 }
 
@@ -538,13 +584,3 @@ function displayText() {
 }
 // display 'X' to pick, when close to items
 function displayPickText() {}
-// check the item is to the left of the ghost (user) or not (to the right)
-function isLeft() {
-  for (let i = 0; i < items.length; i++) {
-    if (items[i].x < ghost.pos.x) {
-      return true;
-    } else if (items[i].x > ghost.pos.x) {
-      return false;
-    }
-  }
-}
