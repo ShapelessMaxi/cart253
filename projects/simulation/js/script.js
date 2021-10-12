@@ -105,6 +105,14 @@ let butterflyIcon = undefined;
 let potionIcon = undefined;
 let flowerIcon = undefined;
 
+// store dialogue entries as strings here
+let dialEntries = [];
+let dialBox = {
+  x: undefined,
+  y: undefined,
+  w: undefined,
+  h: undefined,
+};
 // preloading the cloud, icon images and wings image
 function preload() {
   cat.rightWings.img = loadImage(`assets/images/wings_right.png`);
@@ -650,3 +658,9 @@ function displayText() {
     }
   }
 }
+// display text dialogue box for a few seconds each after the cat is fed
+function displayDialogue() {}
+// create dialogue boxes
+function dialogueBox() {}
+// create different dialogue entries
+function dialogueEntries() {}
