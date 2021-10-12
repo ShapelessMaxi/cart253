@@ -29,7 +29,7 @@ let ghost = {
   color: { r: 240, g: 240, b: 140, a: 100 },
   eyes: {
     x1: undefined,
-    y1: undefined,
+    y: undefined,
     x2: undefined,
     w1: 12,
     w2: 10,
@@ -80,6 +80,9 @@ let cat = {
   },
 };
 
+// store item object here
+let items = [];
+
 // preloading the cloud images
 function preload() {
   cloudA.img = loadImage(`assets/images/cloud1.png`);
@@ -92,13 +95,16 @@ function preload() {
 function setup() {
   createCanvas(windowWidth, windowHeight);
   setInterval(changeStarSeed, 2500);
+
+  createItems();
 }
 
 // drawing game elements and setting up states
 function draw() {
   drawBackground();
-  movement();
   drawCharacters();
+  movement();
+  displayItems();
 }
 
 // DRAWING BACKGROUND ELEMENTS
@@ -301,6 +307,8 @@ function movement() {
   ghostMovement();
   // defining movemements for the cat
   catMovement();
+  // defining movements for picked items
+  pickedItemMovement();
 }
 // controlling the movement of the ghost (user) with arrow keys
 function ghostMovement() {
@@ -326,7 +334,7 @@ function ghostMovement() {
 // flipping the cat according to the ghost's position
 function catMovement() {
   // flipping the cat's eyes and tail with ghost position
-  if (ghost.pog.x < cat.pos.x) {
+  if (ghost.pos.x < cat.pos.x) {
     // flipping the eyes and pupils
     cat.eyes.x1 = cat.pos.x - 5;
     cat.eyes.x2 = cat.pos.x - 25;
@@ -356,5 +364,86 @@ function catMovement() {
     cat.tail.y2 = cat.tail.y1;
     cat.tail.y3 = cat.tail.y1 + 50;
     cat.tail.y4 = cat.tail.y3 - 5;
+  }
+}
+// picked item movement controlled byt the user
+function pickedItemMovement() {
+  for (let i = 0; i < items.length; i++) {
+    if (items[i].picked) {
+      if (isLeft()) {
+        items[i].x = ghost.pos.x - 40;
+        items[i].y = ghost.eyes.y + 25;
+      } else if (!isLeft()) {
+        items[i].x = ghost.pos.x + 40;
+        items[i].y = ghost.eyes.y + 25;
+      }
+      if (keyIsDown(LEFT_ARROW)) {
+        items[i].x = ghost.pos.x - 40;
+      } else if (keyIsDown(RIGHT_ARROW)) {
+        items[i].x = ghost.pos.x + 40;
+      }
+    }
+  }
+}
+
+// CREATING ITEMS
+function createItems() {
+  let butterfly = new Item(random(40, width - 40), random(40, height - 110));
+  items.push(butterfly);
+  let potion = new Item(random(40, width - 40), random(40, height - 110));
+  items.push(potion);
+}
+// displaying items
+function displayItems() {
+  for (let i = 0; i < items.length; i++) {
+    if (items[i].active === true) {
+      items[i].display();
+    }
+  }
+}
+// check the item is to the left of the ghost (user) or not (to the right)
+function isLeft() {
+  for (let i = 0; i < items.length; i++) {
+    if (items[i].x < ghost.pos.x) {
+      return true;
+    } else if (items[i].x > ghost.pos.x) {
+      return false;
+    }
+  }
+}
+// check if the user is close enough to an item to pick it up (returns true or false)
+function itemIsPickable() {
+  for (let i = 0; i < items.length; i++) {
+    let d = dist(ghost.eyes.x1, ghost.eyes.y, items[i].x, items[i].y);
+    if (d < ghost.bod.w / 2 + items[i].size / 2 + 10) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+}
+// picking up an item as user with 'x' key
+function keyPressed() {
+  pickUpItem();
+  putDownItem();
+}
+// picking up an item
+function pickUpItem() {
+  for (let i = 0; i < items.length; i++) {
+    if (key == "x") {
+      if (itemIsPickable()) {
+        items[i].picked = true;
+      }
+    }
+  }
+}
+// putting down an item
+function putDownItem() {
+  for (let i = 0; i < items.length; i++) {
+    if (key == "x") {
+      if (items[i].picked) {
+        items[i].picked = false;
+      }
+    }
   }
 }
