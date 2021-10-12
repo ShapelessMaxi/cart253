@@ -3,16 +3,15 @@
 
 class Item {
   //location, size, color, image
-  constructor(/*img,*/ x, y) {
-    // add img eventualy, for now its just a circle
-    /*this.img = img;*/
+  constructor(image, x, y) {
+    this.img = image;
     this.x = x;
     this.y = y;
-    this.size = 30;
+    this.size = 50;
     this.color = {
-      r: 255,
-      g: 255,
-      b: 255,
+      r: 232,
+      g: 106,
+      b: 97,
     };
     this.active = true;
     this.picked = false;
@@ -20,10 +19,8 @@ class Item {
   // display an item
   display() {
     push();
-    // replace this with tint();
-    fill(this.color.r, this.color.g, this.color.b);
-    // replace this line with image();
-    ellipse(this.x, this.y, this.size);
+    tint(this.color.r, this.color.g, this.color.b);
+    image(this.img, this.x, this.y, this.size, this.size);
     pop();
   }
 }
