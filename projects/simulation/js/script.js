@@ -132,6 +132,8 @@ let flowerIcon = undefined;
 // store dialogue entries as strings here
 let dialEntries = [];
 let dialBox = {
+  active: false,
+  current: 0,
   x: undefined,
   y: undefined,
   w: undefined,
@@ -172,6 +174,12 @@ function setup() {
 function draw() {
   if (state === `info`) {
     info();
+  } else if (state === `intro`) {
+    intro();
+  } else if (state === `simulation`) {
+    simulation();
+  } else if (state === `end`) {
+    end();
   }
 }
 // info and commands screen (info state)
@@ -206,8 +214,8 @@ function intro() {
     I feel like I have some task to fulfill around here.
 
 
-    Im not sure ill ever get used to this form.
-    I thought being able to navigate so high up in the sky would be fun,
+    Im not sure I'll ever get used to this form.
+    I thought being able to fly so high up in the sky would be fun,
     but my stomach, or whatever's in the place where my stomach was,
     says the opposite.
 
@@ -215,7 +223,8 @@ function intro() {
     Oh... this cat.
     Me and this cat, man, we never really got along.
     I was always trying to help him,
-    I wanted to help him. Now look at us, not doing so well, uh.`,
+    I wanted to help him.
+    Now look at us, not doing so well, uh.`,
     200,
     200
   );
@@ -231,16 +240,10 @@ function simulation() {
   movement();
   displayItems();
   displayText();
-  dialogueBox();
+  displayDialogue();
 }
 // endgame screen (end state)
 function end() {}
-// pressing spacebar to continue to the next screen
-function keyPressed() {
-  if (state === `info` && keyCode === 32) {
-    state = `intro`;
-  }
-}
 
 // DRAWING BACKGROUND ELEMENTS
 function drawBackground() {
@@ -637,8 +640,18 @@ function catReactions(item) {
   }
 }
 
-// pressing 'x' to pick, drop or feed and item
+// pressing 'x' to pick, drop or feed and item, pressing 'space' changes states
 function keyPressed() {
+  // state navigation with spacebar
+  if (state === `info` && keyCode === 32) {
+    state = `intro`;
+  } else if (state === `intro` && keyCode === 32) {
+    state = `simulation`;
+    // show first dialogue box and hide it after timer
+    dialBox.active = true;
+    setTimeout(hideDialogue, 5000);
+  }
+  // actions with 'x' key
   if (!isOdd(n)) {
     pickUpItem();
   } else if (isOdd(n)) {
@@ -721,6 +734,10 @@ function feedItem() {
         deleteItem(items[i]);
         // have the cat react to the items
         catReactions(items[i]);
+        // show the next dialogue boxes
+        dialBox.active = true;
+        // dialogue box stays for 4 seconds before disapearing
+        setTimeout(hideDialogue, 4000);
       }
     }
   }
@@ -758,26 +775,36 @@ function displayText() {
 }
 // display text dialogue box for a few seconds each after the cat is fed
 function displayDialogue() {
-  dialogueBox();
+  if (dialBox.active) {
+    dialogueBox();
+  }
+}
+// hide dialogue box after timer
+function hideDialogue() {
+  dialBox.active = false;
+  dialBox.current += 1;
+  // returns to the second dialogue entry if every entries has been said
+  if (dialBox.current > dialEntries.length) {
+    dialBox.current = 1;
+  }
 }
 // create dialogue boxes
 function dialogueBox() {
   drawDialogueBox();
-  for (let i = 0; i < dialEntries.length; i++) {
-    push();
-    textAlign(CENTER);
-    textFont(dialogueFont);
-    fill(255);
-    textSize(24);
-    text(dialEntries[i], dialBox.x, dialBox.y);
-    pop();
-  }
+  // write the next dialogue entrie
+  push();
+  textAlign(CENTER);
+  textFont(dialogueFont);
+  fill(255);
+  textSize(24);
+  text(dialEntries[dialBox.current], dialBox.x, dialBox.y);
+  pop();
 }
 // drawing dialogue the dialogue box
 function drawDialogueBox() {
   dialBox.x = width / 2;
   dialBox.y = height / 4;
-  dialBox.w = (width * 45) / 100;
+  dialBox.w = (width * 55) / 100;
   dialBox.h = 80;
   push();
   rectMode(CENTER);
@@ -794,14 +821,18 @@ function drawDialogueBox() {
 }
 // create different dialogue entries
 function dialogueEntries() {
-  let dialogueA = `I might have created a monster`;
-  dialEntries.push(dialogueA);
-  let dialogueB = `I'm not sure this is right`;
-  dialEntries.push(dialogueB);
-  let dialogueC = `I think this may be a mistake`;
-  dialEntries.push(dialogueC);
-  let dialogueD = `I used to be scared of heights`;
-  dialEntries.push(dialogueD);
-  let dialogueE = `oh... why did I do that?`;
-  dialEntries.push(dialogueE);
+  let dialogueFirst = `What happens when you feed random stuff to a cat ?`;
+  let dialogueA = `I'm not sure this is right`;
+  let dialogueB = `I used to be scared of heights`;
+  let dialogueC = `oh... why did I do that?`;
+  let dialogueD = `I think this may be a mistake`;
+  let dialogueE = `I might have created a monster`;
+  dialEntries.push(
+    dialogueFirst,
+    dialogueA,
+    dialogueB,
+    dialogueC,
+    dialogueD,
+    dialogueE
+  );
 }
