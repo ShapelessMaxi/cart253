@@ -2,18 +2,42 @@
 Feed the cat - Simulation
 Maxime Perreault
 
+Who feeds a cat in the afterlife when they reach their limit of nine lives? What happens when you feed
+random stuff to cat? Is there a place we go to when we die?
+
+************************************************
+`Where am I?
+
+Although I'm sure I've never seen these plains,
+I feel like I have some task to fulfill around here.
+
+
+Im not sure ill ever get used to this form.
+I thought being able to navigate so high up in the sky would be fun,
+but my stomach, or whatever's in the place where my stomach was,
+says the opposite.
+
+
+Oh... this cat.
+Me and this cat, man, we never really got along.
+I was always trying to help him,
+I wanted to help him. Now look at us, not doing so well, uh.`
+************************************************
+
 In this simulation game, you navigate from left to right, up and down, to go fetch some items.
 You can hold one item at the time and each item can be fed to the "cat". Every item fed to the "cat"
 has a different effect, see what each one of them do!
 
 I want this game to have a spooky but cute atmosphere, complete with simple graphics,
-a soft and dark color palette and some slightly uncomfortable dialogues.
+a soft color palette and some slightly uncomfortable dialogues.
 
 ps: sorry to whoever sees this code, the 'drawing the cat' portion of the code is very messy. I will
 probably never draw a triangle in p5.js ever again :).
 */
 
 "use strict";
+
+let state = `info`; // possible states: info, intro, simulation, end
 
 let cloudA = { img: undefined, x: 0, y: 20, vx: 0.2 };
 let cloudB = { img: undefined, x: 100, y: 380, vx: 0.6 };
@@ -146,12 +170,76 @@ function setup() {
 
 // drawing game elements and setting up states
 function draw() {
+  if (state === `info`) {
+    info();
+  }
+}
+// info and commands screen (info state)
+function info() {
+  background(0);
+  push();
+  textAlign(CENTER);
+  textFont(dialogueFont);
+  fill(135, 41, 48);
+  textSize(30);
+  text(`press 'spacebar' to continue`, width / 2, height / 2);
+  textSize(20);
+  text(
+    `navigate with 'arrow' keys             press 'x' to execute an action`,
+    width / 2,
+    (height * 7) / 8
+  );
+  pop();
+}
+// introduction story screen (intro state)
+function intro() {
+  background(169, 180, 199);
+  push();
+  textAlign(LEFT);
+  textFont(dialogueFont);
+  fill(135, 41, 48);
+  textSize(20);
+  text(
+    `Where am I?
+
+    Although I'm sure I've never seen these plains,
+    I feel like I have some task to fulfill around here.
+
+
+    Im not sure ill ever get used to this form.
+    I thought being able to navigate so high up in the sky would be fun,
+    but my stomach, or whatever's in the place where my stomach was,
+    says the opposite.
+
+
+    Oh... this cat.
+    Me and this cat, man, we never really got along.
+    I was always trying to help him,
+    I wanted to help him. Now look at us, not doing so well, uh.`,
+    200,
+    200
+  );
+  fill(255);
+  textSize(18);
+  text(`press 'spacebar' to start the game`, (width * 5) / 8, (height * 8) / 9);
+  pop();
+}
+// simulation (simulation state)
+function simulation() {
   drawBackground();
   drawCharacters();
   movement();
   displayItems();
   displayText();
   dialogueBox();
+}
+// endgame screen (end state)
+function end() {}
+// pressing spacebar to continue to the next screen
+function keyPressed() {
+  if (state === `info` && keyCode === 32) {
+    state = `intro`;
+  }
 }
 
 // DRAWING BACKGROUND ELEMENTS
@@ -675,7 +763,6 @@ function displayDialogue() {
 // create dialogue boxes
 function dialogueBox() {
   drawDialogueBox();
-
   for (let i = 0; i < dialEntries.length; i++) {
     push();
     textAlign(CENTER);
