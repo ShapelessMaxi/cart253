@@ -112,8 +112,13 @@ let dialBox = {
   y: undefined,
   w: undefined,
   h: undefined,
+  color: { r: 80, g: 80, b: 97, a: 200 },
+  corner: 20,
+  colorStroke: { r: 240, g: 240, b: 140, a: 100 },
 };
-// preloading the cloud, icon images and wings image
+let dialogueFont = undefined;
+
+// preloading the cloud, icon images, wings image and fonts
 function preload() {
   cat.rightWings.img = loadImage(`assets/images/wings_right.png`);
   cat.leftWings.img = loadImage(`assets/images/wings_left.png`);
@@ -125,6 +130,8 @@ function preload() {
   butterflyIcon = loadImage(`assets/images/item_butterfly.png`);
   potionIcon = loadImage(`assets/images/item_potion.png`);
   flowerIcon = loadImage(`assets/images/item_flower.png`);
+
+  dialogueFont = loadFont(`assets/fonts/cour.ttf`);
 }
 
 // creating the canvas
@@ -134,6 +141,7 @@ function setup() {
   setInterval(changeStarSeed, 2500);
 
   createItems();
+  dialogueEntries();
 }
 
 // drawing game elements and setting up states
@@ -143,6 +151,7 @@ function draw() {
   movement();
   displayItems();
   displayText();
+  dialogueBox();
 }
 
 // DRAWING BACKGROUND ELEMENTS
@@ -547,6 +556,7 @@ function keyPressed() {
   } else if (isOdd(n)) {
     if (catIsClose()) {
       feedItem();
+      dialogueBox();
     } else {
       putDownItem();
     }
@@ -659,8 +669,52 @@ function displayText() {
   }
 }
 // display text dialogue box for a few seconds each after the cat is fed
-function displayDialogue() {}
+function displayDialogue() {
+  dialogueBox();
+}
 // create dialogue boxes
-function dialogueBox() {}
+function dialogueBox() {
+  drawDialogueBox();
+
+  for (let i = 0; i < dialEntries.length; i++) {
+    push();
+    textAlign(CENTER);
+    textFont(dialogueFont);
+    fill(255);
+    textSize(24);
+    text(dialEntries[i], dialBox.x, dialBox.y);
+    pop();
+  }
+}
+// drawing dialogue the dialogue box
+function drawDialogueBox() {
+  dialBox.x = width / 2;
+  dialBox.y = height / 4;
+  dialBox.w = (width * 45) / 100;
+  dialBox.h = 80;
+  push();
+  rectMode(CENTER);
+  fill(dialBox.color.r, dialBox.color.g, dialBox.color.b, dialBox.color.a);
+  stroke(
+    dialBox.colorStroke.r,
+    dialBox.colorStroke.g,
+    dialBox.colorStroke.b,
+    dialBox.colorStroke.a
+  );
+  strokeWeight(10);
+  rect(dialBox.x, dialBox.y, dialBox.w, dialBox.h, dialBox.corner);
+  pop();
+}
 // create different dialogue entries
-function dialogueEntries() {}
+function dialogueEntries() {
+  let dialogueA = `I might have created a monster`;
+  dialEntries.push(dialogueA);
+  let dialogueB = `I'm not sure this is right`;
+  dialEntries.push(dialogueB);
+  let dialogueC = `I think this may be a mistake`;
+  dialEntries.push(dialogueC);
+  let dialogueD = `I used to be scared of heights`;
+  dialEntries.push(dialogueD);
+  let dialogueE = `oh... why did I do that?`;
+  dialEntries.push(dialogueE);
+}
