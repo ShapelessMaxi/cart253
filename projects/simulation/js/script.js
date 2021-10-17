@@ -185,6 +185,7 @@ function setup() {
 
 // drawing game elements and setting up states
 function draw() {
+  console.log(frameRate());
   if (state === `info`) {
     info();
   } else if (state === `intro`) {
@@ -452,6 +453,36 @@ function drawCat() {
   ellipse(cat.pupil.x2, cat.eyes.y, cat.pupil.w, cat.pupil.h);
   pop();
 }
+// draw tails on the right
+function drawRightTails(yOffset) {
+  push();
+  cat.rightTail.x = cat.pos.x + cat.rightTail.offset;
+  cat.rightTail.y = groundLevel - cat.tailHeight - yOffset;
+  tint(cat.color.r, cat.color.g, cat.color.b, cat.color.a);
+  image(
+    cat.rightTail.img,
+    cat.rightTail.x,
+    cat.rightTail.y,
+    cat.rightTail.w * cat.tailGrowth,
+    cat.rightTail.h * cat.tailGrowth
+  );
+  pop();
+}
+// draw tails on the left
+function drawLeftTails(yOffset) {
+  push();
+  cat.leftTail.x = cat.pos.x - cat.leftTail.offset;
+  cat.leftTail.y = groundLevel - cat.tailHeight - yOffset;
+  tint(cat.color.r, cat.color.g, cat.color.b, cat.color.a);
+  image(
+    cat.leftTail.img,
+    cat.leftTail.x,
+    cat.leftTail.y,
+    cat.leftTail.w * cat.tailGrowth,
+    cat.leftTail.h * cat.tailGrowth
+  );
+  pop();
+}
 
 // defining movemements of the characters and items
 function movement() {
@@ -508,66 +539,22 @@ function catMovement() {
       pop();
     }
     // drawing the tails on the left (1 or more)
-    if (cat.numOfTails >= 1) {
-      push();
-      cat.rightTail.x = cat.pos.x + cat.rightTail.offset;
-      cat.rightTail.y = groundLevel - cat.tailHeight;
-      tint(cat.color.r, cat.color.g, cat.color.b, cat.color.a);
-      image(
-        cat.rightTail.img,
-        cat.rightTail.x,
-        cat.rightTail.y,
-        cat.rightTail.w * cat.tailGrowth,
-        cat.rightTail.h * cat.tailGrowth
-      );
-      if (cat.numOfTails >= 2) {
-        cat.rightTail.y = groundLevel - cat.tailHeight - 30;
-        image(
-          cat.rightTail.img,
-          cat.rightTail.x,
-          cat.rightTail.y,
-          cat.rightTail.w * cat.tailGrowth,
-          cat.rightTail.h * cat.tailGrowth
-        );
-        if (cat.numOfTails >= 3) {
-          cat.rightTail.y = groundLevel - cat.tailHeight - 60;
-          image(
-            cat.rightTail.img,
-            cat.rightTail.x,
-            cat.rightTail.y,
-            cat.rightTail.w * cat.tailGrowth,
-            cat.rightTail.h * cat.tailGrowth
-          );
-          if (cat.numOfTails > 3) {
-            cat.leftTail.x = cat.pos.x - cat.leftTail.offset;
-            cat.leftTail.y = groundLevel - cat.tailHeight;
-            image(
-              cat.leftTail.img,
-              cat.leftTail.x,
-              cat.leftTail.y,
-              cat.leftTail.w * cat.tailGrowth,
-              cat.leftTail.h * cat.tailGrowth
-            );
-            cat.leftTail.y = groundLevel - cat.tailHeight - 30;
-            image(
-              cat.leftTail.img,
-              cat.leftTail.x,
-              cat.leftTail.y,
-              cat.leftTail.w * cat.tailGrowth,
-              cat.leftTail.h * cat.tailGrowth
-            );
-            cat.leftTail.y = groundLevel - cat.tailHeight - 60;
-            image(
-              cat.leftTail.img,
-              cat.leftTail.x,
-              cat.leftTail.y,
-              cat.leftTail.w * cat.tailGrowth,
-              cat.leftTail.h * cat.tailGrowth
-            );
-            pop();
-          }
-        }
-      }
+    if (cat.numOfTails === 1) {
+      drawRightTails(0);
+    } else if (cat.numOfTails === 2) {
+      drawRightTails(0);
+      drawRightTails(40);
+    } else if (cat.numOfTails === 3) {
+      drawRightTails(0);
+      drawRightTails(40);
+      drawRightTails(80);
+    } else if (cat.numOfTails > 3) {
+      drawRightTails(0);
+      drawRightTails(40);
+      drawRightTails(80);
+      drawLeftTails(0);
+      drawLeftTails(40);
+      drawLeftTails(80);
     }
   } else if (ghost.pos.x > cat.pos.x) {
     // flipping the eyes and pupils
@@ -591,65 +578,22 @@ function catMovement() {
       pop();
     }
     // drawing the tails on the left (1 or more)
-    if (cat.numOfTails >= 1) {
-      push();
-      cat.leftTail.x = cat.pos.x - cat.leftTail.offset;
-      cat.leftTail.y = groundLevel - cat.tailHeight;
-      tint(cat.color.r, cat.color.g, cat.color.b, cat.color.a);
-      image(
-        cat.leftTail.img,
-        cat.leftTail.x,
-        cat.leftTail.y,
-        cat.leftTail.w * cat.tailGrowth,
-        cat.leftTail.h * cat.tailGrowth
-      );
-      if (cat.numOfTails >= 2) {
-        cat.leftTail.y = groundLevel - cat.tailHeight - 30;
-        image(
-          cat.leftTail.img,
-          cat.leftTail.x,
-          cat.leftTail.y,
-          cat.leftTail.w * cat.tailGrowth,
-          cat.leftTail.h * cat.tailGrowth
-        );
-        if (cat.numOfTails >= 3) {
-          cat.leftTail.y = groundLevel - cat.tailHeight - 60;
-          image(
-            cat.leftTail.img,
-            cat.leftTail.x,
-            cat.leftTail.y,
-            cat.leftTail.w * cat.tailGrowth,
-            cat.leftTail.h * cat.tailGrowth
-          );
-          if (cat.numOfTails > 3) {
-            cat.rightTail.y = groundLevel - cat.tailHeight;
-            image(
-              cat.rightTail.img,
-              cat.rightTail.x,
-              cat.rightTail.y,
-              cat.rightTail.w * cat.tailGrowth,
-              cat.rightTail.h * cat.tailGrowth
-            );
-            cat.rightTail.y = groundLevel - cat.tailHeight - 30;
-            image(
-              cat.rightTail.img,
-              cat.rightTail.x,
-              cat.rightTail.y,
-              cat.rightTail.w * cat.tailGrowth,
-              cat.rightTail.h * cat.tailGrowth
-            );
-            cat.rightTail.y = groundLevel - cat.tailHeight - 60;
-            image(
-              cat.rightTail.img,
-              cat.rightTail.x,
-              cat.rightTail.y,
-              cat.rightTail.w * cat.tailGrowth,
-              cat.rightTail.h * cat.tailGrowth
-            );
-            pop();
-          }
-        }
-      }
+    if (cat.numOfTails === 1) {
+      drawLeftTails(0);
+    } else if (cat.numOfTails === 2) {
+      drawLeftTails(0);
+      drawLeftTails(40);
+    } else if (cat.numOfTails === 3) {
+      drawLeftTails(0);
+      drawLeftTails(40);
+      drawLeftTails(80);
+    } else if (cat.numOfTails > 3) {
+      drawLeftTails(0);
+      drawLeftTails(40);
+      drawLeftTails(80);
+      drawRightTails(0);
+      drawRightTails(40);
+      drawRightTails(80);
     }
   }
 }
