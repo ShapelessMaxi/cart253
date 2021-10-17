@@ -37,7 +37,7 @@ probably never draw a triangle in p5.js ever again :).
 
 "use strict";
 
-let state = `info`; // possible states: info, intro, simulation, end
+let state = `intro`; // possible states: info, intro, simulation, end
 
 let cloudA = { img: undefined, x: 0, y: 20, vx: 0.2 };
 let cloudB = { img: undefined, x: 100, y: 380, vx: 0.6 };
@@ -244,7 +244,24 @@ function simulation() {
   displayDialogue();
 }
 // endgame screen (end state)
-function end() {}
+function end() {
+  background(25);
+  push();
+  textAlign(CENTER);
+  textFont(dialogueFont);
+  fill(135, 41, 48);
+  textSize(20);
+  text(`press 'spacebar' to restart`, width / 2, (height * 7) / 8);
+  textAlign(LEFT);
+  textSize(35);
+  text(
+    `ps: it was not your fault.
+              - the cat`,
+    200,
+    height / 4
+  );
+  pop();
+}
 
 // DRAWING BACKGROUND ELEMENTS
 function drawBackground() {
@@ -652,6 +669,10 @@ function keyPressed() {
     // show first dialogue box and hide it after timer
     dialBox.active = true;
     setTimeout(hideDialogue, 5000);
+  } else if (state === `simulation` && keyCode === 32) {
+    state = `end`;
+  } else if (state === `end` && keyCode === 32) {
+    state = `info`;
   }
   // actions with 'x' key
   if (!isOdd(n)) {
@@ -748,6 +769,13 @@ function feedItem() {
 // display 'X' to drop or 'X' to pick
 function displayText() {
   for (let i = 0; i < items.length; i++) {
+    // 'spacebar' to leave always displayed
+    push();
+    fill(101, 150, 138);
+    textAlign(RIGHT);
+    textSize(16);
+    text(` press 'spacebar' to leave`, (width * 7.7) / 8, (height * 7.8) / 8);
+    pop();
     if (itemIsPickable(items[i])) {
       // `'X' to pick` when item is close to ghost and no item in hand
       if (!items[i].picked) {
