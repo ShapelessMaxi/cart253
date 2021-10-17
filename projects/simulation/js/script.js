@@ -94,6 +94,7 @@ let cat = {
     color: { r: 50, g: 10, b: 10, a: 180 },
   },
   tail: {
+    // growth: 1,
     x1: undefined,
     y1: undefined,
     x2: undefined,
@@ -612,7 +613,7 @@ function deleteItem(item) {
 // respawn some items after being fed depending on item type
 function respawnFedItems(item) {
   if (item.img === potionIcon) {
-    if (cat.bod.w < 2000) {
+    if (cat.bod.w < 800) {
       createPotion();
     }
   } else if (item.img === flowerIcon) {
@@ -633,6 +634,7 @@ function catReactions(item) {
     cat.leftWings.w *= 1.3;
     cat.leftWings.h *= 1.3;
     cat.leftWings.offset *= 1.3;
+    // cat.tail.growth += 0.1;
   } else if (item.img === flowerIcon) {
     cat.color.r = random(0, 255);
     cat.color.g = random(0, 255);
@@ -784,7 +786,7 @@ function hideDialogue() {
   dialBox.active = false;
   dialBox.current += 1;
   // returns to the second dialogue entry if every entries has been said
-  if (dialBox.current > dialEntries.length) {
+  if (dialBox.current >= dialEntries.length) {
     dialBox.current = 1;
   }
 }
@@ -824,15 +826,25 @@ function dialogueEntries() {
   let dialogueFirst = `What happens when you feed random stuff to a cat ?`;
   let dialogueA = `I'm not sure this is right`;
   let dialogueB = `I used to be scared of heights`;
-  let dialogueC = `oh... why did I do that?`;
+  let dialogueC = `will I get in trouble for this?`;
   let dialogueD = `I think this may be a mistake`;
-  let dialogueE = `I might have created a monster`;
+  let dialogueE = `no reason to stop now i guess..`;
+  let dialogueF = `This is getting out of hands`;
+  let dialogueG = `Ridiculous...`;
+  let dialogueH = `There's no way this is good news`;
+  let dialogueI = `oh... why did I do that?`;
+  let dialogueJ = `I might have created a monster`;
   dialEntries.push(
     dialogueFirst,
     dialogueA,
     dialogueB,
     dialogueC,
     dialogueD,
-    dialogueE
+    dialogueE,
+    dialogueF,
+    dialogueG,
+    dialogueH,
+    dialogueI,
+    dialogueJ
   );
 }
