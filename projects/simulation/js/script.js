@@ -93,16 +93,24 @@ let cat = {
     h: 17,
     color: { r: 50, g: 10, b: 10, a: 180 },
   },
-  tail: {
-    // growth: 1,
-    x1: undefined,
-    y1: undefined,
-    x2: undefined,
-    y2: undefined,
-    x3: undefined,
-    y3: undefined,
-    x4: undefined,
-    y4: undefined,
+  numOfTails: 1,
+  tailGrowth: 1,
+  tailHeight: 85,
+  rightTail: {
+    img: undefined,
+    x: undefined,
+    y: undefined,
+    w: 100,
+    h: 80,
+    offset: 30,
+  },
+  leftTail: {
+    img: undefined,
+    x: undefined,
+    y: undefined,
+    w: 100,
+    h: 80,
+    offset: 130,
   },
   rightWings: {
     active: false,
@@ -145,10 +153,12 @@ let dialBox = {
 };
 let dialogueFont = undefined;
 
-// preloading the cloud, icon images, wings image and fonts
+// preloading the cloud, icon images, wings and tails image and fonts
 function preload() {
   cat.rightWings.img = loadImage(`assets/images/wings_right.png`);
   cat.leftWings.img = loadImage(`assets/images/wings_left.png`);
+  cat.rightTail.img = loadImage(`assets/images/tail_right.png`);
+  cat.leftTail.img = loadImage(`assets/images/tail_left.png`);
 
   cloudA.img = loadImage(`assets/images/cloud1.png`);
   cloudB.img = loadImage(`assets/images/cloud2.png`);
@@ -251,7 +261,7 @@ function end() {
   textFont(dialogueFont);
   fill(135, 41, 48);
   textSize(20);
-  text(`press 'spacebar' to restart`, width / 2, (height * 7) / 8);
+  text(`press 'F5' to restart`, width / 2, (height * 7) / 8);
   textAlign(LEFT);
   textSize(35);
   text(
@@ -439,22 +449,6 @@ function drawCat() {
   ellipse(cat.pupil.x1, cat.eyes.y, cat.pupil.w, cat.pupil.h);
   ellipse(cat.pupil.x2, cat.eyes.y, cat.pupil.w, cat.pupil.h);
   pop();
-  // drawing the cat's tail
-  push();
-  noFill();
-  stroke(cat.color.r, cat.color.g, cat.color.b, cat.color.a);
-  strokeWeight(8);
-  bezier(
-    cat.tail.x1,
-    cat.tail.y1,
-    cat.tail.x2,
-    cat.tail.y2,
-    cat.tail.x3,
-    cat.tail.y3,
-    cat.tail.x4,
-    cat.tail.y4
-  );
-  pop();
 }
 
 // defining movemements of the characters and items
@@ -496,16 +490,7 @@ function catMovement() {
     cat.eyes.x2 = cat.pos.x - 25;
     cat.pupil.x1 = cat.eyes.x1 - 2;
     cat.pupil.x2 = cat.eyes.x2 - 2;
-    // flipping the tail
-    cat.tail.x1 = cat.pos.x + 100;
-    cat.tail.x2 = cat.tail.x1 - 78;
-    cat.tail.x3 = cat.tail.x1 + 10;
-    cat.tail.x4 = cat.tail.x2 + 10;
-    cat.tail.y1 = cat.top.y;
-    cat.tail.y2 = cat.tail.y1;
-    cat.tail.y3 = cat.tail.y1 + 50;
-    cat.tail.y4 = cat.tail.y3 - 5;
-    // drawing the wings on the left side (deactivated until fed the butterfly)
+    // drawing the wings on the right side (deactivated until fed the butterfly)
     if (cat.rightWings.active) {
       push();
       cat.rightWings.x = cat.pos.x + cat.rightWings.offset;
@@ -520,21 +505,27 @@ function catMovement() {
       );
       pop();
     }
+    // drawing the tails on the left (1 or more)
+    for (let i = 0; i < cat.numOfTails; i++) {
+      push();
+      cat.rightTail.x = cat.pos.x + cat.rightTail.offset;
+      cat.rightTail.y = groundLevel - cat.tailHeight;
+      tint(cat.color.r, cat.color.g, cat.color.b, cat.color.a);
+      image(
+        cat.rightTail.img,
+        cat.rightTail.x,
+        cat.rightTail.y,
+        cat.rightTail.w * cat.tailGrowth,
+        cat.rightTail.h * cat.tailGrowth
+      );
+      pop();
+    }
   } else if (ghost.pos.x > cat.pos.x) {
     // flipping the eyes and pupils
     cat.eyes.x1 = cat.pos.x + 5;
     cat.eyes.x2 = cat.pos.x + 25;
     cat.pupil.x1 = cat.eyes.x1 + 2;
     cat.pupil.x2 = cat.eyes.x2 + 2;
-    // flipping the tail
-    cat.tail.x1 = cat.pos.x - 100;
-    cat.tail.x2 = cat.tail.x1 + 78;
-    cat.tail.x3 = cat.tail.x1 - 10;
-    cat.tail.x4 = cat.tail.x2 - 10;
-    cat.tail.y1 = cat.top.y;
-    cat.tail.y2 = cat.tail.y1;
-    cat.tail.y3 = cat.tail.y1 + 50;
-    cat.tail.y4 = cat.tail.y3 - 5;
     // drawing the wings on the left side (deactivated until fed the butterfly)
     if (cat.leftWings.active) {
       push();
@@ -545,8 +536,23 @@ function catMovement() {
         cat.leftWings.img,
         cat.leftWings.x,
         cat.leftWings.y,
-        cat.leftWings.w,
-        cat.leftWings.h
+        cat.leftWings.w * cat.tailGrowth,
+        cat.leftWings.h * cat.tailGrowth
+      );
+      pop();
+    }
+    // drawing the tails on the left (1 or more)
+    for (let i = 0; i < cat.numOfTails; i++) {
+      push();
+      cat.leftTail.x = cat.pos.x - cat.leftTail.offset;
+      cat.leftTail.y = groundLevel - cat.tailHeight;
+      tint(cat.color.r, cat.color.g, cat.color.b, cat.color.a);
+      image(
+        cat.leftTail.img,
+        cat.leftTail.x,
+        cat.leftTail.y,
+        cat.leftTail.w * cat.tailGrowth,
+        cat.leftTail.h * cat.tailGrowth
       );
       pop();
     }
@@ -643,15 +649,21 @@ function catReactions(item) {
     cat.rightWings.active = true;
     cat.leftWings.active = true;
   } else if (item.img === potionIcon) {
+    // cat body grow
     cat.bod.w *= 1.5;
     cat.bod.h *= 1.5;
+    // cat wings grow and adjustment
     cat.rightWings.w *= 1.3;
     cat.rightWings.h *= 1.3;
     cat.rightWings.offset *= 1.4;
     cat.leftWings.w *= 1.3;
     cat.leftWings.h *= 1.3;
     cat.leftWings.offset *= 1.3;
-    // cat.tail.growth += 0.1;
+    // cat tails grow and adjustment
+    cat.tailGrowth += 0.8;
+    cat.tailHeight += 100;
+    cat.leftTail.offset += 100;
+    cat.rightTail.offset += 20;
   } else if (item.img === flowerIcon) {
     cat.color.r = random(0, 255);
     cat.color.g = random(0, 255);
@@ -671,8 +683,9 @@ function keyPressed() {
     setTimeout(hideDialogue, 5000);
   } else if (state === `simulation` && keyCode === 32) {
     state = `end`;
-  } else if (state === `end` && keyCode === 32) {
-    state = `info`;
+    // } else if (state === `end` && keyCode === 32) {
+    //   state = `info`;
+    //   redraw();
   }
   // actions with 'x' key
   if (!isOdd(n)) {
@@ -769,7 +782,7 @@ function feedItem() {
 // display 'X' to drop or 'X' to pick
 function displayText() {
   for (let i = 0; i < items.length; i++) {
-    // 'spacebar' to leave always displayed
+    // 'f5' to leave always displayed
     push();
     fill(101, 150, 138);
     textAlign(RIGHT);
