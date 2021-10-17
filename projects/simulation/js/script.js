@@ -137,6 +137,7 @@ let items = [];
 let butterflyIcon = undefined;
 let potionIcon = undefined;
 let flowerIcon = undefined;
+let snakeIcon = undefined;
 
 // store dialogue entries as strings here
 let dialEntries = [];
@@ -167,6 +168,7 @@ function preload() {
   butterflyIcon = loadImage(`assets/images/item_butterfly.png`);
   potionIcon = loadImage(`assets/images/item_potion.png`);
   flowerIcon = loadImage(`assets/images/item_flower.png`);
+  snakeIcon = loadImage(`assets/images/item_snake.png`);
 
   dialogueFont = loadFont(`assets/fonts/cour.ttf`);
 }
@@ -467,16 +469,16 @@ function ghostMovement() {
   ghost.bod.h = constrain(ghost.bod.h, 80, height - 110);
   // controlling the ghost and flipping the eyes with arrow keys and
   if (keyIsDown(UP_ARROW)) {
-    ghost.bod.h += height / 90;
+    ghost.bod.h += height / 70;
   } else if (keyIsDown(DOWN_ARROW)) {
-    ghost.bod.h -= height / 90;
+    ghost.bod.h -= height / 70;
   }
   if (keyIsDown(LEFT_ARROW)) {
-    ghost.pos.x -= width / 120;
+    ghost.pos.x -= width / 100;
     ghost.eyes.x1 = ghost.pos.x - 5;
     ghost.eyes.x2 = ghost.eyes.x1 - 15;
   } else if (keyIsDown(RIGHT_ARROW)) {
-    ghost.pos.x += width / 120;
+    ghost.pos.x += width / 100;
     ghost.eyes.x1 = ghost.pos.x + 5;
     ghost.eyes.x2 = ghost.eyes.x1 + 15;
   }
@@ -506,7 +508,7 @@ function catMovement() {
       pop();
     }
     // drawing the tails on the left (1 or more)
-    for (let i = 0; i < cat.numOfTails; i++) {
+    if (cat.numOfTails >= 1) {
       push();
       cat.rightTail.x = cat.pos.x + cat.rightTail.offset;
       cat.rightTail.y = groundLevel - cat.tailHeight;
@@ -518,7 +520,54 @@ function catMovement() {
         cat.rightTail.w * cat.tailGrowth,
         cat.rightTail.h * cat.tailGrowth
       );
-      pop();
+      if (cat.numOfTails >= 2) {
+        cat.rightTail.y = groundLevel - cat.tailHeight - 30;
+        image(
+          cat.rightTail.img,
+          cat.rightTail.x,
+          cat.rightTail.y,
+          cat.rightTail.w * cat.tailGrowth,
+          cat.rightTail.h * cat.tailGrowth
+        );
+        if (cat.numOfTails >= 3) {
+          cat.rightTail.y = groundLevel - cat.tailHeight - 60;
+          image(
+            cat.rightTail.img,
+            cat.rightTail.x,
+            cat.rightTail.y,
+            cat.rightTail.w * cat.tailGrowth,
+            cat.rightTail.h * cat.tailGrowth
+          );
+          if (cat.numOfTails > 3) {
+            cat.leftTail.x = cat.pos.x - cat.leftTail.offset;
+            cat.leftTail.y = groundLevel - cat.tailHeight;
+            image(
+              cat.leftTail.img,
+              cat.leftTail.x,
+              cat.leftTail.y,
+              cat.leftTail.w * cat.tailGrowth,
+              cat.leftTail.h * cat.tailGrowth
+            );
+            cat.leftTail.y = groundLevel - cat.tailHeight - 30;
+            image(
+              cat.leftTail.img,
+              cat.leftTail.x,
+              cat.leftTail.y,
+              cat.leftTail.w * cat.tailGrowth,
+              cat.leftTail.h * cat.tailGrowth
+            );
+            cat.leftTail.y = groundLevel - cat.tailHeight - 60;
+            image(
+              cat.leftTail.img,
+              cat.leftTail.x,
+              cat.leftTail.y,
+              cat.leftTail.w * cat.tailGrowth,
+              cat.leftTail.h * cat.tailGrowth
+            );
+            pop();
+          }
+        }
+      }
     }
   } else if (ghost.pos.x > cat.pos.x) {
     // flipping the eyes and pupils
@@ -536,13 +585,13 @@ function catMovement() {
         cat.leftWings.img,
         cat.leftWings.x,
         cat.leftWings.y,
-        cat.leftWings.w * cat.tailGrowth,
-        cat.leftWings.h * cat.tailGrowth
+        cat.leftWings.w,
+        cat.leftWings.h
       );
       pop();
     }
     // drawing the tails on the left (1 or more)
-    for (let i = 0; i < cat.numOfTails; i++) {
+    if (cat.numOfTails >= 1) {
       push();
       cat.leftTail.x = cat.pos.x - cat.leftTail.offset;
       cat.leftTail.y = groundLevel - cat.tailHeight;
@@ -554,7 +603,53 @@ function catMovement() {
         cat.leftTail.w * cat.tailGrowth,
         cat.leftTail.h * cat.tailGrowth
       );
-      pop();
+      if (cat.numOfTails >= 2) {
+        cat.leftTail.y = groundLevel - cat.tailHeight - 30;
+        image(
+          cat.leftTail.img,
+          cat.leftTail.x,
+          cat.leftTail.y,
+          cat.leftTail.w * cat.tailGrowth,
+          cat.leftTail.h * cat.tailGrowth
+        );
+        if (cat.numOfTails >= 3) {
+          cat.leftTail.y = groundLevel - cat.tailHeight - 60;
+          image(
+            cat.leftTail.img,
+            cat.leftTail.x,
+            cat.leftTail.y,
+            cat.leftTail.w * cat.tailGrowth,
+            cat.leftTail.h * cat.tailGrowth
+          );
+          if (cat.numOfTails > 3) {
+            cat.rightTail.y = groundLevel - cat.tailHeight;
+            image(
+              cat.rightTail.img,
+              cat.rightTail.x,
+              cat.rightTail.y,
+              cat.rightTail.w * cat.tailGrowth,
+              cat.rightTail.h * cat.tailGrowth
+            );
+            cat.rightTail.y = groundLevel - cat.tailHeight - 30;
+            image(
+              cat.rightTail.img,
+              cat.rightTail.x,
+              cat.rightTail.y,
+              cat.rightTail.w * cat.tailGrowth,
+              cat.rightTail.h * cat.tailGrowth
+            );
+            cat.rightTail.y = groundLevel - cat.tailHeight - 60;
+            image(
+              cat.rightTail.img,
+              cat.rightTail.x,
+              cat.rightTail.y,
+              cat.rightTail.w * cat.tailGrowth,
+              cat.rightTail.h * cat.tailGrowth
+            );
+            pop();
+          }
+        }
+      }
     }
   }
 }
@@ -589,6 +684,8 @@ function createItems() {
   createPotion();
   // this item changes the cat's color
   createFlower();
+  // this item gives the cat's more tails
+  createSnake();
 }
 // creating a butterfly item
 function createButterfly() {
@@ -617,6 +714,15 @@ function createFlower() {
   );
   items.push(flower);
 }
+// creating a snake
+function createSnake() {
+  let snake = new Item(
+    snakeIcon,
+    random(100, width - 100),
+    random(100, height - 160)
+  );
+  items.push(snake);
+}
 
 // displaying items
 function displayItems() {
@@ -635,12 +741,12 @@ function deleteItem(item) {
 }
 // respawn some items after being fed depending on item type
 function respawnFedItems(item) {
-  if (item.img === potionIcon) {
-    if (cat.bod.w < 800) {
-      createPotion();
-    }
+  if (item.img === potionIcon && cat.bod.w < 800) {
+    createPotion();
   } else if (item.img === flowerIcon) {
     createFlower();
+  } else if (item.img === snakeIcon && cat.numOfTails < 3) {
+    createSnake();
   }
 }
 // cat reacting differetnyl depending on item being fed
@@ -668,6 +774,8 @@ function catReactions(item) {
     cat.color.r = random(0, 255);
     cat.color.g = random(0, 255);
     cat.color.b = random(0, 255);
+  } else if (item.img === snakeIcon) {
+    cat.numOfTails += 1;
   }
 }
 
@@ -683,9 +791,6 @@ function keyPressed() {
     setTimeout(hideDialogue, 5000);
   } else if (state === `simulation` && keyCode === 32) {
     state = `end`;
-    // } else if (state === `end` && keyCode === 32) {
-    //   state = `info`;
-    //   redraw();
   }
   // actions with 'x' key
   if (!isOdd(n)) {
