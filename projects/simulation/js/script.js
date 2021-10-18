@@ -163,45 +163,50 @@ let dialogueFont = undefined;
 
 // preloading the cloud, icon images, wings and tails image, font and sound
 function preload() {
-  //
+  // loading wings and tails images
   cat.rightWings.img = loadImage(`assets/images/wings_right.png`);
   cat.leftWings.img = loadImage(`assets/images/wings_left.png`);
   cat.rightTail.img = loadImage(`assets/images/tail_right.png`);
   cat.leftTail.img = loadImage(`assets/images/tail_left.png`);
-
+  // loading cloud images
   cloudA.img = loadImage(`assets/images/cloud1.png`);
   cloudB.img = loadImage(`assets/images/cloud2.png`);
   cloudC.img = loadImage(`assets/images/cloud3.png`);
-
+  // loading items images
   butterflyIcon = loadImage(`assets/images/item_butterfly.png`);
   potionIcon = loadImage(`assets/images/item_potion.png`);
   flowerIcon = loadImage(`assets/images/item_flower.png`);
   snakeIcon = loadImage(`assets/images/item_snake.png`);
-
+  // loading font
   dialogueFont = loadFont(`assets/fonts/cour.ttf`);
-
+  // loading sound
   ambiantSound = loadSound(`assets/sounds/forest.wav`);
 }
 
-// creating the canvas
-// defining an interval to change the position of the stars every few seconds
+// creating the canvas, setting interval, creating items objects and dialogues entries
 function setup() {
   createCanvas(windowWidth, windowHeight);
+  // defining an interval to change the position of the stars every few seconds
   setInterval(changeStarSeed, 2500);
-
+  // creating items object (class)
   createItems();
+  // creating dialogue entries (array of strings)
   dialogueEntries();
 }
 
 // drawing game elements and setting up states
 function draw() {
   if (state === `info`) {
+    // this tells you what are the controls
     info();
   } else if (state === `intro`) {
+    // this is the backstory, the music starts here
     intro();
   } else if (state === `simulation`) {
+    // this is the game part
     simulation();
   } else if (state === `end`) {
+    // this is the end screen
     end();
   }
 }
@@ -222,7 +227,7 @@ function info() {
   );
   pop();
 }
-// introduction story screen (intro state)
+// introduction backstory screen (intro state)
 function intro() {
   background(169, 180, 199);
   push();
@@ -258,11 +263,17 @@ function intro() {
 }
 // simulation (simulation state)
 function simulation() {
+  // draws background elements
   drawBackground();
+  // draws characters
   drawCharacters();
+  // define the character's movement and draws some characters elements
   movement();
+  // draws the items
   displayItems();
+  // draws the hint text (press 'x' to ...)
   displayText();
+  // draws the dialogues boxes
   displayDialogue();
 }
 // endgame screen (end state)
@@ -328,6 +339,8 @@ function animatedBackground() {
 }
 // drawing the stars with a loop
 function drawStars() {
+  // this seed changes every few seconds
+  // effectivly, this changes the position of the set of stars (drawn by for loop) every few seconds
   randomSeed(starSeed);
   let numOfStars = 100;
   for (let i = 0; i < numOfStars; i++) {
@@ -346,8 +359,9 @@ function changeStarSeed() {
 }
 // drawing the clouds and defining how they move
 function drawClouds() {
-  // define a ratio to adjust the cloud size to screen size and define a tint
+  // define a ratio to adjust the cloud size to screen size
   let cloudRatio = windowWidth / 1000;
+  // define color of the clouds
   tint(102, 113, 138, 200);
   // drawing Cloud A and resetting position when off-screen
   cloudA.x -= cloudA.vx;
@@ -378,7 +392,7 @@ function drawCharacters() {
   // drawing the cat (entity to interact with)
   drawCat();
 }
-// drawing the ghot (user)
+// drawing the ghost (user)
 function drawGhost() {
   push();
   rectMode(CENTER);
@@ -391,7 +405,7 @@ function drawGhost() {
   ghost.top.y = ghost.pos.y - ghost.bod.h;
   arc(ghost.top.x, ghost.top.y, ghost.bod.w, ghost.bod.w, PI, TWO_PI);
   pop();
-  // drawing ghost eyes
+  // drawing the ghost's eyes
   push();
   fill(
     ghost.eyes.color.r,
@@ -558,6 +572,7 @@ function catMovement() {
       drawRightTails(40);
       drawRightTails(80);
     } else if (cat.numOfTails > 3) {
+      // drawing 3 sets of tails on the right and left
       drawRightTails(0);
       drawRightTails(40);
       drawRightTails(80);
@@ -597,6 +612,7 @@ function catMovement() {
       drawLeftTails(40);
       drawLeftTails(80);
     } else if (cat.numOfTails > 3) {
+      // drawing 3 sets of tails on the right and left
       drawLeftTails(0);
       drawLeftTails(40);
       drawLeftTails(80);
@@ -689,6 +705,8 @@ function displayItems() {
 function deleteItem(item) {
   item.active = false;
   item.picked = false;
+  // n variable for the 'isOdd' function
+  // this lets the program know wether its time to pickup of put down an item
   n += 1;
   return n;
 }
@@ -830,7 +848,7 @@ function feedItem() {
         respawnFedItems(items[i]);
         // deactivate (delete) current item
         deleteItem(items[i]);
-        // have the cat react to the items
+        // have the cat react to the item
         catReactions(items[i]);
         // show the next dialogue boxes
         dialBox.active = true;
@@ -896,8 +914,9 @@ function hideDialogue() {
 }
 // create dialogue boxes
 function dialogueBox() {
+  // draw the box
   drawDialogueBox();
-  // write the next dialogue entrie
+  // draw the next dialogue entrie
   push();
   textAlign(CENTER);
   textFont(dialogueFont);
