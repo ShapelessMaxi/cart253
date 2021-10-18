@@ -1,9 +1,12 @@
 /**
-Feed the cat - Simulation
+The Cat - Simulation
 Maxime Perreault
 
 Who feeds a cat in the afterlife when they reach their limit of nine lives? What happens when you feed
-random stuff to cat? Is there a place we go to when we die?
+random stuff to cat? Is there a place we go to when we die? This mini game brings you in a etheral world.
+The backstory and the dialogues, with vague creepiness and sadness vibe, makes you wonder about what
+happened between the main character and the cat before both of you got there. What type of relationship
+did you have with this cat?
 
 ************************************************
 `Where am I?
@@ -11,35 +14,32 @@ random stuff to cat? Is there a place we go to when we die?
 Although I'm sure I've never seen these plains,
 I feel like I have some task to fulfill around here.
 
-
 Im not sure ill ever get used to this form.
 I thought being able to navigate so high up in the sky would be fun,
 but my stomach, or whatever's in the place where my stomach was,
 says the opposite.
 
-
 Oh... this cat.
 Me and this cat, man, we never really got along.
-I was always trying to help him,
-I wanted to help him. Now look at us, not doing so well, uh.`
+I was always trying to help him, I wanted to help him.
+Now look at us, not doing so well, uh.`
 ************************************************
 
 In this simulation game, you navigate from left to right, up and down, to go fetch some items.
-You can hold one item at the time and each item can be fed to the "cat". Every item fed to the "cat"
+You can hold one item at the time and each item can be fed to the "cat". Every item fed to the cat
 has a different effect, see what each one of them do!
 
-I want this game to have a spooky but cute atmosphere, complete with simple graphics,
+I wanted this game to have a spooky but cute atmosphere, complete with simple graphics,
 a soft color palette and some slightly uncomfortable dialogues.
 
-ps: sorry to whoever sees this code, the 'drawing the cat' portion of the code is very messy. I will
-probably never draw a triangle in p5.js ever again :).
-ps2: also sorry about the lag... I don't know how to fix it!
+ps: sorry to whoever sees this code, the 'drawing the cat' portion of the code is very messy.
+I will probably never draw a triangle in p5.js ever again :).
 */
 
 "use strict";
 
 // this line was taken from (https://github.com/processing/p5.js/wiki/Optimizing-p5.js-Code-for-Performance#p5-performance-tips)
-// helps with better framerate
+// supposed to help with better framerate
 p5.disableFriendlyErrors = true;
 
 let ambiantSound = undefined;
@@ -163,6 +163,7 @@ let dialogueFont = undefined;
 
 // preloading the cloud, icon images, wings and tails image, font and sound
 function preload() {
+  //
   cat.rightWings.img = loadImage(`assets/images/wings_right.png`);
   cat.leftWings.img = loadImage(`assets/images/wings_left.png`);
   cat.rightTail.img = loadImage(`assets/images/tail_right.png`);
@@ -194,7 +195,6 @@ function setup() {
 
 // drawing game elements and setting up states
 function draw() {
-  console.log(frameRate());
   if (state === `info`) {
     info();
   } else if (state === `intro`) {
@@ -509,16 +509,16 @@ function ghostMovement() {
   ghost.bod.h = constrain(ghost.bod.h, 80, height - 110);
   // controlling the ghost and flipping the eyes with arrow keys and
   if (keyIsDown(UP_ARROW)) {
-    ghost.bod.h += height / 70;
+    ghost.bod.h += height / 100;
   } else if (keyIsDown(DOWN_ARROW)) {
-    ghost.bod.h -= height / 70;
+    ghost.bod.h -= height / 100;
   }
   if (keyIsDown(LEFT_ARROW)) {
-    ghost.pos.x -= width / 100;
+    ghost.pos.x -= width / 150;
     ghost.eyes.x1 = ghost.pos.x - 5;
     ghost.eyes.x2 = ghost.eyes.x1 - 15;
   } else if (keyIsDown(RIGHT_ARROW)) {
-    ghost.pos.x += width / 100;
+    ghost.pos.x += width / 150;
     ghost.eyes.x1 = ghost.pos.x + 5;
     ghost.eyes.x2 = ghost.eyes.x1 + 15;
   }
