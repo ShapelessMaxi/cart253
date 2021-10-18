@@ -33,6 +33,7 @@ a soft color palette and some slightly uncomfortable dialogues.
 
 ps: sorry to whoever sees this code, the 'drawing the cat' portion of the code is very messy. I will
 probably never draw a triangle in p5.js ever again :).
+ps2: also sorry about the lag... I don't know how to fix it!
 */
 
 "use strict";
