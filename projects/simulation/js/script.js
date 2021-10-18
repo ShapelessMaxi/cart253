@@ -38,6 +38,10 @@ ps2: also sorry about the lag... I don't know how to fix it!
 
 "use strict";
 
+// this line was taken from (https://github.com/processing/p5.js/wiki/Optimizing-p5.js-Code-for-Performance#p5-performance-tips)
+// helps with better framerate
+p5.disableFriendlyErrors = true;
+
 let state = `intro`; // possible states: info, intro, simulation, end
 
 let cloudA = { img: undefined, x: 0, y: 20, vx: 0.2 };
