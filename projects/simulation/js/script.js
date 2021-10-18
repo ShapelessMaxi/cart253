@@ -42,7 +42,9 @@ ps2: also sorry about the lag... I don't know how to fix it!
 // helps with better framerate
 p5.disableFriendlyErrors = true;
 
-let state = `intro`; // possible states: info, intro, simulation, end
+let ambiantSound = undefined;
+
+let state = `info`; // possible states: info, intro, simulation, end
 
 let cloudA = { img: undefined, x: 0, y: 20, vx: 0.2 };
 let cloudB = { img: undefined, x: 100, y: 380, vx: 0.6 };
@@ -159,7 +161,7 @@ let dialBox = {
 };
 let dialogueFont = undefined;
 
-// preloading the cloud, icon images, wings and tails image and fonts
+// preloading the cloud, icon images, wings and tails image, font and sound
 function preload() {
   cat.rightWings.img = loadImage(`assets/images/wings_right.png`);
   cat.leftWings.img = loadImage(`assets/images/wings_left.png`);
@@ -176,6 +178,8 @@ function preload() {
   snakeIcon = loadImage(`assets/images/item_snake.png`);
 
   dialogueFont = loadFont(`assets/fonts/cour.ttf`);
+
+  ambiantSound = loadSound(`assets/sounds/forest.wav`);
 }
 
 // creating the canvas
@@ -269,7 +273,7 @@ function end() {
   textFont(dialogueFont);
   fill(135, 41, 48);
   textSize(20);
-  text(`press 'F5' to restart`, width / 2, (height * 7) / 8);
+  text(`press 'spacebar ' to restart`, width / 2, (height * 7) / 8);
   textAlign(LEFT);
   textSize(35);
   text(
@@ -733,6 +737,8 @@ function keyPressed() {
   // state navigation with spacebar
   if (state === `info` && keyCode === 32) {
     state = `intro`;
+    // start playing ambiant sound here
+    ambiantSound.play();
   } else if (state === `intro` && keyCode === 32) {
     state = `simulation`;
     // show first dialogue box and hide it after timer
@@ -740,6 +746,8 @@ function keyPressed() {
     setTimeout(hideDialogue, 5000);
   } else if (state === `simulation` && keyCode === 32) {
     state = `end`;
+  } else if (state === `end` && keyCode === 32) {
+    location.reload();
   }
   // actions with 'x' key
   if (!isOdd(n)) {
@@ -836,7 +844,7 @@ function feedItem() {
 // display 'X' to drop or 'X' to pick
 function displayText() {
   for (let i = 0; i < items.length; i++) {
-    // 'f5' to leave always displayed
+    // 'spacebar' to leave always displayed
     push();
     fill(101, 150, 138);
     textAlign(RIGHT);
@@ -851,21 +859,22 @@ function displayText() {
         textSize(18);
         text(`'X' to pick`, items[i].x, items[i].y - 25);
         pop();
-        // `'X' to drop` when item iis in hand
+        // `'X' to drop` when item is in hand
       } else if (items[i].picked) {
         push();
         fill(255);
         textSize(32);
-        text(`'X' to drop`, 100, 100);
+        text(`'X' to drop`, 80, 100);
         pop();
       }
     }
+    // `'X' to feed` when item is near the cat
     if (itemIsFeedable(items[i])) {
       push();
       fill(255);
       textSize(18);
       textAlign(CENTER);
-      text(`'X' to feed`, cat.pos.x, cat.pos.y + 20);
+      text(`'X' to feed`, cat.pos.x, (height * 7.8) / 8);
       pop();
     }
   }
