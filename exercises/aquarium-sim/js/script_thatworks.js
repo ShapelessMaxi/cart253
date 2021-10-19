@@ -25,37 +25,20 @@ to make the fish avoid them
 - not sure what to do for the endings yet...
 - ending 1: if theres too much obstacle (check % of obstacles vs canvas size?)
 - ending 2: timer? press 'x' top stop?
-
-*********** ok so in the middle of writing code i had another idea that came from a 'bug'
-so the plan is off ! (will reuse it maybe eventualy)
 */
 
 "use strict";
 let group = [];
 
-// let groupNum = 2;
-
+let groupNum = 2;
 let groupRange = 10;
-let botLimit = undefined;
-let topLimit = undefined;
 
 let entityNum = 100;
-let entityLen = 20;
+let entityLen = 8;
 
-let sun = {
-  x: 100,
-  y: 100,
-  size: 50,
-  grow: 10,
-  color: {
-    r: 70,
-    g: 2,
-    b: 20,
-    a: 100,
-  },
-};
-
-// create canvas and create entities
+/**
+create canvas
+*/
 function setup() {
   // creating canvas
   createCanvas(1000, 500);
@@ -64,15 +47,15 @@ function setup() {
   createGroup();
 }
 
-// drawing simulaion elements
+/**
+drawing simulaion elements
+*/
 function draw() {
   // drawing backgroup
-  background(224, 211, 132);
-
-  // drawing sun
-  moreLight();
+  background(25);
 
   // iterating through the group, and displaying the elements
+
   for (let i = 0; i < group.length; i++) {
     displayEntity(group[i]);
     moveEntity(group[i]);
@@ -96,19 +79,24 @@ function createEntity(x, y) {
     y2: y,
     vx: undefined,
     vy: undefined,
-    color: {
-      r: random(15, 55),
-      g: random(95, 105),
-      b: random(15, 55),
-    },
   };
   return entity;
 }
 
+// function createGroup(topLimit) {
+//   let group = {
+//     array: [],
+//     topLimit: topLimit,
+//     botLimit: topLimit + groupRange,
+//   };
+//
+//   return group;
+// }
+
 function displayEntity(entity) {
   push();
   noFill();
-  stroke(entity.color.r, entity.color.g, entity.color.b);
+  stroke(200);
   strokeWeight(5);
   line(entity.x1, entity.y1, entity.x2, entity.y2);
   pop();
@@ -141,28 +129,6 @@ function moveEntity(entity, group) {
     entity.y2 = entity.y1;
   }
 
-  // constrain y positon to group's range
-  botLimit = 500;
-  topLimit = random(100, 300);
-  entity.y1 = constrain(entity.y1, topLimit, botLimit);
-  entity.y2 = constrain(entity.y2, botLimit, botLimit);
-  // I didnt mean to do that but it gave me a great idea so the 300 word plan i wrote is put aside :3
-}
-
-function moreLight() {
-  push();
-  noStroke();
-  fill(sun.color.r, sun.color.g, sun.color.b, sun.color.a);
-  ellipse(sun.x, sun.y, sun.size);
-  pop();
-
-  // constrain sun size
-  sun.size = constrain(sun.size, 50, 1000);
-
-  // sun grows when mouse is pressed and shrink when mouse is not pressed
-  if (mouseIsPressed) {
-    sun.size += sun.grow;
-  } else {
-    sun.size -= sun.grow;
-  }
+  // // constrain y positon to group's range
+  // constrain(entity.y1, group.topLimit, group.botLimit);
 }
