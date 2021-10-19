@@ -54,6 +54,12 @@ let sun = {
     a: 100,
   },
 };
+let light = {
+  r: 200,
+  g: 235,
+  b: 255,
+  a: 0,
+};
 
 // create canvas and create entities
 function setup() {
@@ -67,10 +73,10 @@ function setup() {
 // drawing simulaion elements
 function draw() {
   // drawing backgroup
-  background(224, 211, 132);
+  drawBg();
 
   // drawing sun
-  moreLight();
+  drawSun();
 
   // iterating through the group, and displaying the elements
   for (let i = 0; i < group.length; i++) {
@@ -149,7 +155,7 @@ function moveEntity(entity, group) {
   // I didnt mean to do that but it gave me a great idea so the 300 word plan i wrote is put aside :3
 }
 
-function moreLight() {
+function drawSun() {
   push();
   noStroke();
   fill(sun.color.r, sun.color.g, sun.color.b, sun.color.a);
@@ -165,4 +171,28 @@ function moreLight() {
   } else {
     sun.size -= sun.grow;
   }
+}
+
+// draws the main background
+function drawBg() {
+  // draw the main color bg
+  background(97, 92, 60);
+
+  // control the alpha channel of the blue rectangle over the bg
+  if (mouseIsPressed) {
+    light.a += 10;
+  } else {
+    light.a -= 10;
+  }
+
+  // // map the alpha channel to have a slower change
+  // light.a = map(light.a, 0, 255, 0, width);
+
+  // draws a transparent white rectangle over
+  push();
+  rectMode(CORNERS);
+  noStroke();
+  fill(light.r, light.g, light.b, light.a);
+  rect(0, 0, width, height);
+  pop();
 }
