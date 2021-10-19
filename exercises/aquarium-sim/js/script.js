@@ -185,8 +185,8 @@ function drawBg() {
     light.a -= 10;
   }
 
-  // // map the alpha channel to have a slower change
-  // light.a = map(light.a, 0, 255, 0, width);
+  // i want the alpha value to the max when sun size is 1000
+  // light.a = map(light.a, 0, 255, 0, sun.size);
 
   // draws a transparent white rectangle over
   push();
