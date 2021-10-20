@@ -41,11 +41,13 @@ grass will perish.
 
 "use strict";
 let grassGroup = [];
-
 let botLimit = undefined;
 let topLimit = undefined;
 
 let grassNum = 300;
+
+// this affects the slope of the grass blades. bigger number means more slanted.
+// distance from x1 and x2
 let grassLen = 20;
 
 let sun = {
@@ -66,6 +68,17 @@ let light = {
   b: 215,
   a: 0,
 };
+let button = {
+  x: undefined,
+  y: undefined,
+  size: 550,
+  color: {
+    r: 245,
+    g: 180,
+    b: 140,
+  },
+  hovering: false,
+};
 
 // day timer
 let numSecondsDay = 30;
@@ -78,8 +91,12 @@ let numMinutesNight = 2;
 // will display timers
 let isDay = false;
 
+// timer text
 let dayTimeText = undefined;
 let nightTimeText = undefined;
+
+// states
+let state = `intro`; //possible state: intro, simulation, endBurn, endRot
 
 // create canvas and create entities
 function setup() {
@@ -92,7 +109,44 @@ function setup() {
 
 // drawing simulaion elements
 function draw() {
-  console.log(`is day:${isDay}`);
+  if (state === `intro`) {
+    intro();
+  } else if (state === `simulation`) {
+    simulation();
+  } else if (state === `endBurn`) {
+    endBurn();
+  } else if (state === `endRot`) {
+    endRot();
+  }
+}
+
+// contains intro elements
+function intro() {
+  background(153, 132, 142);
+
+  drawButton();
+  buttonChange();
+
+  // text
+  push();
+  textSize(16);
+  textAlign(LEFT);
+  fill(245, 180, 140);
+  text(
+    `"I have to let you know but, you are in a grass field now, and you control the sun.
+The sun grows when you 'press the mouse'. That's weird, I know, but with great power
+comes great resposibility.
+You have to be careful not to let the grass die.
+If the sun shines for too long, the grass willl burn, and maybe you will too.
+If the sun is not strong enough, the grass will perish and rot, like any future plans you had."`,
+    50,
+    342
+  );
+  pop();
+}
+
+// contains simulation elements
+function simulation() {
   // drawing backgroud
   drawBg();
 
@@ -107,9 +161,71 @@ function draw() {
 
   // allow the day timer to start
   displayDayTimer();
-
   // allow the night timer to start
   displayNightTimer();
+}
+
+// contains first ending elements
+function endBurn() {
+  background(255, 0, 0);
+  push();
+  fill(255, 255, 255);
+  textSize(20);
+  textAlign(CENTER);
+  text(`hey u burned`, width / 2, height / 2);
+  pop();
+}
+
+// contains second ending elements
+function endRot() {
+  background(0);
+  push();
+  fill(255, 255, 255);
+  textSize(20);
+  textAlign(CENTER);
+  text(`hey u rotted`, width / 2, height / 2);
+  pop();
+}
+
+// buttons changes color if mouse is hovering
+function buttonChange() {
+  button.hovering = checkHover();
+  if (button.hovering) {
+    button.color.r = 190;
+    button.color.g = 145;
+    button.color.b = 125;
+  } else {
+    button.color.r = 245;
+    button.color.g = 180;
+    button.color.b = 140;
+  }
+}
+
+// drawing the button
+function drawButton() {
+  // button shape
+  push();
+  noStroke();
+  fill(button.color.r, button.color.g, button.color.b);
+  button.x = width;
+  button.y = height / 2;
+  ellipse(button.x, button.y, button.size);
+  pop();
+  // button arrow
+  push();
+  stroke(153, 132, 142);
+  strokeWeight(15);
+  line(900, 210, 950, height / 2, 600, 500, 900, height / 2);
+  line(900, 290, 950, height / 2, 600, 500, 900, height / 2);
+  pop();
+}
+
+// check if mouse is on button
+function checkHover() {
+  let d = dist(mouseX, mouseY, button.x, button.y);
+  if (d < button.size / 2) {
+    return true;
+  }
 }
 
 // creates individual grass and push them in the grass group
@@ -132,11 +248,11 @@ function createGrass(x, y) {
     vx: undefined,
     vy: undefined,
     color: {
-      r: random(15, 55),
-      g: random(95, 105),
-      b: random(15, 55),
+      r: random(50, 90),
+      g: random(40, 90),
+      b: random(30, 50),
     },
-    maxH: 100,
+    maxH: 170,
   };
   return grass;
 }
@@ -253,7 +369,7 @@ function displayDayTimer() {
 
   // simulation ends when time's out
   if (totalSeconds(isDay) < 0) {
-    noLoop();
+    state = `endBurn`;
   }
 }
 
@@ -285,7 +401,7 @@ function displayNightTimer() {
 
   // simulation ends when time's out
   if (totalSeconds(isDay) < 0) {
-    noLoop();
+    state = `endRot`;
   }
 }
 
@@ -298,8 +414,12 @@ function mouseReleased(isDay) {
   }
 }
 
-// reset night timer when mouse is pressed
-function mousePressed(isDay) {
+// resets timer when simulation, changes from intro to simulation state
+function mousePressed() {
+  if (state === `intro` && button.hovering === true) {
+    state = `simulation`;
+  }
+
   // cant be reset if timer is less than 50 seconds
   if (totalSeconds(isDay) > 50) {
     timerReset(isDay);
@@ -377,8 +497,8 @@ function grassShrink() {
 // reset grass color
 function grassColorReset() {
   for (let i = 0; i < grassGroup.length; i++) {
-    grassGroup[i].color.r = random(15, 55);
-    grassGroup[i].color.g = random(95, 105);
-    grassGroup[i].color.b = random(15, 55);
+    grassGroup[i].color.r = random(50, 90);
+    grassGroup[i].color.g = random(40, 90);
+    grassGroup[i].color.b = random(30, 50);
   }
 }
