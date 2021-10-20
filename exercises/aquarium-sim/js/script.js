@@ -1,5 +1,5 @@
 /**
-aquarium simulation?
+balance is key
 Maxime Perreault
 
 ps: I will leave this here to go back to it for a future project, but dont get too
@@ -97,7 +97,14 @@ let nightTimeText = undefined;
 
 // states
 let state = `intro`; //possible state: intro, simulation, endBurn, endRot
+let burnImg = undefined;
+let rotImg = undefined;
 
+// preloading images for endings
+function preload() {
+  burnImg = loadImage(`assets/images/fire.png`);
+  rotImg = loadImage(`assets/images/rot.png`);
+}
 // create canvas and create entities
 function setup() {
   // creating canvas
@@ -134,13 +141,14 @@ function intro() {
   fill(245, 180, 140);
   text(
     `"I have to let you know but, you are in a grass field now, and you control the sun.
-The sun grows when you 'press the mouse'. That's weird, I know, but with great power
+The sun grows when you 'press the mouse'. It's weird, I know, but with great power
 comes great resposibility.
+
 You have to be careful not to let the grass die.
 If the sun shines for too long, the grass willl burn, and maybe you will too.
 If the sun is not strong enough, the grass will perish and rot, like any future plans you had."`,
     50,
-    342
+    335
   );
   pop();
 }
@@ -160,30 +168,58 @@ function simulation() {
   }
 
   // allow the day timer to start
-  displayDayTimer();
+  dayTimer();
   // allow the night timer to start
-  displayNightTimer();
+  nightTimer();
 }
 
 // contains first ending elements
 function endBurn() {
-  background(255, 0, 0);
+  // backgroung color
+  background(161, 21, 35);
+  // fire image
   push();
-  fill(255, 255, 255);
-  textSize(20);
-  textAlign(CENTER);
-  text(`hey u burned`, width / 2, height / 2);
+  tint(82, 4, 30);
+  image(burnImg, 270, 60, 750, 450);
+  pop();
+  // text
+  push();
+  fill(82, 4, 30);
+  textSize(18);
+  textAlign(LEFT);
+  text(
+    `"Hey, you were not able to take care of the grass... That's OK.
+I hope you enjoyed the landscape.
+
+Now burn."`,
+    50,
+    50
+  );
   pop();
 }
 
 // contains second ending elements
 function endRot() {
-  background(0);
+  // backgroung color
+  background(33, 24, 38);
+  // fire image
   push();
-  fill(255, 255, 255);
-  textSize(20);
-  textAlign(CENTER);
-  text(`hey u rotted`, width / 2, height / 2);
+  tint(138, 129, 106);
+  image(rotImg, -100, 340, 1200, 450);
+  pop();
+  // text
+  push();
+  fill(138, 129, 106);
+  textSize(18);
+  textAlign(LEFT);
+  text(
+    `"Hey, you were not able to take care of the grass... That's OK.
+I hope you enjoyed the landscape.
+
+Now rot."`,
+    50,
+    50
+  );
   pop();
 }
 
@@ -343,9 +379,9 @@ function drawBg() {
 }
 
 // starts day timer and displays it
-function displayDayTimer() {
+function dayTimer() {
   // start timer
-  if (mouseIsPressed && sun.size > 900) {
+  if (mouseIsPressed && sun.size > 700) {
     // this is dayTime tracking variable
     isDay = true;
     // draws the text if sun if big and mouse pressed
@@ -368,13 +404,11 @@ function displayDayTimer() {
   }
 
   // simulation ends when time's out
-  if (totalSeconds(isDay) < 0) {
-    state = `endBurn`;
-  }
+  endingTrigger(isDay);
 }
 
 // starts night timer and displays it
-function displayNightTimer() {
+function nightTimer() {
   // start timer
   if (sun.size < 70) {
     // this is dayTime tracking variable
@@ -400,7 +434,14 @@ function displayNightTimer() {
   }
 
   // simulation ends when time's out
-  if (totalSeconds(isDay) < 0) {
+  endingTrigger(isDay);
+}
+
+// ending gets triggered
+function endingTrigger(isDay) {
+  if (isDay && totalSeconds(isDay) < 0) {
+    state = `endBurn`;
+  } else if (!isDay && totalSeconds(isDay) < 0) {
     state = `endRot`;
   }
 }
@@ -430,22 +471,43 @@ function mousePressed() {
 // display timers
 function drawTimer(isDay) {
   push();
-  fill(79, 6, 23);
-  textSize(30);
+  fill(125, 16, 27);
+  textSize(24);
   textAlign(RIGHT);
   // display day or night timer
   if (isDay) {
-    dayTimeText = `${numMinutesDay} : ${int(
-      numSecondsDay
+    dayTimeText = `0${numMinutesDay} : ${displayNumSeconds(
+      isDay
     )} before everything burns and die`;
     text(dayTimeText, width - 25, 50);
   } else if (!isDay) {
-    nightTimeText = `${numMinutesNight} : ${int(
-      numSecondsNight
+    nightTimeText = `0${numMinutesNight} : ${displayNumSeconds(
+      isDay
     )} before everything rots and die`;
     text(nightTimeText, width - 25, 50);
   }
   pop();
+}
+
+// display num seconds (adds 0 when s < 10 )
+function displayNumSeconds(isDay) {
+  if (isDay) {
+    if (numSecondsDay >= 10) {
+      let numSecond = int(numSecondsDay);
+      return numSecond;
+    } else if (numSecondsDay < 10) {
+      let numSecond = `0` + str(int(numSecondsDay));
+      return numSecond;
+    }
+  } else if (!isDay) {
+    if (numSecondsNight >= 10) {
+      let numSecond = int(numSecondsNight);
+      return numSecond;
+    } else if (numSecondsNight < 10) {
+      let numSecond = `0` + str(int(numSecondsNight));
+      return numSecond;
+    }
+  }
 }
 
 // calculate toal amount of seconds
