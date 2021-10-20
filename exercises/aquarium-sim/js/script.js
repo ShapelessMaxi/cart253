@@ -69,13 +69,15 @@ let light = {
 
 // day timer
 let numSecondsDay = 30;
-let numMinutesDay = 3;
+let numMinutesDay = 2;
 
 // night timer
 let numSecondsNight = 30;
-let numMinutesNight = 3;
+let numMinutesNight = 2;
 
 // will display timers
+let isDay = false;
+
 let dayTimeText = undefined;
 let nightTimeText = undefined;
 
@@ -90,6 +92,7 @@ function setup() {
 
 // drawing simulaion elements
 function draw() {
+  console.log(`is day:${isDay}`);
   // drawing backgroud
   drawBg();
 
@@ -133,7 +136,7 @@ function createGrass(x, y) {
       g: random(95, 105),
       b: random(15, 55),
     },
-    maxH: 30,
+    maxH: 100,
   };
   return grass;
 }
@@ -223,104 +226,159 @@ function drawBg() {
   pop();
 }
 
+// starts day timer and displays it
 function displayDayTimer() {
   // start timer
-  if (mouseIsPressed) {
-    if (sun.size > 900) {
-      // when sun is up for too long, th grass burns
-      if (numMinutesDay < 2) {
-        for (let i = 0; i < grassGroup.length; i++) {
-          grassGroup[i].color.r += 0.6;
-          grassGroup[i].color.g -= 0.4;
-        }
+  if (mouseIsPressed && sun.size > 900) {
+    // this is dayTime tracking variable
+    isDay = true;
+    // draws the text if sun if big and mouse pressed
+    drawTimer(isDay);
+    // resetting seconds and counting down minutes when seconds timer gets to 0
+    countDown(isDay);
+
+    // when sun is up for too long (1min before timer ends), the grass burns
+    if (totalSeconds(isDay) <= 100) {
+      for (let i = 0; i < grassGroup.length; i++) {
+        grassGroup[i].color.r += 0.7;
+        grassGroup[i].color.g -= 0.5;
       }
-      // the grass aslo starts to shrink
-      if (numMinutesDay < 1) {
-        for (let i = 0; i < grassGroup.length; i++) {
-          grassGroup[i].maxH += 7;
-        }
-      }
-
-      // draws the text if sun if big and mouse pressed
-      push();
-      fill(255);
-      textSize(64);
-      textAlign(CENTER);
-      text(dayTimeText, width / 2, height / 2);
-      pop();
-
-      // counting down seconds
-      numSecondsDay -= 0.3;
-
-      // time text display
-      dayTimeText = `${numMinutesDay} : ${int(numSecondsDay)}`;
     }
-  } else if (!mouseIsPressed && numMinutesDay >= 1) {
-    // resetting timer when mouse is released
-    numMinutesDay = 3;
-    numSecondsDay = 30;
-    // resetting grass color
-    for (let i = 0; i < grassGroup.length; i++) {
-      grassGroup[i].color.r = random(15, 55);
-      grassGroup[i].color.g = random(95, 105);
-    }
-  }
 
-  // resetting seconds and counting down minutes when seconds timer gets to 0
-  if (numSecondsDay <= 0) {
-    numSecondsDay = 30;
-    numMinutesDay -= 1;
+    // the grass also starts to shrink (30 seconds before timer ends)
+    if (totalSeconds(isDay) <= 45) {
+      grassShrink();
+    }
   }
 
   // simulation ends when time's out
-  if (numMinutesDay < 1 && numSecondsDay <= 1) {
+  if (totalSeconds(isDay) < 0) {
     noLoop();
   }
 }
 
+// starts night timer and displays it
 function displayNightTimer() {
   // start timer
-  if (!mouseIsPressed) {
-    if (sun.size < 75) {
-      // when sun is down for too long, th grass rots
-      if (numMinutesNight < 2) {
-        for (let i = 0; i < grassGroup.length; i++) {
-          grassGroup[i].color.r -= 5;
-          grassGroup[i].color.g -= 5;
-          grassGroup[i].color.b -= 5;
-        }
-      }
-      // the grass also starts to shrink
-      if (numMinutesNight < 1) {
-        for (let i = 0; i < grassGroup.length; i++) {
-          grassGroup[i].maxH += 1;
-        }
+  if (sun.size < 70) {
+    // this is dayTime tracking variable
+    isDay = false;
+    // draws the text if sun if big and mouse pressed
+    drawTimer(isDay);
+    // resetting seconds and counting down minutes when seconds timer gets to 0
+    countDown(isDay);
+
+    // when sun is up down too long (50 seconds before timer ends), the grass rots
+    if (totalSeconds(isDay) <= 50) {
+      for (let i = 0; i < grassGroup.length; i++) {
+        grassGroup[i].color.r -= 2;
+        grassGroup[i].color.g -= 2;
+        grassGroup[i].color.b -= 2;
       }
     }
 
-    // draws the text if sun if big and mouse pressed
-    push();
-    fill(255);
-    textSize(64);
-    textAlign(CENTER);
-    text(nightTimeText, width / 2, height / 2);
-    pop();
+    // the grass also starts to shrink (30 seconds before timer ends)
+    if (totalSeconds(isDay) <= 30) {
+      grassShrink();
+    }
+  }
 
-    // counting down seconds
-    numSecondsNight -= 0.3;
+  // simulation ends when time's out
+  if (totalSeconds(isDay) < 0) {
+    noLoop();
+  }
+}
 
-    // time text display
-    nightTimeText = `${numMinutesNight} : ${int(numSecondsNight)}`;
+// reset day timer when mouse is released
+function mouseReleased(isDay) {
+  // cant be reset if timer is less than 50 seconds
+  if (totalSeconds(isDay) > 50) {
+    timerReset(isDay);
+    grassColorReset();
+  }
+}
 
-    // resetting seconds and counting down minutes when seconds timer gets to 0
+// reset night timer when mouse is pressed
+function mousePressed(isDay) {
+  // cant be reset if timer is less than 50 seconds
+  if (totalSeconds(isDay) > 50) {
+    timerReset(isDay);
+    grassColorReset();
+  }
+}
+
+// display timers
+function drawTimer(isDay) {
+  push();
+  fill(79, 6, 23);
+  textSize(30);
+  textAlign(RIGHT);
+  // display day or night timer
+  if (isDay) {
+    dayTimeText = `${numMinutesDay} : ${int(
+      numSecondsDay
+    )} before everything burns and die`;
+    text(dayTimeText, width - 25, 50);
+  } else if (!isDay) {
+    nightTimeText = `${numMinutesNight} : ${int(
+      numSecondsNight
+    )} before everything rots and die`;
+    text(nightTimeText, width - 25, 50);
+  }
+  pop();
+}
+
+// calculate toal amount of seconds
+function totalSeconds(isDay) {
+  if (isDay) {
+    let totalDay = numMinutesDay * 60 + numSecondsDay;
+    return totalDay;
+  } else if (!isDay) {
+    let totalNight = numMinutesNight * 60 + numSecondsNight;
+    return totalNight;
+  }
+}
+
+// counting down seconds and minutes
+function countDown(isDay) {
+  if (isDay) {
+    numSecondsDay -= 0.5;
+    if (numSecondsDay <= 0) {
+      numSecondsDay = 60;
+      numMinutesDay -= 1;
+    }
+  } else if (!isDay) {
+    numSecondsNight -= 0.5;
     if (numSecondsNight <= 0) {
-      numSecondsNight = 30;
+      numSecondsNight = 60;
       numMinutesNight -= 1;
     }
+  }
+}
 
-    // simulation ends when time's out
-    if (numMinutesNight < 1 && numSecondsNight <= 1) {
-      noLoop();
-    }
+// reset timers
+function timerReset(isDay) {
+  if (isDay) {
+    numMinutesDay = 2;
+    numSecondsDay = 30;
+  } else if (!isDay) {
+    numMinutesNight = 2;
+    numSecondsNight = 30;
+  }
+}
+
+// makes the grass smaller
+function grassShrink() {
+  for (let i = 0; i < grassGroup.length; i++) {
+    grassGroup[i].maxH += 9;
+  }
+}
+
+// reset grass color
+function grassColorReset() {
+  for (let i = 0; i < grassGroup.length; i++) {
+    grassGroup[i].color.r = random(15, 55);
+    grassGroup[i].color.g = random(95, 105);
+    grassGroup[i].color.b = random(15, 55);
   }
 }
