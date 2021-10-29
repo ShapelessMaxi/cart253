@@ -3,6 +3,7 @@
 let vehicles = [];
 let numCars = 20;
 let numMoto = 20;
+let numSportCars = 3;
 
 function setup() {
   createCanvas(750, 500);
@@ -19,6 +20,13 @@ function setup() {
     let y = random(0, height);
     let moto = new Moto(x, y);
     vehicles.push(moto);
+  }
+
+  for (let i = 0; i < numSportCars; i++) {
+    let x = random(0, width);
+    let y = random(0, height);
+    let sportCar = new SportCar(x, y);
+    vehicles.push(sportCar);
   }
 }
 
