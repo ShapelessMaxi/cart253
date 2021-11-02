@@ -15,13 +15,17 @@ in-between, see the proposal's pdf.
 
 // body parts
 let head;
+// let leftLeg;
 
 // store all populating circles here (eventualy one array for each body part)
 let headCircles = [];
+// let leftLegCircles = [];
 
-// store all body parts here
+// store all body parts here (for now only a head)
+// with all the parts in the same array, i'll be able to chose parts at random
 let bodyParts = [];
 
+// create the canvas, the body parts and populate the body parts with circles
 function setup() {
   // create canvas
   createCanvas(400, 400);
@@ -68,9 +72,15 @@ function draw() {
   // reset the head circles array and repopulate it every frame
   headCircles = [];
   populateHead();
+
+  // generative algorithm activated by pressing any key
+  if (keyIsPressed === true) {
+    stretch();
+  }
 }
 
 // create a bunch of circles inside the head
+// maybe the number of circles could start low (with bigger size), and go up as the number of user interactions go up?
 function populateHead() {
   // create an array of the x coordinate from the perimeter array (value inside are from createVertex())
   let xValues = [];
@@ -78,8 +88,7 @@ function populateHead() {
     let currentVertX = head.perimeter[v].x;
     xValues.push(currentVertX);
   }
-  // spread operator(...) to unpack values inside the arrays, used with Math.min() and Math.max() from:
-  // -> https://medium.com/coding-at-dawn/the-fastest-way-to-find-minimum-and-maximum-values-in-an-array-in-javascript-2511115f8621
+  // spread operator(...) to unpack values inside the arrays, used with Math.min() and Math.max() -> https://medium.com/coding-at-dawn/the-fastest-way-to-find-minimum-and-maximum-values-in-an-array-in-javascript-2511115f8621
   // get the min and max value from the x coordinate array
   let xMinBorder = Math.min(...xValues);
   let xMaxBorder = Math.max(...xValues);
@@ -149,5 +158,37 @@ function checkOutsideHead(currentCircle) {
     currentCircle.outside = false;
   } else {
     currentCircle.outside = true;
+  }
+}
+
+// lets try to make a gen algorithm when oyu press a key
+function stretch() {
+  // this chooses which vert to modify
+  let numOfVerts = 5;
+  let modifiableVerts = [];
+
+  // loop through the vertex array and select some at random
+  for (let i = 0; i < numOfVerts; i++) {
+    let currentVert = random(head.perimeter);
+    // check if the selected vertex is the first or last.
+    // these connect with other body parts and should not be moved.
+    while (
+      currentVert === head.perimeter[0] ||
+      currentVert === head.perimeter[8]
+    ) {
+      currentVert = random(head.perimeter);
+    }
+    modifiableVerts.push(currentVert);
+  }
+
+  // this determines how the vertices move
+  // maybe link this with the name value (the sum of each letter converted into ASCII?)
+  let movementValue = sin(10 * frameRate());
+
+  // apply the movement to the selected vertices
+  for (let i = 0; i < modifiableVerts.length; i++) {
+    let currentVert = modifiableVerts[i];
+    currentVert.y += movementValue;
+    currentVert.x += movementValue;
   }
 }

@@ -1,5 +1,6 @@
 // this is the body class (superclass).
 // it will be extended in multiple subclasses for each body parts ?(maybe).
+// every body part will be some kind of irregular polygon and will have the same color
 
 class Body {
   // give the constructor each vertices coordinates as vectors.
@@ -16,11 +17,12 @@ class Body {
   }
 
   display() {
-    // display border shape
+    // display polygon
     push();
     fill(this.color.r, this.color.g, this.color.b, this.color.a);
     noStroke();
     beginShape();
+    // line from collide2D librairy documentation -> https://github.com/bmoren/p5.collide2D#collidelinepoly
     for (let { x, y } of this.perimeter) vertex(x, y);
     endShape(CLOSE);
     pop();
