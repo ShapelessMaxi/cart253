@@ -7,9 +7,9 @@ class Circle {
     this.y = y;
     this.size = random(10, 15);
     this.color = {
-      r: 200,
-      g: 200,
-      b: 200,
+      r: 210,
+      g: 175,
+      b: 235,
       a: 200,
     };
     this.overlapping = undefined;

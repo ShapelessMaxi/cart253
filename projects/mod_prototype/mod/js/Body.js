@@ -10,7 +10,7 @@ class Body {
       r: 200,
       g: 0,
       b: 0,
-      a: 120,
+      a: 50,
     };
     // vertices created with createVector() in main script
     this.perimeter = [va, vb, vc, vd, ve, vf, vg, vh, vi];

@@ -58,7 +58,7 @@ function createHead() {
 // draw elements
 function draw() {
   // background
-  background(0);
+  background(15, 0, 26);
 
   // displaying body parts
   head.display();
@@ -183,12 +183,17 @@ function stretch() {
 
   // this determines how the vertices move
   // maybe link this with the name value (the sum of each letter converted into ASCII?)
-  let movementValue = sin(10 * frameRate());
+  let movementValue = 3 * sin(100 * frameRate());
+  let chance = random();
 
   // apply the movement to the selected vertices
   for (let i = 0; i < modifiableVerts.length; i++) {
     let currentVert = modifiableVerts[i];
-    currentVert.y += movementValue;
-    currentVert.x += movementValue;
+
+    if (chance > 0.66) {
+      currentVert.y += movementValue;
+      currentVert.x += movementValue;
+    } else currentVert.y -= movementValue;
+    currentVert.x -= movementValue;
   }
 }
