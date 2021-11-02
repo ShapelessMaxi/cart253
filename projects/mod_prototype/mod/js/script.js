@@ -15,70 +15,43 @@ in-between, see the proposal's pdf.
 
 // body parts
 let head;
-// let leftArm;
-// let rightArm;
 
-// store all body parts here
-let bodyParts = [];
 // store all populating circles here (eventualy one array for each body part)
 let headCircles = [];
 
-function preload() {}
+// store all body parts here
+let bodyParts = [];
 
 function setup() {
-  createCanvas(750, 750);
+  // create canvas
+  createCanvas(400, 400);
 
+  // create head outline
   createHead();
-}
 
-function createHead() {
-  // defining perimeter of the head
-  let x1 = 30;
-  let y1 = 80;
-  let x2 = 100;
-  let y2 = 30;
-  let x3 = 200;
-  let y3 = 50;
-  let x4 = 250;
-  let y4 = 110;
-  let x5 = 250;
-  let y5 = 200;
-  let x6 = 200;
-  let y6 = 250;
-  let x7 = 110;
-  let y7 = 300;
-  let x8 = 30;
-  let y8 = 250;
-  let x9 = 10;
-  let y9 = 160;
-  // create head with Body class
-  head = new Body(
-    x1,
-    y1,
-    x2,
-    y2,
-    x3,
-    y3,
-    x4,
-    y4,
-    x5,
-    y5,
-    x6,
-    y6,
-    x7,
-    y7,
-    x8,
-    y8,
-    x9,
-    y9
-  );
-  // store head in body parts array for future usage
-  bodyParts.push(head);
-
-  // populating the head with circles
+  // create a bunch of circle inside the head perimeter
   populateHead();
 }
 
+// create the head perimeter
+function createHead() {
+  // defining perimeter of the head, vertex a to vertex i
+  let va = createVector(30, 80);
+  let vb = createVector(100, 30);
+  let vc = createVector(200, 50);
+  let vd = createVector(250, 110);
+  let ve = createVector(250, 200);
+  let vf = createVector(200, 250);
+  let vg = createVector(110, 300);
+  let vh = createVector(30, 250);
+  let vi = createVector(10, 160);
+  // create head with Body class
+  head = new Body(va, vb, vc, vd, ve, vf, vg, vh, vi);
+  // store head in body parts array for future usage
+  bodyParts.push(head);
+}
+
+// draw elements
 function draw() {
   // background
   background(0);
@@ -91,31 +64,66 @@ function draw() {
     let currentCircle = headCircles[i];
     currentCircle.display();
   }
+
+  // reset the head circles array and repopulate it every frame
+  headCircles = [];
+  populateHead();
 }
 
+// create a bunch of circles inside the head
 function populateHead() {
-  let numCircles = 10;
-
+  // create an array of the x coordinate from the perimeter array (value inside are from createVertex())
+  let xValues = [];
+  for (let v = 0; v < head.perimeter.length; v++) {
+    let currentVertX = head.perimeter[v].x;
+    xValues.push(currentVertX);
+  }
   // spread operator(...) to unpack values inside the arrays, used with Math.min() and Math.max() from:
   // -> https://medium.com/coding-at-dawn/the-fastest-way-to-find-minimum-and-maximum-values-in-an-array-in-javascript-2511115f8621
-  let xMinBorder = Math.min(...head.xArray);
-  let xMaxBorder = Math.max(...head.xArray);
-  let yMinBorder = Math.min(...head.yArray);
-  let yMaxBorder = Math.max(...head.yArray);
+  // get the min and max value from the x coordinate array
+  let xMinBorder = Math.min(...xValues);
+  let xMaxBorder = Math.max(...xValues);
 
+  // create an array of the y coordinate from the perimeter array
+  let yValues = [];
+  for (let v = 0; v < head.perimeter.length; v++) {
+    let currentVertY = head.perimeter[v].y;
+    yValues.push(currentVertY);
+  }
+  // get the min and max value from the y coordinate array
+  let yMinBorder = Math.min(...yValues);
+  let yMaxBorder = Math.max(...yValues);
+
+  // create a bunch of circles
+  let numCircles = 150;
   for (let i = 0; i < numCircles; i++) {
     let currentCircle = new Circle(
       random(xMinBorder, xMaxBorder),
       random(yMinBorder, yMaxBorder)
     );
+
+    // check if current circle overlaps with other circles
     checkOverlap(currentCircle);
-    if (!currentCircle.overlapping) {
-      headCircles.push(currentCircle);
+    // check if current circle is outside polygon perimeter
+    checkOutsideHead(currentCircle);
+
+    while (currentCircle.overlapping || currentCircle.outside) {
+      currentCircle.x = random(xMinBorder, xMaxBorder);
+      currentCircle.y = random(yMinBorder, yMaxBorder);
+
+      // rerun the check, if one is true, redo the while loop
+      checkOverlap(currentCircle);
+      checkOutsideHead(currentCircle);
     }
+
+    // add the current circle to the array
+    headCircles.push(currentCircle);
   }
 }
 
+// check if the circles overlaps with each other
 function checkOverlap(currentCircle) {
+  // loop trough all the circles
   for (let j = 0; j < headCircles.length; j++) {
     let otherCircle = headCircles[j];
     let d = dist(
@@ -124,16 +132,22 @@ function checkOverlap(currentCircle) {
       currentCircle.x,
       currentCircle.y
     );
-    if ((d < currentCircle.size / 2, otherCircle.size / 2)) {
+    if (d < currentCircle.size / 2 + otherCircle.size / 2) {
       currentCircle.overlapping = true;
+      break;
+    } else {
+      currentCircle.overlapping = false;
     }
   }
 }
 
-// lets do math to know if circles are inside polygon shape...
-// maybe solution in there -> http://www.jeffreythompson.org/collision-detection/point-circle.php
-function checkOutside() {
-  for (let i = 0; i < headCircles.length; i++) {
-    let currentCircle = headCircles[i];
+// check if the circles are outside of the head perimeter using collide2D librairy
+function checkOutsideHead(currentCircle) {
+  if (
+    collidePointPoly(currentCircle.x, currentCircle.y, head.perimeter, true)
+  ) {
+    currentCircle.outside = false;
+  } else {
+    currentCircle.outside = true;
   }
 }

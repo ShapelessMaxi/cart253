@@ -5,14 +5,15 @@ class Circle {
   constructor(x, y) {
     this.x = x;
     this.y = y;
-    this.size = random(10, 20);
+    this.size = random(10, 15);
     this.color = {
-      r: 130,
-      g: 175,
-      b: 175,
-      a: 100,
+      r: 200,
+      g: 200,
+      b: 200,
+      a: 200,
     };
-    this.overlapping = false;
+    this.overlapping = undefined;
+    this.outside = undefined;
   }
 
   display() {
