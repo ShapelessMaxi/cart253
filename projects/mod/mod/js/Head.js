@@ -1,0 +1,3 @@
+// do I even need subclasses????????
+
+class Head extends Body {}
