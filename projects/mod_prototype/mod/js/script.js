@@ -32,48 +32,10 @@ function setup() {
   createCanvas(750, 750);
 
   // create the head object, index[0] of bodyParts array
-  createBodyPart(
-    30,
-    80,
-    100,
-    30,
-    200,
-    50,
-    250,
-    110,
-    250,
-    200,
-    200,
-    250,
-    110,
-    300,
-    30,
-    250,
-    10,
-    160
-  );
+  createHead();
 
   // create the torso object, index[1] of bodyParts array
-  // createBodyPart(
-  //   30,
-  //   80,
-  //   100,
-  //   30,
-  //   200,
-  //   50,
-  //   250,
-  //   110,
-  //   250,
-  //   200,
-  //   200,
-  //   250,
-  //   110,
-  //   300,
-  //   30,
-  //   250,
-  //   10,
-  //   160
-  // );
+  createTorso();
 
   // create a bunch of circle inside the head perimeter
   populateHead();
@@ -149,6 +111,87 @@ function createBodyPart(
   bodyParts.push(currentBodyPart);
 }
 
+function createHead() {
+  let x1 = 236; // (x1,y1) fixed - attached to torso and left arm
+  let y1 = 220;
+  let x2 = 230;
+  let y2 = 194;
+  let x3 = 209;
+  let y3 = 180;
+  let x4 = 183;
+  let y4 = 186;
+  let x5 = 170;
+  let y5 = 207;
+  let x6 = 174;
+  let y6 = 224;
+  let x7 = 184;
+  let y7 = 231;
+  let x8 = 195;
+  let y8 = 238;
+  let x9 = 222; // (x9,y9) fixed - attached to torso and right arm
+  let y9 = 240;
+  createBodyPart(
+    x1,
+    y1,
+    x2,
+    y2,
+    x3,
+    y3,
+    x4,
+    y4,
+    x5,
+    y5,
+    x6,
+    y6,
+    x7,
+    y7,
+    x8,
+    y8,
+    x9,
+    y9
+  );
+}
+function createTorso() {
+  let x1 = 236; // (x1,y1) fixed - attached to head and left arm
+  let y1 = 220;
+  let x2 = 265; // (x2,y2) fixed - attached to left arm
+  let y2 = 227;
+  let x3 = 303;
+  let y3 = 236;
+  let x4 = 334; // (x4,y4) fixed - attached to left tigh
+  let y4 = 253;
+  let x5 = 341; // (x5,y5) fixed - attached to left and right thighs
+  let y5 = 287;
+  let x6 = 308; // (x6,y6) fixed - attached to right tigh
+  let y6 = 303;
+  let x7 = 260;
+  let y7 = 287;
+  let x8 = 237; //(x8,y8) fixed - attached to right arm
+  let y8 = 265;
+  let x9 = 222; // (x9,y9) fixed - attached to head and right arm
+  let y9 = 240;
+  createBodyPart(
+    x1,
+    y1,
+    x2,
+    y2,
+    x3,
+    y3,
+    x4,
+    y4,
+    x5,
+    y5,
+    x6,
+    y6,
+    x7,
+    y7,
+    x8,
+    y8,
+    x9,
+    y9
+  );
+}
+
 // draw elements
 function draw() {
   // background
@@ -156,7 +199,7 @@ function draw() {
 
   // displaying body parts
   for (let i = 0; i < bodyParts.length; i++) {
-    bodyParts[0].display();
+    bodyParts[i].display();
   }
 
   // displaying the circles in all body parts
@@ -200,7 +243,7 @@ function populateHead() {
   let yMaxBorder = Math.max(...yValues);
 
   // create a bunch of circles
-  let numCircles = 10;
+  let numCircles = 40;
   for (let i = 0; i < numCircles; i++) {
     let currentCircle = new Circle(
       random(xMinBorder, xMaxBorder),
@@ -262,7 +305,7 @@ function checkOutsideHead(currentCircle) {
   }
 }
 
-// lets try to make a gen algorithm when oyu press a key
+// lets try to make a gen algorithm, activate when you press a key
 function stretch() {
   // this chooses which vert to modify
   let numOfVerts = 5;
@@ -284,7 +327,7 @@ function stretch() {
 
   // this determines how the vertices move
   // maybe link this with the name value (the sum of each letter converted into ASCII?)
-  let movementValue = 3 * sin(100 * frameRate());
+  let movementValue = sin(100 * frameRate());
   let chance = random();
 
   // apply the movement to the selected vertices

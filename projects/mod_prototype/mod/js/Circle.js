@@ -5,7 +5,7 @@ class Circle {
   constructor(x, y) {
     this.x = x;
     this.y = y;
-    this.size = random(10, 15);
+    this.size = random(2, 5);
     this.color = {
       r: 210,
       g: 175,
