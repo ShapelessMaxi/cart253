@@ -15,44 +15,138 @@ in-between, see the proposal's pdf.
 
 // body parts
 let head;
+let torso;
 // let leftLeg;
 
 // store all populating circles here (eventualy one array for each body part)
 let headCircles = [];
+let torsoCircles = [];
 // let leftLegCircles = [];
 
-// store all body parts here (for now only a head)
-// with all the parts in the same array, i'll be able to chose parts at random
+// store all body parts here
 let bodyParts = [];
 
 // create the canvas, the body parts and populate the body parts with circles
 function setup() {
   // create canvas
-  createCanvas(400, 400);
+  createCanvas(750, 750);
 
-  // create head outline
-  createHead();
+  // create the head object, index[0] of bodyParts array
+  createBodyPart(
+    30,
+    80,
+    100,
+    30,
+    200,
+    50,
+    250,
+    110,
+    250,
+    200,
+    200,
+    250,
+    110,
+    300,
+    30,
+    250,
+    10,
+    160
+  );
+
+  // create the torso object, index[1] of bodyParts array
+  // createBodyPart(
+  //   30,
+  //   80,
+  //   100,
+  //   30,
+  //   200,
+  //   50,
+  //   250,
+  //   110,
+  //   250,
+  //   200,
+  //   200,
+  //   250,
+  //   110,
+  //   300,
+  //   30,
+  //   250,
+  //   10,
+  //   160
+  // );
 
   // create a bunch of circle inside the head perimeter
   populateHead();
 }
 
-// create the head perimeter
-function createHead() {
-  // defining perimeter of the head, vertex a to vertex i
-  let va = createVector(30, 80);
-  let vb = createVector(100, 30);
-  let vc = createVector(200, 50);
-  let vd = createVector(250, 110);
-  let ve = createVector(250, 200);
-  let vf = createVector(200, 250);
-  let vg = createVector(110, 300);
-  let vh = createVector(30, 250);
-  let vi = createVector(10, 160);
-  // create head with Body class
-  head = new Body(va, vb, vc, vd, ve, vf, vg, vh, vi);
+function createBodyPart(
+  x1,
+  y1,
+  x2,
+  y2,
+  x3,
+  y3,
+  x4,
+  y4,
+  x5,
+  y5,
+  x6,
+  y6,
+  x7,
+  y7,
+  x8,
+  y8,
+  x9,
+  y9
+) {
+  // defining perimeter of the part, vertex a to vertex i
+  // va and vi must be fixed, and must connect to other parts (see map)
+  let coordinates = [
+    x1,
+    y1,
+    x2,
+    y2,
+    x3,
+    y3,
+    x4,
+    y4,
+    x5,
+    y5,
+    x6,
+    y6,
+    x7,
+    y7,
+    x8,
+    y8,
+    x9,
+    y9,
+  ];
+
+  // let coordinates = [
+  //   { x: x1, y: y1 },
+  //   { x: x2, y: y2 },
+  //   { x: x3, y: y3 },
+  //   { x: x4, y: y4 },
+  //   { x: x5, y: y5 },
+  //   { x: x6, y: y6 },
+  //   { x: x7, y: y7 },
+  //   { x: x8, y: y8 },
+  //   { x: x9, y: y9 },
+  // ];
+
+  let va = createVector(coordinates[0], coordinates[1]);
+  let vb = createVector(coordinates[2], coordinates[3]);
+  let vc = createVector(coordinates[4], coordinates[5]);
+  let vd = createVector(coordinates[6], coordinates[7]);
+  let ve = createVector(coordinates[8], coordinates[9]);
+  let vf = createVector(coordinates[10], coordinates[11]);
+  let vg = createVector(coordinates[12], coordinates[13]);
+  let vh = createVector(coordinates[14], coordinates[15]);
+  let vi = createVector(coordinates[16], coordinates[17]);
+  // create body part with Body class
+  let currentBodyPart = new Body(va, vb, vc, vd, ve, vf, vg, vh, vi);
   // store head in body parts array for future usage
-  bodyParts.push(head);
+  bodyParts.push(currentBodyPart);
 }
 
 // draw elements
@@ -61,7 +155,9 @@ function draw() {
   background(15, 0, 26);
 
   // displaying body parts
-  head.display();
+  for (let i = 0; i < bodyParts.length; i++) {
+    bodyParts[0].display();
+  }
 
   // displaying the circles in all body parts
   for (let i = 0; i < headCircles.length; i++) {
@@ -84,8 +180,8 @@ function draw() {
 function populateHead() {
   // create an array of the x coordinate from the perimeter array (value inside are from createVertex())
   let xValues = [];
-  for (let v = 0; v < head.perimeter.length; v++) {
-    let currentVertX = head.perimeter[v].x;
+  for (let v = 0; v < bodyParts[0].perimeter.length; v++) {
+    let currentVertX = bodyParts[0].perimeter[v].x;
     xValues.push(currentVertX);
   }
   // spread operator(...) to unpack values inside the arrays, used with Math.min() and Math.max() -> https://medium.com/coding-at-dawn/the-fastest-way-to-find-minimum-and-maximum-values-in-an-array-in-javascript-2511115f8621
@@ -95,8 +191,8 @@ function populateHead() {
 
   // create an array of the y coordinate from the perimeter array
   let yValues = [];
-  for (let v = 0; v < head.perimeter.length; v++) {
-    let currentVertY = head.perimeter[v].y;
+  for (let v = 0; v < bodyParts[0].perimeter.length; v++) {
+    let currentVertY = bodyParts[0].perimeter[v].y;
     yValues.push(currentVertY);
   }
   // get the min and max value from the y coordinate array
@@ -104,7 +200,7 @@ function populateHead() {
   let yMaxBorder = Math.max(...yValues);
 
   // create a bunch of circles
-  let numCircles = 150;
+  let numCircles = 10;
   for (let i = 0; i < numCircles; i++) {
     let currentCircle = new Circle(
       random(xMinBorder, xMaxBorder),
@@ -153,7 +249,12 @@ function checkOverlap(currentCircle) {
 // check if the circles are outside of the head perimeter using collide2D librairy
 function checkOutsideHead(currentCircle) {
   if (
-    collidePointPoly(currentCircle.x, currentCircle.y, head.perimeter, true)
+    collidePointPoly(
+      currentCircle.x,
+      currentCircle.y,
+      bodyParts[0].perimeter,
+      true
+    )
   ) {
     currentCircle.outside = false;
   } else {
@@ -169,14 +270,14 @@ function stretch() {
 
   // loop through the vertex array and select some at random
   for (let i = 0; i < numOfVerts; i++) {
-    let currentVert = random(head.perimeter);
+    let currentVert = random(bodyParts[0].perimeter);
     // check if the selected vertex is the first or last.
     // these connect with other body parts and should not be moved.
     while (
-      currentVert === head.perimeter[0] ||
-      currentVert === head.perimeter[8]
+      currentVert === bodyParts[0].perimeter[0] ||
+      currentVert === bodyParts[0].perimeter[8]
     ) {
-      currentVert = random(head.perimeter);
+      currentVert = random(bodyParts[0].perimeter);
     }
     modifiableVerts.push(currentVert);
   }
