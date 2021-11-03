@@ -23,6 +23,9 @@ let headCircles = [];
 let torsoCircles = [];
 // let leftLegCircles = [];
 
+// store all circles array here
+let circleArrays = [headCircles, torsoCircles];
+
 // store all body parts here
 let bodyParts = [];
 
@@ -33,12 +36,15 @@ function setup() {
 
   // create the head object, index[0] of bodyParts array
   createHead();
-
   // create the torso object, index[1] of bodyParts array
   createTorso();
 
-  // create a bunch of circle inside the head perimeter
-  populateHead();
+  // create a bunch of circle inside the body parts perimeters
+  // for (let i = 0; i < bodyParts.length; i++) {
+  //   populate(bodyParts[i], circleArrays[i]);
+  // }
+  populate(bodyParts[0], headCircles);
+  populate(bodyParts[1], torsoCircles);
 }
 
 function createBodyPart(
@@ -61,8 +67,7 @@ function createBodyPart(
   x9,
   y9
 ) {
-  // defining perimeter of the part, vertex a to vertex i
-  // va and vi must be fixed, and must connect to other parts (see map)
+  // defining perimeter of the body part, vertex a to vertex i
   let coordinates = [
     x1,
     y1,
@@ -83,19 +88,6 @@ function createBodyPart(
     x9,
     y9,
   ];
-
-  // let coordinates = [
-  //   { x: x1, y: y1 },
-  //   { x: x2, y: y2 },
-  //   { x: x3, y: y3 },
-  //   { x: x4, y: y4 },
-  //   { x: x5, y: y5 },
-  //   { x: x6, y: y6 },
-  //   { x: x7, y: y7 },
-  //   { x: x8, y: y8 },
-  //   { x: x9, y: y9 },
-  // ];
-
   let va = createVector(coordinates[0], coordinates[1]);
   let vb = createVector(coordinates[2], coordinates[3]);
   let vc = createVector(coordinates[4], coordinates[5]);
@@ -203,14 +195,33 @@ function draw() {
   }
 
   // displaying the circles in all body parts
+  // for (let i = 0; i < circleArrays.length; i++) {
+  //   let currentArray = circleArrays[i];
+  //   for (let j = 0; j < currentArray.length; j++) {
+  //     let currentCircle = currentArray[j];
+  //     currentCircle.display();
+  //   }
+  // }
+
   for (let i = 0; i < headCircles.length; i++) {
     let currentCircle = headCircles[i];
     currentCircle.display();
   }
+  for (let i = 0; i < torsoCircles.length; i++) {
+    let currentCircle = torsoCircles[i];
+    currentCircle.display();
+  }
 
-  // reset the head circles array and repopulate it every frame
+  // reset the circles arrays every frame
   headCircles = [];
-  populateHead();
+  torsoCircles = [];
+
+  // repopulating the body parts every frame
+  // for (let i = 0; i < bodyParts.length; i++) {
+  //   populate(bodyParts[i], circleArrays[i]);
+  // }
+  populate(bodyParts[0], circleArrays[0]);
+  populate(bodyParts[1], circleArrays[1]);
 
   // generative algorithm activated by pressing any key
   if (keyIsPressed === true) {
@@ -220,11 +231,11 @@ function draw() {
 
 // create a bunch of circles inside the head
 // maybe the number of circles could start low (with bigger size), and go up as the number of user interactions go up?
-function populateHead() {
+function populate(bodyPart, circleArray) {
   // create an array of the x coordinate from the perimeter array (value inside are from createVertex())
   let xValues = [];
-  for (let v = 0; v < bodyParts[0].perimeter.length; v++) {
-    let currentVertX = bodyParts[0].perimeter[v].x;
+  for (let v = 0; v < bodyPart.perimeter.length; v++) {
+    let currentVertX = bodyPart.perimeter[v].x;
     xValues.push(currentVertX);
   }
   // spread operator(...) to unpack values inside the arrays, used with Math.min() and Math.max() -> https://medium.com/coding-at-dawn/the-fastest-way-to-find-minimum-and-maximum-values-in-an-array-in-javascript-2511115f8621
@@ -234,8 +245,8 @@ function populateHead() {
 
   // create an array of the y coordinate from the perimeter array
   let yValues = [];
-  for (let v = 0; v < bodyParts[0].perimeter.length; v++) {
-    let currentVertY = bodyParts[0].perimeter[v].y;
+  for (let v = 0; v < bodyPart.perimeter.length; v++) {
+    let currentVertY = bodyPart.perimeter[v].y;
     yValues.push(currentVertY);
   }
   // get the min and max value from the y coordinate array
@@ -243,7 +254,7 @@ function populateHead() {
   let yMaxBorder = Math.max(...yValues);
 
   // create a bunch of circles
-  let numCircles = 40;
+  let numCircles = 5;
   for (let i = 0; i < numCircles; i++) {
     let currentCircle = new Circle(
       random(xMinBorder, xMaxBorder),
@@ -251,7 +262,7 @@ function populateHead() {
     );
 
     // check if current circle overlaps with other circles
-    checkOverlap(currentCircle);
+    checkOverlap(currentCircle, circleArray);
     // check if current circle is outside polygon perimeter
     checkOutsideHead(currentCircle);
 
@@ -260,20 +271,20 @@ function populateHead() {
       currentCircle.y = random(yMinBorder, yMaxBorder);
 
       // rerun the check, if one is true, redo the while loop
-      checkOverlap(currentCircle);
+      checkOverlap(currentCircle, circleArray);
       checkOutsideHead(currentCircle);
     }
 
     // add the current circle to the array
-    headCircles.push(currentCircle);
+    circleArray.push(currentCircle);
   }
 }
 
 // check if the circles overlaps with each other
-function checkOverlap(currentCircle) {
+function checkOverlap(currentCircle, circleArray) {
   // loop trough all the circles
-  for (let j = 0; j < headCircles.length; j++) {
-    let otherCircle = headCircles[j];
+  for (let j = 0; j < circleArray.length; j++) {
+    let otherCircle = circleArray[j];
     let d = dist(
       otherCircle.x,
       otherCircle.y,
