@@ -24,7 +24,7 @@ let torsoCircles = [];
 // let leftLegCircles = [];
 
 // store all circles array here
-let circleArrays = [headCircles, torsoCircles];
+let circleArrays = [];
 
 // store all body parts here
 let bodyParts = [];
@@ -38,6 +38,10 @@ function setup() {
   createHead();
   // create the torso object, index[1] of bodyParts array
   createTorso();
+
+  // store the circles arrays in an array
+  circleArrays.push(headCircles, torsoCircles);
+  console.log(torsoCircles);
 
   // create a bunch of circle inside the body parts perimeters
   // for (let i = 0; i < bodyParts.length; i++) {
@@ -220,8 +224,9 @@ function draw() {
   // for (let i = 0; i < bodyParts.length; i++) {
   //   populate(bodyParts[i], circleArrays[i]);
   // }
-  populate(bodyParts[0], circleArrays[0]);
-  populate(bodyParts[1], circleArrays[1]);
+
+  populate(bodyParts[0], headCircles);
+  populate(bodyParts[1], torsoCircles);
 
   // generative algorithm activated by pressing any key
   if (keyIsPressed === true) {
@@ -238,6 +243,7 @@ function populate(bodyPart, circleArray) {
     let currentVertX = bodyPart.perimeter[v].x;
     xValues.push(currentVertX);
   }
+
   // spread operator(...) to unpack values inside the arrays, used with Math.min() and Math.max() -> https://medium.com/coding-at-dawn/the-fastest-way-to-find-minimum-and-maximum-values-in-an-array-in-javascript-2511115f8621
   // get the min and max value from the x coordinate array
   let xMinBorder = Math.min(...xValues);
