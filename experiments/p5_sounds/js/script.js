@@ -1,30 +1,43 @@
 "use strict";
-
-let synth;
-
-let notes = [`F4`, `G4`, `Ab4`, `Bb4`, `C4`, `Db4`, `Eb4`, `F5`];
-let currentNote = 0;
+let mic;
+let ghost = {
+  x: undefined,
+  y: undefined,
+  vx: 0,
+  img: undefined,
+};
 
 function setup() {
   createCanvas(500, 500);
-  background(5, 43, 15);
+
   userStartAudio();
 
-  synth = new p5.PolySynth();
+  ghost.x = 255;
+  ghost.y = 250;
+  ghost.img = loadImage(`assets/images/clown.png`);
+
+  mic = new p5.AudioIn();
+  mic.start();
 }
 
-function draw() {}
+function draw() {
+  background(5, 43, 15);
+  let level = mic.getLevel();
 
-function keyPressed() {
-  setInterval(playNote, 500);
-}
+  ghost.x += random(-1, 1);
+  ghost.x += random(-1, 0);
+  push();
+  imageMode(CENTER);
+  tint(255, 100);
+  image(ghost.img, ghost.x, ghost.y);
 
-function playNote() {
-  let note = notes[currentNote];
-  synth.play(note, 1, 0, 0.2);
+  pop();
 
-  currentNote += 1;
-  if (currentNote === notes.length) {
-    currentNote = 0;
+  if (level > 0.6) {
+    ghost.vx = 20;
   }
+
+  ghost.x += ghost.vx;
 }
+
+function keyPressed() {}
