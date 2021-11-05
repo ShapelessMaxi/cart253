@@ -24,7 +24,7 @@ let torsoCircles = [];
 // let leftLegCircles = [];
 
 // store all circles array here
-let circleArrays = [];
+let circleArrays = [headCircles, torsoCircles];
 
 // store all body parts here
 let bodyParts = [];
@@ -36,19 +36,11 @@ function setup() {
 
   // create the head object, index[0] of bodyParts array
   createHead();
+  head = bodyParts[0];
+
   // create the torso object, index[1] of bodyParts array
   createTorso();
-
-  // store the circles arrays in an array
-  circleArrays.push(headCircles, torsoCircles);
-  console.log(torsoCircles);
-
-  // create a bunch of circle inside the body parts perimeters
-  // for (let i = 0; i < bodyParts.length; i++) {
-  //   populate(bodyParts[i], circleArrays[i]);
-  // }
-  populate(bodyParts[0], headCircles);
-  populate(bodyParts[1], torsoCircles);
+  torso = bodyParts[1];
 }
 
 function createBodyPart(
@@ -225,8 +217,11 @@ function draw() {
   //   populate(bodyParts[i], circleArrays[i]);
   // }
 
-  populate(bodyParts[0], headCircles);
-  populate(bodyParts[1], torsoCircles);
+  // populate(head, headCircles);
+  populate(torso, torsoCircles);
+
+  // populate(bodyParts[0], headCircles);
+  // populate(bodyParts[1], torsoCircles);
 
   // generative algorithm activated by pressing any key
   if (keyIsPressed === true) {
