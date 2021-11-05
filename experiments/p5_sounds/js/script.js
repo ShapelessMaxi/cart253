@@ -13,8 +13,11 @@ function setup() {
 
 function draw() {
   background(150, 150, 55);
+
+  let newRate = map(mouseX, 0, width, -0.1, -5);
+  barkSFX.rate(newRate);
 }
 
 function mousePressed() {
-  barkSFX.play();
+  barkSFX.loop();
 }
