@@ -16,15 +16,15 @@ in-between, see the proposal's pdf.
 // body parts
 let head;
 let torso;
-// let leftLeg;
+// let rightUpperArm;
 
 // store all populating circles here (eventualy one array for each body part)
 let headCircles = [];
 let torsoCircles = [];
-// let leftLegCircles = [];
+// let rightUpperArmCircles = [];
 
 // store all circles array here
-let circleArrays = [headCircles, torsoCircles];
+let circleArrays = [headCircles, torsoCircles /*, rightUpperArmCircles*/];
 
 // store all body parts here
 let bodyParts = [];
@@ -41,6 +41,10 @@ function setup() {
   // create the torso object, index[1] of bodyParts array
   createTorso();
   torso = bodyParts[1];
+
+  // create the right upper arm object, index[2] of bodyParts array
+  // createRighUpperArm();
+  // rightUpperArm = bodyParts[2];
 }
 
 function createBodyPart(
@@ -99,6 +103,7 @@ function createBodyPart(
   bodyParts.push(currentBodyPart);
 }
 
+// create head object (body Class)
 function createHead() {
   let x1 = 236; // (x1,y1) fixed - attached to torso and left arm
   let y1 = 220;
@@ -139,6 +144,7 @@ function createHead() {
     y9
   );
 }
+// create torso object (body Class)
 function createTorso() {
   let x1 = 236; // (x1,y1) fixed - attached to head and left arm
   let y1 = 220;
@@ -179,6 +185,8 @@ function createTorso() {
     y9
   );
 }
+// create right upper arm object (body Class)
+// function createRighUpperArm() {}
 
 // draw elements
 function draw() {
@@ -207,30 +215,32 @@ function draw() {
     let currentCircle = torsoCircles[i];
     currentCircle.display();
   }
+  // for (let i = 0; i < rightUpperArmCircles.length; i++) {
+  //   let currentCircle = rightUpperArmCircles[i];
+  //   currentCircle.display();
+  // }
 
   // reset the circles arrays every frame
   headCircles = [];
   torsoCircles = [];
+  // rightUpperArmCircles = [];
 
   // repopulating the body parts every frame
   // for (let i = 0; i < bodyParts.length; i++) {
   //   populate(bodyParts[i], circleArrays[i]);
   // }
 
-  // populate(head, headCircles);
+  populate(head, headCircles);
   populate(torso, torsoCircles);
+  // populate(rightUpperArm, rightUpperArmCircles);
 
-  // populate(bodyParts[0], headCircles);
-  // populate(bodyParts[1], torsoCircles);
-
-  // generative algorithm activated by pressing any key
+  // generative algorithm activated by pressing any key (only affects head for now)
   if (keyIsPressed === true) {
     stretch();
   }
 }
 
 // create a bunch of circles inside the head
-// maybe the number of circles could start low (with bigger size), and go up as the number of user interactions go up?
 function populate(bodyPart, circleArray) {
   // create an array of the x coordinate from the perimeter array (value inside are from createVertex())
   let xValues = [];
@@ -254,8 +264,13 @@ function populate(bodyPart, circleArray) {
   let yMinBorder = Math.min(...yValues);
   let yMaxBorder = Math.max(...yValues);
 
+  // calculate possible spawn area
+  let rectArea = (xMaxBorder - xMinBorder) * (yMaxBorder - yMinBorder);
+  // define a ratio so there isn't way to many circles (crashes when there's too much cause they can't overlap)
+  let circleRatio = 0.02;
+  // calculate the number of circles to spawn, depending ont the overall size of the body part
+  let numCircles = int(circleRatio * rectArea);
   // create a bunch of circles
-  let numCircles = 5;
   for (let i = 0; i < numCircles; i++) {
     let currentCircle = new Circle(
       random(xMinBorder, xMaxBorder),
@@ -265,7 +280,7 @@ function populate(bodyPart, circleArray) {
     // check if current circle overlaps with other circles
     checkOverlap(currentCircle, circleArray);
     // check if current circle is outside polygon perimeter
-    checkOutsideHead(currentCircle);
+    checkOutsideHead(currentCircle, bodyPart);
 
     while (currentCircle.overlapping || currentCircle.outside) {
       currentCircle.x = random(xMinBorder, xMaxBorder);
@@ -273,7 +288,7 @@ function populate(bodyPart, circleArray) {
 
       // rerun the check, if one is true, redo the while loop
       checkOverlap(currentCircle, circleArray);
-      checkOutsideHead(currentCircle);
+      checkOutsideHead(currentCircle, bodyPart);
     }
 
     // add the current circle to the array
@@ -302,14 +317,9 @@ function checkOverlap(currentCircle, circleArray) {
 }
 
 // check if the circles are outside of the head perimeter using collide2D librairy
-function checkOutsideHead(currentCircle) {
+function checkOutsideHead(currentCircle, bodyPart) {
   if (
-    collidePointPoly(
-      currentCircle.x,
-      currentCircle.y,
-      bodyParts[0].perimeter,
-      true
-    )
+    collidePointPoly(currentCircle.x, currentCircle.y, bodyPart.perimeter, true)
   ) {
     currentCircle.outside = false;
   } else {
@@ -325,14 +335,14 @@ function stretch() {
 
   // loop through the vertex array and select some at random
   for (let i = 0; i < numOfVerts; i++) {
-    let currentVert = random(bodyParts[0].perimeter);
+    let currentVert = random(head.perimeter);
     // check if the selected vertex is the first or last.
     // these connect with other body parts and should not be moved.
     while (
-      currentVert === bodyParts[0].perimeter[0] ||
-      currentVert === bodyParts[0].perimeter[8]
+      currentVert === head.perimeter[0] ||
+      currentVert === head.perimeter[8]
     ) {
-      currentVert = random(bodyParts[0].perimeter);
+      currentVert = random(head.perimeter);
     }
     modifiableVerts.push(currentVert);
   }
