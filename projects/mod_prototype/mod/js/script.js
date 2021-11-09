@@ -9,6 +9,8 @@ have a body, to have authority over it, and to modify it.
 
 to learn more about the program plan, the concept, the story and everything
 in-between, see the proposal's pdf.
+
+also im using p5.2dcollide librairy to cofine circles into the bodyparts (complex polygons).
 */
 
 "use strict";
