@@ -4,7 +4,7 @@ Maxime Perreault
 
 This is a prototype in which I explore sound generation for my final project.
 A- I want to generate a heartbeat sound to use in the background
-B- I wanr to experiment with a generative algorithm using an oscilaltor. my
+B- I want to experiment with a generative algorithm using an oscillator. my
 goal with this is to generate a cool organic sound and a cool visual modification
 of the body (see project 2 proposal and project 2 mod() prototype).
 
@@ -15,16 +15,33 @@ since synthetizers and oscillators are not exactly, well... organic sounding.
 "use strict";
 
 let heart = {
-  main: undefined,
-  secondary: undefined,
+  main: {
+    oscillator: undefined,
+    amp: 0.9,
+    freq: 75,
+    type: `sine`,
+  },
+  secondary: {
+    oscillator: undefined,
+    amp: 0.6,
+    freq: 70,
+    type: `sine`,
+  },
 };
 
 let delay = {
   main: {
-    oscillator: undefined,
-    amp: 0.9,
+    obj: undefined,
+    amp: 0.05,
+    delayTime: 0.1,
+    feedback: 0.2,
   },
-  secondary: undefined,
+  secondary: {
+    obj: undefined,
+    amp: 0.1,
+    delayTime: 0.1,
+    feedback: 0.1,
+  },
 };
 
 // create the canvas, create the oscillator and start the audio
@@ -41,33 +58,44 @@ function setup() {
 // create oscillators for the heartbeat
 function heartbeat() {
   // create the main oscillator for the heartbeat
-  heart.main = new p5.Oscillator(75, `sine`);
-  heart.main.amp(delay.main.amp);
+  heart.main.oscillator = new p5.Oscillator(heart.main.freq, heart.main.type);
+  heart.main.oscillator.amp(heart.main.amp);
   // delay (echo) the main oscillator
-  delay.main = new p5.Delay();
-  delay.main.amp(0.05);
-  delay.main.process(heart.main, 0.1, 0.2);
+  delay.main.obj = new p5.Delay();
+  delay.main.obj.amp(delay.main.amp);
+  delay.main.obj.process(
+    heart.main.oscillator,
+    delay.main.delayTime,
+    delay.main.feedback
+  );
 
   // create the secondary oscillator for the heartbeat
-  heart.secondary = new p5.Oscillator(70, `sine`);
-  heart.secondary.amp(0.6);
+  heart.secondary.oscillator = new p5.Oscillator(
+    heart.secondary.freq,
+    heart.secondary.type
+  );
+  heart.secondary.oscillator.amp(heart.secondary.amp);
   // delay (echo) the secondary oscillator
-  delay.secondary = new p5.Delay();
-  delay.secondary.amp(0.1);
-  delay.secondary.process(heart.secondary, 0.1, 0.1);
+  delay.secondary.obj = new p5.Delay();
+  delay.secondary.obj.amp(delay.secondary.amp);
+  delay.secondary.obj.process(
+    heart.secondary.oscillator,
+    delay.secondary.delayTime,
+    delay.secondary.feedback
+  );
 }
 
 // start and stop the heart oscillators (once)
 function singleHeartbeat() {
   // start the main heartbeat oscillator with a 0.13 second delay
-  heart.main.start(0.33);
+  heart.main.oscillator.start(0.23);
   // stop the main heartbeat oscillator after 0.1 second
-  heart.main.stop(0.43);
+  heart.main.oscillator.stop(0.33);
 
   // start the secondary heartbeat oscillator a bit before the main heartbeat
-  heart.secondary.start();
+  heart.secondary.oscillator.start();
   // stop the secondary heartbeat oscillator after 0.1 second
-  heart.secondary.stop(0.1);
+  heart.secondary.oscillator.stop(0.1);
 }
 
 // set the interval that plays the heartbeat
