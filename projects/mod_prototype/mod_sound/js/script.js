@@ -39,19 +39,19 @@ function setup() {
 function heartbeat() {
   // create the main oscillator for the heartbeat
   heart.main = new p5.Oscillator(75, `sine`);
-  heart.main.amp(0.5);
+  heart.main.amp(0.9);
   // delay (echo) the main oscillator
   delay.main = new p5.Delay();
-  delay.main.amp(0.2);
-  delay.main.process(heart.main, 0.25, 0.2);
+  delay.main.amp(0.05);
+  delay.main.process(heart.main, 0.1, 0.2);
 
   // create the secondary oscillator for the heartbeat
   heart.secondary = new p5.Oscillator(70, `sine`);
-  heart.secondary.amp(0.4);
+  heart.secondary.amp(0.6);
   // delay (echo) the secondary oscillator
   delay.secondary = new p5.Delay();
-  delay.secondary.amp(0.4);
-  delay.secondary.process(heart.secondary, 0.1, 0.2);
+  delay.secondary.amp(0.1);
+  delay.secondary.process(heart.secondary, 0.1, 0.1);
 }
 
 // start and stop the heart oscillators (once)
