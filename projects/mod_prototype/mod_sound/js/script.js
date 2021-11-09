@@ -20,7 +20,10 @@ let heart = {
 };
 
 let delay = {
-  main: undefined,
+  main: {
+    oscillator: undefined,
+    amp: 0.9,
+  },
   secondary: undefined,
 };
 
@@ -39,7 +42,7 @@ function setup() {
 function heartbeat() {
   // create the main oscillator for the heartbeat
   heart.main = new p5.Oscillator(75, `sine`);
-  heart.main.amp(0.9);
+  heart.main.amp(delay.main.amp);
   // delay (echo) the main oscillator
   delay.main = new p5.Delay();
   delay.main.amp(0.05);
