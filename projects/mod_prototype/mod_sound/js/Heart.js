@@ -1,16 +1,14 @@
 class Heart {
-  constructor() {
-    this.main = {
-      oscillator: undefined,
-      amp: 0.9,
-      freq: 75,
-      type: `sine`,
-    };
-    this.secondary = {
-      oscillator: undefined,
-      amp: 0.6,
-      freq: 70,
-      type: `sine`,
-    };
+  constructor(amp, freq, type) {
+    this.oscillator = undefined;
+    this.amp = amp;
+    this.freq = freq;
+    this.type = type;
+  }
+
+  createOscillator() {
+    // create the main oscillator for the heartbeat
+    this.oscillator = new p5.Oscillator(this.freq, this.type);
+    this.oscillator.amp(this.amp);
   }
 }
