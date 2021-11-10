@@ -10,45 +10,34 @@ have a body, to have authority over it, and to modify it.
 to learn more about the program plan, the concept, the story and everything
 in-between, see the proposal's pdf.
 
-also im using p5.2dcollide librairy to cofine circles into the bodyparts (complex polygons).
+also im using p5.2dcollide librairy to confine atoms into the bodyparts (complex polygons).
 */
 
 "use strict";
 
-// body parts
-let head;
-let torso;
-// let rightUpperArm;
-
-// store all populating circles here (eventualy one array for each body part)
-let headCircles = [];
-let torsoCircles = [];
-// let rightUpperArmCircles = [];
-
-// store all circles array here
-let circleArrays = [];
-
 // store all body parts here
 let bodyParts = [];
+// below is the list of body parts with their index number (order of creation), useful for future reference?
+/*
+head - bodyParts[0]
+torso - bodyParts[1]
+*/
 
-// create the canvas, the body parts and populate the body parts with circles
+// create the canvas, the body parts and populate the body parts with atoms
 function setup() {
   // create canvas
   createCanvas(750, 750);
 
-  // create the head object, index[0] of bodyParts array
+  // create the head object
   createHead();
-  head = bodyParts[0];
 
-  // create the torso object, index[1] of bodyParts array
+  // create the torso object
   createTorso();
-  torso = bodyParts[1];
-
-  // create the right upper arm object, index[2] of bodyParts array
-  // createRighUpperArm();
-  // rightUpperArm = bodyParts[2];
 }
 
+// create a body part using a total of 18 parameters (9 (x,y) coordinate points).
+// format of the paramters is: x1,y1,x2,y2,(...),x9,y9.
+// paramters are given in specific bodypart creation functions, ie.: createHead().
 function createBodyPart(
   x1,
   y1,
@@ -69,43 +58,23 @@ function createBodyPart(
   x9,
   y9
 ) {
-  // defining perimeter of the body part, vertex a to vertex i
-  let coordinates = [
-    x1,
-    y1,
-    x2,
-    y2,
-    x3,
-    y3,
-    x4,
-    y4,
-    x5,
-    y5,
-    x6,
-    y6,
-    x7,
-    y7,
-    x8,
-    y8,
-    x9,
-    y9,
-  ];
-  let va = createVector(coordinates[0], coordinates[1]);
-  let vb = createVector(coordinates[2], coordinates[3]);
-  let vc = createVector(coordinates[4], coordinates[5]);
-  let vd = createVector(coordinates[6], coordinates[7]);
-  let ve = createVector(coordinates[8], coordinates[9]);
-  let vf = createVector(coordinates[10], coordinates[11]);
-  let vg = createVector(coordinates[12], coordinates[13]);
-  let vh = createVector(coordinates[14], coordinates[15]);
-  let vi = createVector(coordinates[16], coordinates[17]);
+  // defining perimeter of the body part, vertex a = x1,y1 - vertex i = x9,y9
+  let va = createVector(x1, y1);
+  let vb = createVector(x2, y2);
+  let vc = createVector(x3, y3);
+  let vd = createVector(x4, y4);
+  let ve = createVector(x5, y5);
+  let vf = createVector(x6, y6);
+  let vg = createVector(x7, y7);
+  let vh = createVector(x8, y8);
+  let vi = createVector(x9, y9);
   // create body part with Body class
   let currentBodyPart = new Body(va, vb, vc, vd, ve, vf, vg, vh, vi);
   // store head in body parts array for future usage
   bodyParts.push(currentBodyPart);
 }
 
-// create head object (body Class)
+// create the head object
 function createHead() {
   let x1 = 236; // (x1,y1) fixed - attached to torso and left arm
   let y1 = 220;
@@ -146,7 +115,8 @@ function createHead() {
     y9
   );
 }
-// create torso object (body Class)
+
+// create the torso object
 function createTorso() {
   let x1 = 236; // (x1,y1) fixed - attached to head and left arm
   let y1 = 220;
@@ -187,49 +157,73 @@ function createTorso() {
     y9
   );
 }
-// create right upper arm object (body Class)
-// function createRighUpperArm() {}
 
-// draw elements
+// draw the background, the body and the atoms
+// call generative algorithms (keyIsPressed)
 function draw() {
   // background
   background(37, 19, 69);
 
   // displaying body parts
   for (let i = 0; i < bodyParts.length; i++) {
-    bodyParts[i].display();
+    let currentBodyPart = bodyParts[i];
+    currentBodyPart.displayPolygon();
   }
 
-  // repopulate the circle arrays every few frames
+  // call methods from Body class every 3 frames
   if (frameCount % 3 === 0) {
-    // reset the circles arrays every frame
-    head.circleArray = [];
-    torso.circleArray = [];
-    // rightUpperArm.circleArray = [];
+    // itterate through the list of body parts
+    for (let i = 0; i < bodyParts.length; i++) {
+      let currentBodyPart = bodyParts[i];
 
-    // populate each arrays with circles
-    head.populate();
-    torso.populate();
-    // rightUpperArm.populate();
+      // reset the atoms arrays
+      currentBodyPart.atomArray = [];
+
+      // populate each arrays with atoms
+      currentBodyPart.populate();
+
+      // display atoms
+      currentBodyPart.displayAtoms();
+    }
   }
 
   // generative algorithm activated by pressing any key (only affects head for now)
   if (keyIsPressed === true) {
-    stretch();
+    stretchHead();
   }
 }
 
 // lets try to make a gen algorithm, activate when you press a key
-function stretch() {
-  // this chooses which vert to modify
+/*
+when the shape gets too small, since the atoms cannot overlap, the program crashes.
+possible solutions:
+- check if the area is too small and stop the user from using this algorithm (boring, I don't want an specific ending)
+- link the size of the atoms to the surface area (prob wont fix completely, but it'll help, maybe?)
+(surface area is already calculated in populate() method of body class)
+
+- check on which side the modifable vert is from the center of the shape, and apply
+the movement in a way the shape will stretch more than it'll shrink.
+exemple for the x position:
+33% chance of verts left of center getting the movementValue added and verts right of center getting it substracted (shrink)
+66% chance of verts left of center getting the movementValue substracted and verts right of center getting it added (stretch)
+(still have stop the algo if the area is too small or something)
+
+- make another algorithm to separate to stretching and shrinking
+(still have stop the algo if the area is too small or something)
+*/
+function stretchHead() {
+  // single out the head from the bodyParts array
+  let head = bodyParts[0];
+
+  // choose a number of vertices to modify
   let numOfVerts = 3;
   let modifiableVerts = [];
 
-  // loop through the vertex array and select some at random
+  // loop through the perimeter array and select some at random
   for (let i = 0; i < numOfVerts; i++) {
     let currentVert = random(head.perimeter);
-    // check if the selected vertex is the first or last.
-    // these connect with other body parts and should not be moved.
+    // check if the selected vertex is the first or last
+    // (these connect with other body parts and should not be moved)
     while (
       currentVert === head.perimeter[0] ||
       currentVert === head.perimeter[8]
@@ -240,18 +234,23 @@ function stretch() {
   }
 
   // this determines how the vertices move
-  // maybe link this with the name value (the sum of each letter converted into ASCII?)
+  // maybe link this with the name value? (the sum of each letter converted into ASCII?)
   let movementValue = sin(100 * frameRate());
-  let chance = random();
+
+  // get a float value between 0 and 1
+  let chance = random(0, 1);
 
   // apply the movement to the selected vertices
   for (let i = 0; i < modifiableVerts.length; i++) {
     let currentVert = modifiableVerts[i];
-
     if (chance > 0.66) {
+      // add the value 33% of the time
       currentVert.y += movementValue;
       currentVert.x += movementValue;
-    } else currentVert.y -= movementValue;
-    currentVert.x -= movementValue;
+    } else {
+      // substract the value 66% of the time
+      currentVert.y -= movementValue;
+      currentVert.x -= movementValue;
+    }
   }
 }

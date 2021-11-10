@@ -1,14 +1,12 @@
-// this is the body class (superclass).
-// it will be extended in multiple subclasses for each body parts ?(maybe).
-// every body part will be some kind of irregular polygon and will have the same color
+// every Body object is some kind of irregular polygon populated by a semi-regular density of atoms.
 
 class Body {
   // give the constructor each vertices coordinates as vectors.
-  // keep in mind: va and vi need to connect to other body parts.
   constructor(va, vb, vc, vd, ve, vf, vg, vh, vi) {
+    // define the color of the shape
     this.color = {
-      r: 200,
-      g: 25,
+      r: 130,
+      g: 62,
       b: 25,
       a: 100,
     };
@@ -16,10 +14,14 @@ class Body {
     // vertices created with createVector() in main script
     this.perimeter = [va, vb, vc, vd, ve, vf, vg, vh, vi];
 
-    // store the circles inside an array
-    this.circleArray = [];
+    // store the atoms inside an array
+    this.atomArray = [];
+
+    // define the density of atoms
+    this.atomRatio = 0.01;
   }
 
+  // populate the polyganal shape with atoms
   populate() {
     // create an array of the x coordinate from the perimeter array
     let xValues = [];
@@ -39,89 +41,100 @@ class Body {
       let currentVertY = this.perimeter[v].y;
       yValues.push(currentVertY);
     }
+
     // get the min and max value from the y coordinate array
     let yMinBorder = Math.min(...yValues);
     let yMaxBorder = Math.max(...yValues);
 
-    // calculate possible spawn area
-    let rectArea = (xMaxBorder - xMinBorder) * (yMaxBorder - yMinBorder);
-    // define a ratio so there isn't way to many circles (crashes when there's too much cause they can't overlap)
-    let circleRatio = 0.01;
-    // calculate the number of circles to spawn, depending ont the overall size of the body part
-    let numCircles = int(circleRatio * rectArea);
+    // calculate possible spawn surface
+    let boxArea = (xMaxBorder - xMinBorder) * (yMaxBorder - yMinBorder);
 
-    // create a bunch of circles
-    for (let i = 0; i < numCircles; i++) {
-      let currentCircle = new Circle(
+    // calculate the number of atoms to spawn, depending ont the overall size of the body part
+    let numAtoms = int(this.atomRatio * boxArea);
+
+    // create a bunch of atoms in the spawn area
+    for (let i = 0; i < numAtoms; i++) {
+      let currentAtom = new Atom(
         random(xMinBorder, xMaxBorder),
         random(yMinBorder, yMaxBorder)
       );
 
-      // check if current circle overlaps with other circles
-      this.checkOverlap(currentCircle);
-      // check if current circle is outside polygon perimeter
-      this.checkOutsideHead(currentCircle);
+      // check if current atom overlaps with other atoms
+      this.checkOverlap(currentAtom);
+      // check if current atom is outside polygon perimeter
+      this.checkOutside(currentAtom);
 
-      while (currentCircle.overlapping || currentCircle.outside) {
-        currentCircle.x = random(xMinBorder, xMaxBorder);
-        currentCircle.y = random(yMinBorder, yMaxBorder);
+      while (currentAtom.overlapping || currentAtom.outside) {
+        currentAtom.x = random(xMinBorder, xMaxBorder);
+        currentAtom.y = random(yMinBorder, yMaxBorder);
 
         // rerun the check, if one is true, redo the while loop
-        this.checkOverlap(currentCircle);
-        this.checkOutsideHead(currentCircle);
+        this.checkOverlap(currentAtom);
+        this.checkOutside(currentAtom);
       }
 
-      // add the current circle to the array
-      this.circleArray.push(currentCircle);
+      // add the current atom to the array
+      this.atomArray.push(currentAtom);
     }
   }
 
-  // check if the circles overlaps with each other
-  checkOverlap(currentCircle) {
-    // loop trough all the circles
-    for (let j = 0; j < this.circleArray.length; j++) {
-      let otherCircle = this.circleArray[j];
-      let d = dist(
-        otherCircle.x,
-        otherCircle.y,
-        currentCircle.x,
-        currentCircle.y
-      );
-      if (d < currentCircle.size / 2 + otherCircle.size / 2) {
-        currentCircle.overlapping = true;
+  // check if the atoms overlaps with each other
+  checkOverlap(currentAtom) {
+    // loop trough all the atoms
+    for (let j = 0; j < this.atomArray.length; j++) {
+      let otherAtom = this.atomArray[j];
+
+      // calculate the distance between the center of the two atoms
+      let d = dist(otherAtom.x, otherAtom.y, currentAtom.x, currentAtom.y);
+
+      // if the distance is smaller than the two radius combined, the atoms touch
+      if (d < currentAtom.size / 2 + otherAtom.size / 2) {
+        currentAtom.overlapping = true;
+        // break the loop because they overlap
         break;
       } else {
-        currentCircle.overlapping = false;
+        currentAtom.overlapping = false;
       }
     }
   }
 
-  // check if the circles are outside of the head perimeter using collide2D librairy
-  checkOutsideHead(currentCircle) {
-    if (
-      collidePointPoly(currentCircle.x, currentCircle.y, this.perimeter, true)
-    ) {
-      currentCircle.outside = false;
+  // check if the atoms are outside of the polygon perimeter
+  checkOutside(currentAtom) {
+    // using collidePointPoly method from p5.2dcollide library,
+    // calculate if the current atom touches the perimeter of the shape.
+    // last boolean value is to check if it is inside of the shape.
+    let isInside = collidePointPoly(
+      currentAtom.x,
+      currentAtom.y,
+      this.perimeter,
+      true
+    );
+
+    if (isInside) {
+      currentAtom.outside = false;
     } else {
-      currentCircle.outside = true;
+      currentAtom.outside = true;
     }
   }
 
-  display() {
-    // display polygon
+  // display the polygon border shape
+  displayPolygon() {
     push();
     fill(this.color.r, this.color.g, this.color.b, this.color.a);
     noStroke();
     beginShape();
-    // line from collide2D librairy documentation -> https://github.com/bmoren/p5.collide2D#collidelinepoly
+    // line below is from collide2D librairy documentation -> https://github.com/bmoren/p5.collide2D#collidelinepoly
     for (let { x, y } of this.perimeter) vertex(x, y);
     endShape(CLOSE);
     pop();
+  }
 
-    // displaying the circles
-    for (let j = 0; j < this.circleArray.length; j++) {
-      let currentCircle = this.circleArray[j];
-      currentCircle.display();
+  // display the atoms
+  displayAtoms() {
+    // loop trough
+    for (let j = 0; j < this.atomArray.length; j++) {
+      let currentAtom = this.atomArray[j];
+      currentAtom.display();
     }
   }
 }
