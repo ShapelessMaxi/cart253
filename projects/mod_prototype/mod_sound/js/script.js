@@ -24,7 +24,7 @@ let secondDelay;
 let heartbeatPlaying = false;
 let heartbeatTimer;
 // time in seconds of the delay between each heartbeats, lower num = faster heartbeat
-let singleHeartbeatDelay = 1.9;
+let singleHeartBeatDelay = 1.9;
 
 // define variabes used for the generative oscillator function experiment
 let oscillatorNum = 7;
@@ -60,14 +60,21 @@ function createFirstBeat() {
   let freq = 70;
   let type = `sine`;
   firstBeat = new Heart(amp, freq, type);
-  firstBeat.createOscillator();
+  firstBeat.oscillator = new p5.Oscillator(firstBeat.freq, firstBeat.type);
+  firstBeat.oscillator.amp(firstBeat.amp);
 
   // create the first delay
   let delayAmp = 0.1;
   let delayTime = 0.1;
   let feedback = 0.1;
-  firstDelay = new Delay(delayAmp, delayTime, feedback);
-  firstDelay.createOscillator(firstBeat);
+  firstDelay = new HeartDelay(delayAmp, delayTime, feedback);
+  firstDelay.obj = new p5.Delay();
+  firstDelay.obj.amp(firstDelay.amp);
+  firstDelay.obj.process(
+    firstBeat.oscillator,
+    firstDelay.delayTime,
+    firstDelay.feedback
+  );
 }
 
 // create the oscillators for the second beat of the heart beat and a delay
@@ -77,14 +84,27 @@ function createSecondBeat() {
   let freq = 75;
   let type = `sine`;
   secondBeat = new Heart(amp, freq, type);
-  secondBeat.createOscillator();
+  secondBeat.oscillator = new p5.Oscillator(secondBeat.freq, secondBeat.type);
+  secondBeat.oscillator.amp(secondBeat.amp);
 
   // create the first delay
   let delayAmp = 0.05;
   let delayTime = 0.1;
   let feedback = 0.2;
-  secondDelay = new Delay(delayAmp, delayTime, feedback);
-  secondDelay.createOscillator(secondBeat);
+  secondDelay = new HeartDelay(delayAmp, delayTime, feedback);
+  secondDelay.obj = new p5.Delay();
+  secondDelay.obj.amp(secondDelay.amp);
+  secondDelay.obj.process(
+    secondBeat.oscillator,
+    secondDelay.delayTime,
+    secondDelay.feedback
+  );
+}
+
+// set the interval that plays the heartbeat
+function heartbeatInterval() {
+  // set interval so the single heart beat is repeated every 2 seconds
+  heartbeatTimer = setInterval(singleHeartbeat, singleHeartBeatDelay * 1000);
 }
 
 // start and stop the heart oscillators (once)
@@ -103,12 +123,6 @@ function singleHeartbeat() {
   heartbeatPlaying = true;
 }
 
-// set the interval that plays the heartbeat
-function heartbeatInterval() {
-  // set interval so the single heart beat is repeated every 2 seconds
-  heartbeatTimer = setInterval(singleHeartbeat, singleHeartbeatDelay * 1000);
-}
-
 // draw the background and the instructions
 function draw() {
   // draw the background
@@ -116,22 +130,9 @@ function draw() {
 
   // draw the instructions
   drawInstructions();
-
-  // start and stop the heartbeat when you click (theres a semi big delay btw!)
-  function mouseClicked() {
-    if (!heartbeatPlaying) {
-      // start the heartbeat oscillators
-      heartbeatInterval();
-    } else if (heartbeatPlaying) {
-      // clear the interval (stop the timer)
-      clearInterval(heartbeatTimer);
-      // keep track of the heartbeat not playing anymore
-      heartbeatPlaying = false;
-    }
-  }
-  console.log(heartbeatPlaying);
 }
 
+// draw the instructions
 function drawInstructions() {
   // draw instructions for the heartbeat
   push();
@@ -161,6 +162,19 @@ function drawInstructions() {
     text(`press enter to stop the weird noise`, width / 2, height / 5);
   }
   pop();
+}
+
+// start and stop the heartbeat when you click
+function mousePressed() {
+  if (!heartbeatPlaying) {
+    // start the heartbeat oscillators
+    heartbeatInterval();
+  } else if (heartbeatPlaying) {
+    // clear the interval (stop the timer)
+    clearInterval(heartbeatTimer);
+    // keep track of the heartbeat not playing anymore
+    heartbeatPlaying = false;
+  }
 }
 
 function keyPressed() {
