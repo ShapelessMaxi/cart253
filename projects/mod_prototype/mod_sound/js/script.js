@@ -28,14 +28,20 @@ let singleHeartBeatDelay = 1.9;
 
 // define variabes used for the generative oscillator function experiment
 let oscillatorNum = 7;
+// store all the oscillators here
 let oscillators = [];
-// this should be a class again........
+// this should be a class........
 let osci = {
-  minFrequency: 100,
-  maxFrequency: 1000,
-  amp: 0.2,
+  amp: 0.1,
   type: [`sine`, `sine`, `sine`, `sine`, `triangle`],
   created: false,
+};
+
+// this also sould be a class....
+let circle = {
+  x: undefined,
+  y: undefined,
+  size: 8,
 };
 
 // create the canvas, create the oscillator and start the audio
@@ -130,6 +136,9 @@ function draw() {
 
   // draw the instructions
   drawInstructions();
+
+  // draw some circles (represent the atoms inside the body in my program)
+  drawAtoms();
 }
 
 // draw the instructions
@@ -152,16 +161,30 @@ function drawInstructions() {
   textAlign(CENTER);
   fill(255);
   if (!osci.created) {
-    text(`press space to start a weird noise`, width / 2, height / 4);
+    text(`press space to start a weird noise`, width / 2, height / 6);
   } else {
     text(
       `press space to change the frequency of the weird noise`,
       width / 2,
-      height / 4
+      height / 6
     );
-    text(`press enter to stop the weird noise`, width / 2, height / 5);
+    text(`press enter to stop the weird noise`, width / 2, height / 8);
   }
   pop();
+}
+
+// draw some atoms
+function drawAtoms() {
+  let numCircles = 100;
+  for (let i = 0; i < numCircles; i++) {
+    circle.x = random(100, 200);
+    circle.y = random(100, 200);
+    push();
+    noStroke();
+    fill(255, 0, 0);
+    ellipse(circle.x, circle.y, circle.size);
+    pop();
+  }
 }
 
 // start and stop the heartbeat when you click
@@ -177,17 +200,45 @@ function mousePressed() {
   }
 }
 
+// create the oscillator for the generative experiment
+// in my final program, I call the generative algorithm functions by the general effect they have on the body (twist, shrink, etc)
+function twist() {
+  generateSound();
+}
+
+function generateSound() {
+  for (let i = 0; i < oscillatorNum; i++) {
+    // define cosine equation to generate frequency
+    let minFrequency = Math.cos(random(0, frameRate));
+    let maxFrequency = Math.cos(random(500, frameRate * 1000));
+
+    let currentOscillator = new p5.Oscillator();
+    currentOscillator.setType(random(osci.type));
+    currentOscillator.freq(random(minFrequency, maxFrequency));
+    // scale amplitude to number of oscillators -> https://creative-coding.decontextualize.com/synthesizing-analyzing-sound/
+    currentOscillator.amp(osci.amp / oscillatorNum);
+    currentOscillator.start();
+    oscillators.push(currentOscillator);
+  }
+  // keep track of the creation of these oscilators
+  osci.created = true;
+}
+
+// start, stop and modify the generative algorithm
 function keyPressed() {
   if (keyCode === 32) {
+    // first time you press space, create the sounds
     if (!osci.created) {
-      // press space to create the oscillators
+      // press space to create the sounds (bunch of oscillators)
       twist();
     } else if (osci.created) {
-      // press space to change the tone of the oscillators
+      // press space to modify the algorithm
       for (let i = 0; i < oscillators.length; i++) {
+        let newFreq = Math.sin(random(-100, oscillatorNum * random(1, 10)));
         oscillators[i].freq(random(100, 1000));
       }
     }
+    // press enter to stop the sounds
   } else if (keyCode === 13) {
     // press enter to stop the oscillators
     for (let i = 0; i < oscillators.length; i++) {
@@ -197,20 +248,4 @@ function keyPressed() {
     oscillators = [];
     osci.created = false;
   }
-}
-
-// create the oscillator for the generative experiment
-// in my final program, I call the generative algorithm functions by the general effect they have on the body (twist, shrink, etc)
-function twist() {
-  for (let i = 0; i < oscillatorNum; i++) {
-    let currentOscillator = new p5.Oscillator();
-    currentOscillator.setType(random(osci.type));
-    currentOscillator.freq(random(osci.minFrequency, osci.maxFrequency));
-    // scale amplitude to number of oscillators -> https://creative-coding.decontextualize.com/synthesizing-analyzing-sound/
-    currentOscillator.amp(osci.amp / oscillatorNum);
-    currentOscillator.start();
-    oscillators.push(currentOscillator);
-  }
-  // keep track of the creation of these oscilators
-  osci.created = true;
 }
