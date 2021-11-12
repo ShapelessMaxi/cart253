@@ -5,24 +5,35 @@ class Body {
   constructor(va, vb, vc, vd, ve, vf, vg, vh, vi) {
     // define the color of the shape
     this.color = {
-      r: 130,
-      g: 62,
-      b: 25,
-      a: 40,
+      r: 88,
+      g: 224,
+      b: 135,
+      a: 10,
     };
 
     // vertices created with createVector() in main script
     this.perimeter = [va, vb, vc, vd, ve, vf, vg, vh, vi];
 
+    // define spawn box related variables
+    this.spawnBox = {
+      boxArea: undefined,
+      xMinBorder: undefined,
+      yMinBorder: undefined,
+      xMaxBorder: undefined,
+      yMaxBorder: undefined,
+      xCenter: undefined,
+      yCenter: undefined,
+    };
+
     // store the atoms inside an array
     this.atomArray = [];
 
     // define the density of atoms
-    this.atomRatio = 0.01;
+    this.atomRatio = 0.015;
   }
 
-  // populate the polyganal shape with atoms
-  populate() {
+  // calculate the possible spaw area and the density of atoms, and the center of the box
+  spawnboxMath() {
     // create an array of the x coordinate from the perimeter array
     let xValues = [];
     for (let v = 0; v < this.perimeter.length; v++) {
@@ -32,8 +43,8 @@ class Body {
 
     // spread operator(...) to unpack values inside the arrays, used with Math.min() and Math.max() -> https://medium.com/coding-at-dawn/the-fastest-way-to-find-minimum-and-maximum-values-in-an-array-in-javascript-2511115f8621
     // get the min and max value from the x coordinate array
-    let xMinBorder = Math.min(...xValues);
-    let xMaxBorder = Math.max(...xValues);
+    this.spawnBox.xMinBorder = Math.min(...xValues);
+    this.spawnBox.xMaxBorder = Math.max(...xValues);
 
     // create an array of the y coordinate from the perimeter array
     let yValues = [];
@@ -43,20 +54,34 @@ class Body {
     }
 
     // get the min and max value from the y coordinate array
-    let yMinBorder = Math.min(...yValues);
-    let yMaxBorder = Math.max(...yValues);
+    this.spawnBox.yMinBorder = Math.min(...yValues);
+    this.spawnBox.yMaxBorder = Math.max(...yValues);
 
     // calculate possible spawn surface
-    let boxArea = (xMaxBorder - xMinBorder) * (yMaxBorder - yMinBorder);
+    this.spawnBox.boxArea =
+      (this.spawnBox.xMaxBorder - this.spawnBox.xMinBorder) *
+      (this.spawnBox.yMaxBorder - this.spawnBox.yMinBorder);
+
+    // find the center of the box
+    this.spawnBox.xCenter =
+      (this.spawnBox.xMaxBorder - this.spawnBox.xMinBorder) / 2;
+    this.spawnBox.yCenter =
+      (this.spawnBox.yMaxBorder - this.spawnBox.yMinBorder) / 2;
+  }
+
+  // populate the polyganal shape with atoms
+  populate() {
+    // calculate the possible spawn area of atoms and the density
+    this.spawnboxMath();
 
     // calculate the number of atoms to spawn, depending ont the overall size of the body part
-    let numAtoms = int(this.atomRatio * boxArea);
+    let numAtoms = int(this.atomRatio * this.spawnBox.boxArea);
 
     // create a bunch of atoms in the spawn area
     for (let i = 0; i < numAtoms; i++) {
       let currentAtom = new Atom(
-        random(xMinBorder, xMaxBorder),
-        random(yMinBorder, yMaxBorder)
+        random(this.spawnBox.xMinBorder, this.spawnBox.xMaxBorder),
+        random(this.spawnBox.yMinBorder, this.spawnBox.yMaxBorder)
       );
 
       // check if current atom overlaps with other atoms
@@ -65,8 +90,14 @@ class Body {
       this.checkOutside(currentAtom);
 
       while (currentAtom.overlapping || currentAtom.outside) {
-        currentAtom.x = random(xMinBorder, xMaxBorder);
-        currentAtom.y = random(yMinBorder, yMaxBorder);
+        currentAtom.x = random(
+          this.spawnBox.xMinBorder,
+          this.spawnBox.xMaxBorder
+        );
+        currentAtom.y = random(
+          this.spawnBox.yMinBorder,
+          this.spawnBox.yMaxBorder
+        );
 
         // rerun the check, if one is true, redo the while loop
         this.checkOverlap(currentAtom);

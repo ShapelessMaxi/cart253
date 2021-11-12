@@ -7,14 +7,14 @@ class Atom {
     this.y = y;
 
     // for now, size is a random value between 4 and 6. eventualy make it a variable to be able to play with it
-    this.size = random(3, 5);
+    this.size = random(3, 4);
 
     // define the color of the atoms, eventualy make (r, g and b) a variable to be able to play with em
     this.color = {
-      r: 210,
-      g: 175,
-      b: 235,
-      a: 200,
+      r: 125,
+      g: 255,
+      b: 0,
+      a: 150,
     };
 
     // keeps track of overlap with other atoms
@@ -27,6 +27,7 @@ class Atom {
   // diplay atoms
   display() {
     push();
+    // fill(255, 0, 0);
     fill(this.color.r, this.color.g, this.color.b, this.color.a);
     noStroke();
     ellipse(this.x, this.y, this.size);

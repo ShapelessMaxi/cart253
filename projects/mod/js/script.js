@@ -702,20 +702,24 @@ function draw() {
     currentBodyPart.displayPolygon();
   }
 
-  // call methods from Body class every 3 frames
-  if (frameCount % 3 === 0) {
-    // itterate through the list of body parts
-    for (let i = 0; i < bodyParts.length; i++) {
-      let currentBodyPart = bodyParts[i];
+  // call methods from Body class every 3 frames and every 8 frames
+  let framecountSteps = [3, 8];
+  for (let i = 0; i < framecountSteps.length; i++) {
+    let currentFramecount = framecountSteps[i];
+    if (frameCount % currentFramecount === 0) {
+      // itterate through the list of body parts
+      for (let i = 0; i < bodyParts.length; i++) {
+        let currentBodyPart = bodyParts[i];
 
-      // reset the atoms arrays
-      currentBodyPart.atomArray = [];
+        // reset the atoms arrays
+        currentBodyPart.atomArray = [];
 
-      // populate each arrays with atoms
-      currentBodyPart.populate();
+        // populate each arrays with atoms
+        currentBodyPart.populate();
 
-      // display atoms
-      currentBodyPart.displayAtoms();
+        // display atoms
+        currentBodyPart.displayAtoms();
+      }
     }
   }
 
@@ -727,21 +731,9 @@ function draw() {
 
 // lets try to make a gen algorithm, activate when you press a key
 /*
-when the shape gets too small, since the atoms cannot overlap, the program crashes.
+when the shape gets too weird, the program crashes.
 possible solutions:
-- check if the area is too small and stop the user from using this algorithm (boring, I don't want an specific ending)
-- link the size of the atoms to the surface area (prob wont fix completely, but it'll help, maybe?)
-(surface area is already calculated in populate() method of body class)
-
-- check on which side the modifable vert is from the center of the shape, and apply
-the movement in a way the shape will stretch more than it'll shrink.
-exemple for the x position:
-33% chance of verts left of center getting the movementValue added and verts right of center getting it substracted (shrink)
-66% chance of verts left of center getting the movementValue substracted and verts right of center getting it added (stretch)
-(still have stop the algo if the area is too small or something)
-
-- make another algorithm to separate to stretching and shrinking
-(still have stop the algo if the area is too small or something)
+look at neighboor verts,,,.. and do what lol
 */
 function stretchHead() {
   // single out the head from the bodyParts array
@@ -767,22 +759,26 @@ function stretchHead() {
 
   // this determines how the vertices move
   // maybe link this with the name value? (the sum of each letter converted into ASCII?)
-  let movementValue = sin(100 * frameRate());
-
-  // get a float value between 0 and 1
-  let chance = random(0, 1);
+  let strecthValue = sin(frameCount) * 4;
 
   // apply the movement to the selected vertices
   for (let i = 0; i < modifiableVerts.length; i++) {
     let currentVert = modifiableVerts[i];
-    if (chance > 0.66) {
-      // add the value 33% of the time
-      currentVert.y += movementValue;
-      currentVert.x += movementValue;
+
+    if (currentVert.x < head.spawnBox.xCenter) {
+      // the modifable vert is left of the center, to expand we substract the value
+      currentVert.x -= strecthValue;
     } else {
-      // substract the value 66% of the time
-      currentVert.y -= movementValue;
-      currentVert.x -= movementValue;
+      // the modifable vert is right of the center, to expand we add the value
+      currentVert.x += strecthValue;
+    }
+
+    if (currentVert.y < head.spawnBox.yCenter) {
+      // the modifable vert is higher than the center, to expand we substract the value
+      currentVert.y -= strecthValue;
+    } else {
+      // the modifable vert is lower than the center, to expand we add the value
+      currentVert.y += strecthValue;
     }
   }
 }
