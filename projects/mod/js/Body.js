@@ -8,7 +8,7 @@ class Body {
       r: 130,
       g: 62,
       b: 25,
-      a: 100,
+      a: 40,
     };
 
     // vertices created with createVector() in main script

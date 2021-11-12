@@ -7,7 +7,7 @@ class Atom {
     this.y = y;
 
     // for now, size is a random value between 4 and 6. eventualy make it a variable to be able to play with it
-    this.size = random(4, 6);
+    this.size = random(3, 5);
 
     // define the color of the atoms, eventualy make (r, g and b) a variable to be able to play with em
     this.color = {
