@@ -3,18 +3,31 @@ mod(sound)
 Maxime Perreault
 
 This is a prototype in which I explore sound generation for my final project.
-A- I want to generate a heartbeat sound to use in the background.
+A- I want to generate a heartbeat sound to use in the background. (it works well,
+but it sounds very robotic :/, oh well...)
 B- I want to experiment with a generative algorithm using an oscillator. my
 goal with this is to generate a cool organic sound and a cool visual modification
 of the body (see project 2 proposal and project 2 mod() prototype).
 
 I see one main challenge here and it's how hard it'll be to generate organic sounds
 since synthetizers and oscillators are not exactly, well... organic sounding.
+9 nov update: after the live coding session, i decided that this was ways too hard
+to do without any musical knowledge :/
+
+After experimenting with gerenating a bunch of oscillatorss I have realized how
+hard it was to make random oscillators sound good(let alone just a regular oscillator :/)
+I leave the twist function there as a trace of my experiment, but I hate it, thx.
+
+After all these failures, I will try one last experiment
+C- I want to generate an oscillator. the frequency will be a sine wave linked to
+the number of atoms. in my project, the number of atoms changes depending on the
+body part size. I will also add a random noise parameter that will make it a bit
+more variable.
 */
 
 "use strict";
 
-// define variables used for the heartbeat oscillators
+// define variables used for the heartbeat oscillators (A)
 let firstBeat;
 let firstDelay;
 let secondBeat;
@@ -22,11 +35,18 @@ let secondDelay;
 
 // define variables for the repetition and the on/off fucntion of the heartbeat
 let heartbeatPlaying = false;
-let heartbeatTimer;
+let heartMetronome;
 // time in seconds of the delay between each heartbeats, lower num = faster heartbeat
-let singleHeartBeatDelay = 1.9;
+let heartbeatPace = {
+  current: 2200,
+  min: 1700,
+  max: 2700,
+};
+let changePaceInterval;
 
-// define variabes used for the generative oscillator function experiment
+// define variabes used for the generative oscillator function experiment (B)
+/* experiemnt was not successful... will not be using that...
+sorry i did not take the time to clean this part of the code properly **/
 let oscillatorNum = 7;
 // store all the oscillators here
 let oscillators = [];
@@ -37,20 +57,31 @@ let osci = {
   created: false,
 };
 
-// this also sould be a class....
-let circle = {
-  x: undefined,
-  y: undefined,
-  size: 8,
+// define variables for atom generation
+let atomAmount = 20;
+let spawnBox = {
+  xMinBorder: 100,
+  yMinBorder: 100,
+  xMaxBorder: 400,
+  yMaxBorder: 400,
 };
+
+// define variables for the generated wave sound (C)
+let waveSound;
 
 // create the canvas, create the oscillator and start the audio
 function setup() {
+  // create canvas
   createCanvas(500, 500);
+
+  // audio starts only when user interacts with the webpage
   userStartAudio();
 
   // create oscillators for the heartbeat
   createHeartbeat();
+
+  // create the wave sound
+  createWaveSound();
 }
 
 // create the 2 beats with delays forming the heartbeat
@@ -66,59 +97,39 @@ function createFirstBeat() {
   let freq = 70;
   let type = `sine`;
   firstBeat = new Heart(amp, freq, type);
-  firstBeat.oscillator = new p5.Oscillator(firstBeat.freq, firstBeat.type);
-  firstBeat.oscillator.amp(firstBeat.amp);
+  firstBeat.createOscillator();
 
   // create the first delay
-  let delayAmp = 0.1;
-  let delayTime = 0.1;
+  let delayAmp = 1;
+  let delayTime = 0.2;
   let feedback = 0.1;
   firstDelay = new HeartDelay(delayAmp, delayTime, feedback);
-  firstDelay.obj = new p5.Delay();
-  firstDelay.obj.amp(firstDelay.amp);
-  firstDelay.obj.process(
-    firstBeat.oscillator,
-    firstDelay.delayTime,
-    firstDelay.feedback
-  );
+  firstDelay.createDelay(firstBeat);
 }
 
 // create the oscillators for the second beat of the heart beat and a delay
 function createSecondBeat() {
-  // create the first heartbeat
+  // create the second heartbeat
   let amp = 0.9;
   let freq = 75;
   let type = `sine`;
   secondBeat = new Heart(amp, freq, type);
-  secondBeat.oscillator = new p5.Oscillator(secondBeat.freq, secondBeat.type);
-  secondBeat.oscillator.amp(secondBeat.amp);
+  secondBeat.createOscillator();
 
-  // create the first delay
-  let delayAmp = 0.05;
+  // create the second delay
+  let delayAmp = 0.2;
   let delayTime = 0.1;
   let feedback = 0.2;
   secondDelay = new HeartDelay(delayAmp, delayTime, feedback);
-  secondDelay.obj = new p5.Delay();
-  secondDelay.obj.amp(secondDelay.amp);
-  secondDelay.obj.process(
-    secondBeat.oscillator,
-    secondDelay.delayTime,
-    secondDelay.feedback
-  );
-}
-
-// set the interval that plays the heartbeat
-function heartbeatInterval() {
-  // set interval so the single heart beat is repeated every 2 seconds
-  heartbeatTimer = setInterval(singleHeartbeat, singleHeartBeatDelay * 1000);
+  secondDelay.createDelay(secondBeat);
 }
 
 // start and stop the heart oscillators (once)
 function singleHeartbeat() {
   // start the main heartbeat oscillator with a 0.13 second delay
-  firstBeat.oscillator.start(0.23);
+  firstBeat.oscillator.start(0.38);
   // stop the main heartbeat oscillator after 0.1 second
-  firstBeat.oscillator.stop(0.33);
+  firstBeat.oscillator.stop(0.48);
 
   // start the secondary heartbeat oscillator a bit before the main heartbeat
   secondBeat.oscillator.start();
@@ -129,7 +140,38 @@ function singleHeartbeat() {
   heartbeatPlaying = true;
 }
 
-// draw the background and the instructions
+// set the interval that plays the heartbeat
+function heartbeatInterval() {
+  // set interval to change the pace of the heartbeat
+  changePaceInterval = setInterval(changePace, heartbeatPace.current);
+
+  // set interval so the single heart beat is repeated every 2 seconds
+  heartMetronome = setInterval(singleHeartbeat, heartbeatPace.current);
+}
+
+// change the pace of the heartbeat at every heartbeat
+function changePace() {
+  let speedRandomizer = random(0.8, 1.2);
+  heartbeatPace.current *= speedRandomizer;
+  heartbeatPace.current = constrain(
+    heartbeatPace.current,
+    heartbeatPace.min,
+    heartbeatPace.max
+  );
+  return heartbeatPace.current;
+}
+
+// create the wave sound
+function createWaveSound() {
+  let amp = 0.45;
+  let freq = 300;
+  let type = `sine`;
+  waveSound = new Wave(amp, freq, type);
+  waveSound.createOscillator();
+}
+
+// draw the background, the instructions, the atoms
+// apply filters to wave sound
 function draw() {
   // draw the background
   background(217, 188, 178);
@@ -137,8 +179,11 @@ function draw() {
   // draw the instructions
   drawInstructions();
 
-  // draw some circles (represent the atoms inside the body in my program)
+  // draw some atoms (represent the atoms inside the body in my program)
   drawAtoms();
+
+  // apply sine and noise filters to the wave sound oscillator
+  waveSound.applySine(atomAmount);
 }
 
 // draw the instructions
@@ -171,19 +216,41 @@ function drawInstructions() {
     text(`press enter to stop the weird noise`, width / 2, height / 8);
   }
   pop();
+
+  // draw instructions for the wave sound
+  push();
+  textSize(16);
+  textAlign(CENTER);
+  fill(255);
+  if (!waveSound.started) {
+    text(`press G to start a wave sound`, width / 2, height / 1.1);
+  } else {
+    text(`press G to stop a wave sound`, width / 2, height / 1.1);
+    text(`and change the wave frequency`, width / 2, height / 1.25);
+  }
+  pop();
+
+  // draw insrtructions for adding atoms
+  push();
+  textSize(16);
+  textAlign(CENTER);
+  fill(255);
+  text(
+    `scroll the mouse wheel to add or substract atoms`,
+    width / 2,
+    height / 1.3
+  );
+  pop();
 }
 
 // draw some atoms
 function drawAtoms() {
-  let numCircles = 100;
-  for (let i = 0; i < numCircles; i++) {
-    circle.x = random(100, 200);
-    circle.y = random(100, 200);
-    push();
-    noStroke();
-    fill(255, 0, 0);
-    ellipse(circle.x, circle.y, circle.size);
-    pop();
+  for (let i = 0; i < atomAmount; i++) {
+    let x = random(spawnBox.xMinBorder, spawnBox.xMaxBorder);
+    let y = random(spawnBox.yMinBorder, spawnBox.yMaxBorder);
+    let currentAtom = atomAmount[i];
+    currentAtom = new Atom(x, y);
+    currentAtom.display();
   }
 }
 
@@ -194,7 +261,7 @@ function mousePressed() {
     heartbeatInterval();
   } else if (heartbeatPlaying) {
     // clear the interval (stop the timer)
-    clearInterval(heartbeatTimer);
+    clearInterval(heartMetronome);
     // keep track of the heartbeat not playing anymore
     heartbeatPlaying = false;
   }
@@ -203,10 +270,6 @@ function mousePressed() {
 // create the oscillator for the generative experiment
 // in my final program, I call the generative algorithm functions by the general effect they have on the body (twist, shrink, etc)
 function twist() {
-  generateSound();
-}
-
-function generateSound() {
   for (let i = 0; i < oscillatorNum; i++) {
     // define cosine equation to generate frequency
     let minFrequency = Math.cos(random(0, frameRate));
@@ -224,7 +287,8 @@ function generateSound() {
   osci.created = true;
 }
 
-// start, stop and modify the generative algorithm
+// start, stop and modify the generative algorithm experimenting with space
+// start and stop the wave sound with G key
 function keyPressed() {
   if (keyCode === 32) {
     // first time you press space, create the sounds
@@ -247,5 +311,24 @@ function keyPressed() {
     // reset the array so we can start again cleanly
     oscillators = [];
     osci.created = false;
+  } else if (keyCode === 71) {
+    // press G key to start the wave sound
+    if (!waveSound.started) {
+      waveSound.oscillator.start();
+      waveSound.started = true;
+    } else {
+      // press G key to stop the wave sound
+      waveSound.oscillator.stop();
+      waveSound.started = false;
+    }
+  }
+}
+
+// add or substract atoms whit the mouswheel
+function mouseWheel() {
+  if (event.delta < 0) {
+    atomAmount += 1;
+  } else {
+    atomAmount -= 1;
   }
 }
