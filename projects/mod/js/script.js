@@ -725,9 +725,9 @@ function draw() {
 
   // generative algorithm activated by pressing any key (only affects head for now)
   if (keyIsPressed === true) {
-    let rightLeg = bodyParts[6];
-    let numOfVerts = 3;
-    stretch(rightLeg, numOfVerts);
+    let rightFoot = bodyParts[7];
+    let numOfVerts = 5;
+    stretch(rightFoot, numOfVerts);
   }
 }
 
@@ -741,39 +741,25 @@ function stretch(bodypart, numOfVerts) {
   // store all verts that will be modified here
   let modifiableVerts = [];
 
-  // loop through the perimeter array and select some at random
-  for (let i = 0; i < numOfVerts; i++) {
-    let currentVert = random(bodypart.perimeter);
-    // check if the selected vertex is the first or last (works for head, hands and feet)
-    // (these connect with other body parts and should not be moved)
-    if (
-      bodypart === bodyParts[0] ||
-      bodypart === bodyParts[4] ||
-      bodypart === bodyParts[7] ||
-      bodypart === bodyParts[10] ||
-      bodypart === bodyParts[13]
-    ) {
+  // store these body parts in an array: head, right/left hand and foot
+  // for these parts: the first and last vertex should not be moved (connect with other body part)
+  let head = bodyParts[0];
+  let rightHand = bodyParts[4];
+  let rightFoot = bodyParts[7];
+  let leftHand = bodyParts[10];
+  let leftFoot = bodyParts[13];
+  let fixed2Array = [head, rightHand, rightFoot, leftHand, leftFoot];
+
+  // check if its the torso
+  // torso is the ony body part that only the third and the seventh vertex are not fixed
+  let torso = bodyParts[1];
+  if (bodypart === torso) {
+    for (let i = 0; i < numOfVerts; i++) {
+      let currentVert = random(bodypart.perimeter);
       while (
         currentVert === bodypart.perimeter[0] ||
-        currentVert === bodypart.perimeter[8]
-      ) {
-        currentVert = random(bodypart.perimeter);
-      }
-      modifiableVerts.push(currentVert);
-    } else if (
-      bodypart === bodyParts[2] ||
-      bodypart === bodyParts[3] ||
-      bodypart === bodyParts[5] ||
-      bodypart === bodyParts[6] ||
-      bodypart === bodyParts[8] ||
-      bodypart === bodyParts[9] ||
-      bodypart === bodyParts[11] ||
-      bodypart === bodyParts[12]
-    ) {
-      // check if the selected vertex is the first, fifth, sixth, eihgth or last  (works for shoudlers, arms, thighs and legs)
-      // (these connect with other body parts and should not be moved)
-      while (
-        currentVert === bodypart.perimeter[0] ||
+        currentVert === bodypart.perimeter[1] ||
+        currentVert === bodypart.perimeter[3] ||
         currentVert === bodypart.perimeter[4] ||
         currentVert === bodypart.perimeter[5] ||
         currentVert === bodypart.perimeter[7] ||
@@ -782,6 +768,38 @@ function stretch(bodypart, numOfVerts) {
         currentVert = random(bodypart.perimeter);
       }
       modifiableVerts.push(currentVert);
+    }
+  } else {
+    // checks if the bodypart is inside this array, returns true or false
+    let insideFixed2Array = checkInsideArray(bodypart, fixed2Array);
+    if (insideFixed2Array) {
+      for (let i = 0; i < numOfVerts; i++) {
+        let currentVert = random(bodypart.perimeter);
+        while (
+          currentVert === bodypart.perimeter[0] ||
+          currentVert === bodypart.perimeter[8]
+        ) {
+          currentVert = random(bodypart.perimeter);
+        }
+        modifiableVerts.push(currentVert);
+      }
+    } else {
+      // if not the torso and not in the fixed 2 array, it will be right/left soulder, arm, thigh and leg
+      // for these parts: the first, fifth, sixth and last vertex should not be moved (connect with other body part)
+      let insideFixed4Array = checkInsideArray(bodypart, fixed2Array);
+      for (let i = 0; i < numOfVerts; i++) {
+        let currentVert = random(bodypart.perimeter);
+        while (
+          currentVert === bodypart.perimeter[0] ||
+          currentVert === bodypart.perimeter[4] ||
+          currentVert === bodypart.perimeter[5] ||
+          currentVert === bodypart.perimeter[7] ||
+          currentVert === bodypart.perimeter[8]
+        ) {
+          currentVert = random(bodypart.perimeter);
+        }
+        modifiableVerts.push(currentVert);
+      }
     }
   }
 
@@ -807,6 +825,17 @@ function stretch(bodypart, numOfVerts) {
     } else {
       // the modifable vert is lower than the center, to expand we add the value
       currentVert.y += strecthValue;
+    }
+  }
+}
+
+function checkInsideArray(item, array) {
+  for (let i = 0; i < array.length; i++) {
+    let currentItem = array[i];
+    if (item === currentItem) {
+      return true;
+    } else {
+      return false;
     }
   }
 }
