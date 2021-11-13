@@ -212,7 +212,7 @@ function createRightShoulder() {
   let y6 = 301;
   let x7 = 232;
   let y7 = 284;
-  let x8 = 231; //(x8,y8) fixed - attached to right arm
+  let x8 = 231;
   let y8 = 269;
   let x9 = 237; // (x9,y9) fixed - attached to torso
   let y9 = 265;
@@ -253,7 +253,7 @@ function createRightArm() {
   let y6 = 335;
   let x7 = 276;
   let y7 = 319;
-  let x8 = 255; //(x8,y8) fixed - attached to right arm
+  let x8 = 255;
   let y8 = 306;
   let x9 = 236; // (x9,y9) fixed - attached to right arm
   let y9 = 301;
@@ -329,9 +329,9 @@ function createRightThigh() {
   let y3 = 351;
   let x4 = 356;
   let y4 = 356;
-  let x5 = 384; // (x1,y1) fixed - attached to right leg
+  let x5 = 384; // (x5,y5) fixed - attached to right leg
   let y5 = 359;
-  let x6 = 406; // (x1,y1) fixed - attached to right leg
+  let x6 = 406; // (x6,y6) fixed - attached to right leg
   let y6 = 336;
   let x7 = 394;
   let y7 = 321;
@@ -370,9 +370,9 @@ function createRightLeg() {
   let y3 = 359;
   let x4 = 500;
   let y4 = 352;
-  let x5 = 507; // (x1,y1) fixed - attached to right foot
+  let x5 = 507; // (x5,y5) fixed - attached to right foot
   let y5 = 341;
-  let x6 = 487; // (x1,y1) fixed - attached to right foot
+  let x6 = 487; // (x6,y6) fixed - attached to right foot
   let y6 = 336;
   let x7 = 460;
   let y7 = 333;
@@ -459,7 +459,7 @@ function createLeftShoulder() {
   let y6 = 209;
   let x7 = 286;
   let y7 = 214;
-  let x8 = 270; //(x8,y8) fixed - attached to left arm
+  let x8 = 270;
   let y8 = 214;
   let x9 = 265; // (x9,y9) fixed - attached to torso
   let y9 = 227;
@@ -500,7 +500,7 @@ function createLeftArm() {
   let y6 = 179;
   let x7 = 351;
   let y7 = 179;
-  let x8 = 326; //(x8,y8) fixed - attached to left arm
+  let x8 = 326;
   let y8 = 186;
   let x9 = 309; // (x9,y9) fixed - attached to left arm
   let y9 = 193;
@@ -576,9 +576,9 @@ function createLeftThigh() {
   let y3 = 294;
   let x4 = 424;
   let y4 = 306;
-  let x5 = 440; // (x1,y1) fixed - attached to left leg
+  let x5 = 440; // (x5,y5) fixed - attached to left leg
   let y5 = 297;
-  let x6 = 434; // (x1,y1) fixed - attached to left leg
+  let x6 = 434; // (x6,y6) fixed - attached to left leg
   let y6 = 268;
   let x7 = 412;
   let y7 = 251;
@@ -617,9 +617,9 @@ function createLeftLeg() {
   let y3 = 296;
   let x4 = 529;
   let y4 = 286;
-  let x5 = 544; // (x1,y1) fixed - attached to left foot
+  let x5 = 544; // (x5,y5) fixed - attached to left foot
   let y5 = 275;
-  let x6 = 537; // (x1,y1) fixed - attached to left foot
+  let x6 = 537; // (x6,y6) fixed - attached to left foot
   let y6 = 265;
   let x7 = 499;
   let y7 = 271;
@@ -725,7 +725,9 @@ function draw() {
 
   // generative algorithm activated by pressing any key (only affects head for now)
   if (keyIsPressed === true) {
-    stretchHead();
+    let rightLeg = bodyParts[6];
+    let numOfVerts = 3;
+    stretch(rightLeg, numOfVerts);
   }
 }
 
@@ -735,26 +737,52 @@ when the shape gets too weird, the program crashes.
 possible solutions:
 look at neighboor verts,,,.. and do what lol
 */
-function stretchHead() {
-  // single out the head from the bodyParts array
-  let head = bodyParts[0];
-
-  // choose a number of vertices to modify
-  let numOfVerts = 3;
+function stretch(bodypart, numOfVerts) {
+  // store all verts that will be modified here
   let modifiableVerts = [];
 
   // loop through the perimeter array and select some at random
   for (let i = 0; i < numOfVerts; i++) {
-    let currentVert = random(head.perimeter);
-    // check if the selected vertex is the first or last
+    let currentVert = random(bodypart.perimeter);
+    // check if the selected vertex is the first or last (works for head, hands and feet)
     // (these connect with other body parts and should not be moved)
-    while (
-      currentVert === head.perimeter[0] ||
-      currentVert === head.perimeter[8]
+    if (
+      bodypart === bodyParts[0] ||
+      bodypart === bodyParts[4] ||
+      bodypart === bodyParts[7] ||
+      bodypart === bodyParts[10] ||
+      bodypart === bodyParts[13]
     ) {
-      currentVert = random(head.perimeter);
+      while (
+        currentVert === bodypart.perimeter[0] ||
+        currentVert === bodypart.perimeter[8]
+      ) {
+        currentVert = random(bodypart.perimeter);
+      }
+      modifiableVerts.push(currentVert);
+    } else if (
+      bodypart === bodyParts[2] ||
+      bodypart === bodyParts[3] ||
+      bodypart === bodyParts[5] ||
+      bodypart === bodyParts[6] ||
+      bodypart === bodyParts[8] ||
+      bodypart === bodyParts[9] ||
+      bodypart === bodyParts[11] ||
+      bodypart === bodyParts[12]
+    ) {
+      // check if the selected vertex is the first, fifth, sixth, eihgth or last  (works for shoudlers, arms, thighs and legs)
+      // (these connect with other body parts and should not be moved)
+      while (
+        currentVert === bodypart.perimeter[0] ||
+        currentVert === bodypart.perimeter[4] ||
+        currentVert === bodypart.perimeter[5] ||
+        currentVert === bodypart.perimeter[7] ||
+        currentVert === bodypart.perimeter[8]
+      ) {
+        currentVert = random(bodypart.perimeter);
+      }
+      modifiableVerts.push(currentVert);
     }
-    modifiableVerts.push(currentVert);
   }
 
   // this determines how the vertices move
@@ -765,7 +793,7 @@ function stretchHead() {
   for (let i = 0; i < modifiableVerts.length; i++) {
     let currentVert = modifiableVerts[i];
 
-    if (currentVert.x < head.spawnBox.xCenter) {
+    if (currentVert.x < bodypart.spawnBox.xCenter) {
       // the modifable vert is left of the center, to expand we substract the value
       currentVert.x -= strecthValue;
     } else {
@@ -773,7 +801,7 @@ function stretchHead() {
       currentVert.x += strecthValue;
     }
 
-    if (currentVert.y < head.spawnBox.yCenter) {
+    if (currentVert.y < bodypart.spawnBox.yCenter) {
       // the modifable vert is higher than the center, to expand we substract the value
       currentVert.y -= strecthValue;
     } else {
