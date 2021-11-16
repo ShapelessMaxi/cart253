@@ -37,6 +37,11 @@ left leg - bodyParts[12]
 left foot - bodyParts[13]
 */
 
+let t = 1;
+let highlightAnimation;
+
+let highlightedIndex = 0;
+
 // create the canvas, the body parts and populate the body parts with atoms
 function setup() {
   // create canvas
@@ -730,6 +735,11 @@ function draw() {
     let intensity = 2;
     stretch(head, numOfVerts, intensity);
   }
+
+  // highlight animation
+  highlightAnimation = sin(t);
+  highlightAnimation = map(highlightAnimation, 0, 1, 10, 50);
+  t += 1;
 }
 
 // stretch a body part in a weird way
@@ -847,6 +857,90 @@ function checkInsideArray(item, array) {
       return true;
     } else {
       return false;
+    }
+  }
+}
+
+// select a body part with s key, deselect with d key
+function keyPressed() {
+  // loop back to the start of the array
+  if (highlightedIndex >= bodyParts.length) {
+    highlightedIndex = 0;
+  }
+
+  // define the highlight color
+  let highlightColor = {
+    r: 207,
+    g: 112,
+    b: 157,
+    a: 40,
+  };
+
+  // define the normal unhighlighted color
+  let normalColor = {
+    r: 88,
+    g: 224,
+    b: 135,
+    a: 10,
+  };
+
+  // loop through the bodyparts
+  let currentIndex = highlightedIndex;
+  // when current index is at 0, cannot substract 1 to get the previous bodypart
+  if (currentIndex === 0) {
+    // the last selected bodypart will be the last of the array
+    let lastIndex = 13;
+    // 83 -> S
+    if (keyCode === 83) {
+      // change the selected bodypart color to the highlight color
+      bodyParts[currentIndex].color.r = highlightColor.r;
+      bodyParts[currentIndex].color.g = highlightColor.g;
+      bodyParts[currentIndex].color.b = highlightColor.b;
+      bodyParts[currentIndex].color.a = highlightColor.a;
+      // reset the last bodypart color to normal
+      bodyParts[lastIndex].color.r = normalColor.r;
+      bodyParts[lastIndex].color.g = normalColor.g;
+      bodyParts[lastIndex].color.b = normalColor.b;
+      bodyParts[lastIndex].color.a = normalColor.a;
+      // add 1 to the counter
+      highlightedIndex += 1;
+
+      // 68 -> D
+    } else if (keyCode === 68) {
+      // reset the highlighted bodypart selected color to normal
+      bodyParts[currentIndex].color.r = normalColor.r;
+      bodyParts[currentIndex].color.g = normalColor.g;
+      bodyParts[currentIndex].color.b = normalColor.b;
+      bodyParts[currentIndex].color.a = normalColor.a;
+    }
+    // when current index is not at 0, substract 1 to get the previous bodypart
+  } else {
+    let previousIndex = currentIndex - 1;
+    // 83 -> S
+    if (keyCode === 83) {
+      // reset the last bodypart selected color to normal
+      bodyParts[currentIndex].color.r = highlightColor.r;
+      bodyParts[currentIndex].color.g = highlightColor.g;
+      bodyParts[currentIndex].color.b = highlightColor.b;
+      bodyParts[currentIndex].color.a = highlightColor.a;
+
+      // change the selected bodypart color to the highlight color
+      bodyParts[previousIndex].color.r = normalColor.r;
+      bodyParts[previousIndex].color.g = normalColor.g;
+      bodyParts[previousIndex].color.b = normalColor.b;
+      bodyParts[previousIndex].color.a = normalColor.a;
+
+      // add 1 to the counter
+      highlightedIndex += 1;
+
+      // 68 -> D
+    } else if (keyCode === 68) {
+      // reset the highlighted bodypart selected color to normal
+      // now previous because we counted +1 when selecting it
+      bodyParts[previousIndex].color.r = normalColor.r;
+      bodyParts[previousIndex].color.g = normalColor.g;
+      bodyParts[previousIndex].color.b = normalColor.b;
+      bodyParts[previousIndex].color.a = normalColor.a;
     }
   }
 }
