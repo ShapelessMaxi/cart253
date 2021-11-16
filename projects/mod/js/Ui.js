@@ -5,9 +5,9 @@ class Ui {
 
     // define the border color of the shape
     this.borderColor = {
-      r: 175,
-      g: 175,
-      b: 175,
+      r: 180,
+      g: 130,
+      b: 180,
       a: 25,
     };
 

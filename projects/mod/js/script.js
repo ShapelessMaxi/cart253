@@ -872,7 +872,7 @@ function createLeftFoot() {
 // start the selection highlight animation
 function draw() {
   // background
-  background(14, 19, 28);
+  background(5, 8, 10);
 
   // display background animation
   for (let i = 0; i < backgroundLines.length; i++) {
