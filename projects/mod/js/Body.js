@@ -84,8 +84,13 @@ class Body {
         random(this.spawnBox.yMinBorder, this.spawnBox.yMaxBorder)
       );
 
-      // check if current atom overlaps with other atoms
-      this.checkOverlap(currentAtom);
+      // 7.5% of the time, don't check if atoms overlap (fix algorithm crash)
+      let chance = random(0, 1);
+      let unchecked = 0.075;
+      if (chance > unchecked) {
+        // check if current atom overlaps with other atoms
+        this.checkOverlap(currentAtom);
+      }
       // check if current atom is outside polygon perimeter
       this.checkOutside(currentAtom);
 
@@ -99,8 +104,11 @@ class Body {
           this.spawnBox.yMaxBorder
         );
 
-        // rerun the check, if one is true, redo the while loop
-        this.checkOverlap(currentAtom);
+        // rerun the checks, if one is true, redo the while loop
+        let chance = random(0, 1);
+        if (chance > unchecked) {
+          this.checkOverlap(currentAtom);
+        }
         this.checkOutside(currentAtom);
       }
 

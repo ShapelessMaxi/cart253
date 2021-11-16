@@ -725,10 +725,12 @@ function draw() {
 
   // generative algorithm activated by pressing any key (only affects head for now)
   if (keyIsPressed === true) {
-    let rightFoot = bodyParts[7];
-    let numOfVerts = 5;
-    stretch(rightFoot, numOfVerts);
+    let head = bodyParts[0];
+    let numOfVerts = 2;
+    stretch(head, numOfVerts);
   }
+
+  console.log(bodyParts[0].spawnBox.boxArea);
 }
 
 // lets try to make a gen algorithm, activate when you press a key
