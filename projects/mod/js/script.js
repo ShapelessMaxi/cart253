@@ -42,10 +42,17 @@ let t = 1;
 let highlightWave;
 let highlightedIndex = 0;
 
+// define variables for the ui
+let frameLines = [];
+let ui;
+
 // create the canvas, the body parts and populate the body parts with atoms
 function setup() {
   // create canvas
   createCanvas(750, 750);
+
+  // create the ui
+  createUi();
 
   // create the head object
   createHead();
@@ -77,6 +84,45 @@ function setup() {
   createLeftLeg();
   // create the left foot object
   createLeftFoot();
+}
+
+function createUi() {
+  // create the framing lines
+  let x1 = 75;
+  let y1 = 421;
+  let x2 = 75;
+  let y2 = 0;
+  createFrameLine(x1, y1, x2, y2);
+  let x3 = 675;
+  let y3 = 421;
+  let x4 = 675;
+  let y4 = 0;
+  createFrameLine(x3, y3, x4, y4);
+
+  // create the main ui shape
+  createMainShape();
+}
+
+function createFrameLine(x1, y1, x2, y2) {
+  let va = createVector(x1, y1);
+  let vb = createVector(x2, y2);
+
+  let frameLine = new Frame(va, vb);
+  // store the frame lines here
+  frameLines.push(frameLine);
+}
+
+function createMainShape() {
+  let va = createVector(25, 425);
+  let vb = createVector(125, 425);
+  let vc = createVector(150, 450);
+  let vd = createVector(600, 450);
+  let ve = createVector(625, 425);
+  let vf = createVector(725, 425);
+  let vi = createVector(725, 725);
+  let vg = createVector(25, 725);
+
+  ui = new Ui(va, vb, vc, vd, ve, vf, vi, vg);
 }
 
 // create a body part using a total of 18 parameters (9 (x,y) coordinate points).
@@ -695,11 +741,16 @@ function createLeftFoot() {
   );
 }
 
-// draw the background, the body and the atoms
-// call generative algorithms (keyIsPressed)
+// draw the background, the ui, the body and the atoms
+// start the selection highlight animation
 function draw() {
   // background
   background(14, 19, 28);
+
+  // display the ui
+  ui.display();
+  frameLines[0].display();
+  frameLines[1].display();
 
   // displaying body parts
   for (let i = 0; i < bodyParts.length; i++) {
@@ -844,9 +895,9 @@ function deselectedColorChange(bodypartIndex) {
 
 // makes the highlighted bodypart blink slowly
 function highlightAnimation() {
-  let animationSpeed = 0.03;
-  let darkestAlpha = 25;
-  let lightestAlpha = 95;
+  let animationSpeed = 0.05;
+  let darkestAlpha = 35;
+  let lightestAlpha = 100;
 
   highlightWave = sin(t);
   highlightWave = map(highlightWave, -1, 1, darkestAlpha, lightestAlpha);
@@ -861,7 +912,7 @@ function highlightAnimation() {
 // generative algorithm activated by pressing `1` key
 function strecthSelected() {
   // define the intesity of the streching
-  let intensity = random(2, 4);
+  let intensity = random(3, 6);
 
   // 49 -> `1` key
   if (keyCode === 49) {
@@ -889,7 +940,7 @@ function stretch(bodypart, intensity) {
   let fixed2Array = [head, rightHand, rightFoot, leftHand, leftFoot];
 
   // check if its the torso
-  // torso is the ony body part that only the third and the seventh vertex are not fixed
+  // torso is the only body part that just the third and the seventh vertex are not fixed
   let torso = bodyParts[1];
   if (bodypart === torso) {
     // define the number of vertices that will be modified (torso only has 2 not-fixed vertices)
@@ -913,6 +964,7 @@ function stretch(bodypart, intensity) {
     // define the number of vertices that will be modified (these parts have 7 not-fixed vertices)
     let numOfVerts = floor(random(2, 8));
     // checks if the bodypart is inside this array, returns true or false
+    // for these parts: the first and the last vertex should not be moved (connect with other body part)
     let insideFixed2Array = checkInsideArray(bodypart, fixed2Array);
     if (insideFixed2Array) {
       for (let i = 0; i < numOfVerts; i++) {
