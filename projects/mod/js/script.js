@@ -37,9 +37,9 @@ left leg - bodyParts[12]
 left foot - bodyParts[13]
 */
 
+// define variables for the highlighted body part animation
 let t = 1;
-let highlightAnimation;
-
+let highlightWave;
 let highlightedIndex = 0;
 
 // create the canvas, the body parts and populate the body parts with atoms
@@ -728,22 +728,154 @@ function draw() {
     }
   }
 
-  // generative algorithm activated by pressing any key (only affects head for now)
-  if (keyIsPressed === true) {
-    let head = bodyParts[0];
-    let numOfVerts = 9;
-    let intensity = 2;
-    stretch(head, numOfVerts, intensity);
+  // makes the highlighted bodypart blink slowly
+  highlightAnimation();
+}
+
+// select/deselect
+// strecth algorithm
+function keyPressed() {
+  // select a body part with `S` key, deselect with `D` key
+  selectDeselect();
+
+  // generative algorithm that stretch the selected bodypart in a weird way
+  strecthSelected();
+}
+
+// select the next bodypart, or deselect the current selected bodypart
+function selectDeselect() {
+  // loop back to the start of the array
+  if (highlightedIndex >= bodyParts.length) {
+    highlightedIndex = 0;
   }
 
-  // highlight animation
-  highlightAnimation = sin(t);
-  highlightAnimation = map(highlightAnimation, 0, 1, 10, 50);
-  t += 1;
+  // loop through the bodyparts
+  let currentIndex = highlightedIndex;
+  // when current index is at 0, cannot substract 1 to get the previous bodypart
+  if (currentIndex === 0) {
+    // the last selected bodypart will be the last of the array
+    let lastIndex = 13;
+    // 83 -> `S` key
+    if (keyCode === 83) {
+      // change the selected bodypart color to the highlight color
+      selectedColorChange(currentIndex);
+      // keep track of the selected bodypart
+      bodyParts[currentIndex].selected = true;
+
+      // reset the last bodypart color to normal
+      deselectedColorChange(lastIndex);
+      // keep track of the deselected bodypart
+      bodyParts[lastIndex].selected = false;
+
+      // add 1 to the counter
+      highlightedIndex += 1;
+
+      // 68 -> `D` key
+    } else if (keyCode === 68) {
+      // reset the highlighted bodypart selected color to normal
+      // now previous because we counted +1 when selecting it
+      deselectedColorChange(previousIndex);
+
+      // keep track of the deselected bodypart
+      bodyParts[previousIndex].selected = false;
+    }
+  } else {
+    // when current index is not at 0, substract 1 to get the previous bodypart
+    let previousIndex = currentIndex - 1;
+    // 83 -> `S` key
+    if (keyCode === 83) {
+      // reset the last bodypart selected color to normal
+      selectedColorChange(currentIndex);
+      // keep track of the selected bodypart
+      bodyParts[currentIndex].selected = true;
+
+      // change the selected bodypart color to the highlight color
+      deselectedColorChange(previousIndex);
+      // keep track of the deselected bodypart
+      bodyParts[previousIndex].selected = false;
+
+      // add 1 to the counter
+      highlightedIndex += 1;
+
+      // 68 -> `D` key
+    } else if (keyCode === 68) {
+      // reset the highlighted bodypart selected color to normal
+      // now previous because we counted +1 when selecting it
+      deselectedColorChange(previousIndex);
+
+      // keep track of the deselected bodypart
+      bodyParts[previousIndex].selected = false;
+    }
+  }
+}
+
+// takes care of the color change when selecting a bodypart
+function selectedColorChange(bodypartIndex) {
+  // define the highlight color
+  let highlightColor = {
+    r: 207,
+    g: 112,
+    b: 157,
+    a: 40,
+  };
+
+  // apply the color change
+  bodyParts[bodypartIndex].color.r = highlightColor.r;
+  bodyParts[bodypartIndex].color.g = highlightColor.g;
+  bodyParts[bodypartIndex].color.b = highlightColor.b;
+  bodyParts[bodypartIndex].color.a = highlightColor.a;
+}
+
+// takes care of the color change when deselecting a bodypart
+function deselectedColorChange(bodypartIndex) {
+  // define the normal unhighlighted color
+  let normalColor = {
+    r: 88,
+    g: 224,
+    b: 135,
+    a: 10,
+  };
+
+  bodyParts[bodypartIndex].color.r = normalColor.r;
+  bodyParts[bodypartIndex].color.g = normalColor.g;
+  bodyParts[bodypartIndex].color.b = normalColor.b;
+  bodyParts[bodypartIndex].color.a = normalColor.a;
+}
+
+// makes the highlighted bodypart blink slowly
+function highlightAnimation() {
+  let animationSpeed = 0.03;
+  let darkestAlpha = 25;
+  let lightestAlpha = 95;
+
+  highlightWave = sin(t);
+  highlightWave = map(highlightWave, -1, 1, darkestAlpha, lightestAlpha);
+  t += animationSpeed;
+  for (let i = 0; i < bodyParts.length; i++) {
+    if (bodyParts[i].selected) {
+      bodyParts[i].color.a = highlightWave;
+    }
+  }
+}
+
+// generative algorithm activated by pressing `1` key
+function strecthSelected() {
+  // define the intesity of the streching
+  let intensity = random(2, 4);
+
+  // 49 -> `1` key
+  if (keyCode === 49) {
+    for (let i = 0; i < bodyParts.length; i++) {
+      let currentBodyPart = bodyParts[i];
+      if (currentBodyPart.selected) {
+        stretch(currentBodyPart, intensity);
+      }
+    }
+  }
 }
 
 // stretch a body part in a weird way
-function stretch(bodypart, numOfVerts, intensity) {
+function stretch(bodypart, intensity) {
   // store all verts that will be modified here
   let modifiableVerts = [];
 
@@ -760,16 +892,48 @@ function stretch(bodypart, numOfVerts, intensity) {
   // torso is the ony body part that only the third and the seventh vertex are not fixed
   let torso = bodyParts[1];
   if (bodypart === torso) {
-    if (numOfVerts >= 3) {
-      // get out of the method if the number of verts to modify is bigger han the number of verts that can move
-      return;
-    } else {
+    // define the number of vertices that will be modified (torso only has 2 not-fixed vertices)
+    let numOfVerts = floor(random(1, 3));
+    for (let i = 0; i < numOfVerts; i++) {
+      let currentVert = random(bodypart.perimeter);
+      while (
+        currentVert === bodypart.perimeter[0] ||
+        currentVert === bodypart.perimeter[1] ||
+        currentVert === bodypart.perimeter[3] ||
+        currentVert === bodypart.perimeter[4] ||
+        currentVert === bodypart.perimeter[5] ||
+        currentVert === bodypart.perimeter[7] ||
+        currentVert === bodypart.perimeter[8]
+      ) {
+        currentVert = random(bodypart.perimeter);
+      }
+      modifiableVerts.push(currentVert);
+    }
+  } else {
+    // define the number of vertices that will be modified (these parts have 7 not-fixed vertices)
+    let numOfVerts = floor(random(2, 8));
+    // checks if the bodypart is inside this array, returns true or false
+    let insideFixed2Array = checkInsideArray(bodypart, fixed2Array);
+    if (insideFixed2Array) {
       for (let i = 0; i < numOfVerts; i++) {
         let currentVert = random(bodypart.perimeter);
         while (
           currentVert === bodypart.perimeter[0] ||
-          currentVert === bodypart.perimeter[1] ||
-          currentVert === bodypart.perimeter[3] ||
+          currentVert === bodypart.perimeter[8]
+        ) {
+          currentVert = random(bodypart.perimeter);
+        }
+        modifiableVerts.push(currentVert);
+      }
+    } else {
+      // define the number of vertices that will be modified (these parts have 4 not-fixed vertices)
+      let numOfVerts = floor(random(2, 5));
+      // if not the torso and not in the fixed 2 array, it will be right/left soulder, arm, thigh and leg
+      // for these parts: the first, fifth, sixth and last vertex should not be moved (connect with other body part)
+      for (let i = 0; i < numOfVerts; i++) {
+        let currentVert = random(bodypart.perimeter);
+        while (
+          currentVert === bodypart.perimeter[0] ||
           currentVert === bodypart.perimeter[4] ||
           currentVert === bodypart.perimeter[5] ||
           currentVert === bodypart.perimeter[7] ||
@@ -778,47 +942,6 @@ function stretch(bodypart, numOfVerts, intensity) {
           currentVert = random(bodypart.perimeter);
         }
         modifiableVerts.push(currentVert);
-      }
-    }
-  } else {
-    if (numOfVerts >= 8) {
-      // get out of the method if the number of verts to modify is bigger han the number of verts that can move
-      return;
-    } else {
-      // checks if the bodypart is inside this array, returns true or false
-      let insideFixed2Array = checkInsideArray(bodypart, fixed2Array);
-      if (insideFixed2Array) {
-        for (let i = 0; i < numOfVerts; i++) {
-          let currentVert = random(bodypart.perimeter);
-          while (
-            currentVert === bodypart.perimeter[0] ||
-            currentVert === bodypart.perimeter[8]
-          ) {
-            currentVert = random(bodypart.perimeter);
-          }
-          modifiableVerts.push(currentVert);
-        }
-      } else {
-        if (numOfVerts >= 5) {
-          // get out of the method if the number of verts to modify is bigger han the number of verts that can move
-          return;
-        } else {
-          // if not the torso and not in the fixed 2 array, it will be right/left soulder, arm, thigh and leg
-          // for these parts: the first, fifth, sixth and last vertex should not be moved (connect with other body part)
-          for (let i = 0; i < numOfVerts; i++) {
-            let currentVert = random(bodypart.perimeter);
-            while (
-              currentVert === bodypart.perimeter[0] ||
-              currentVert === bodypart.perimeter[4] ||
-              currentVert === bodypart.perimeter[5] ||
-              currentVert === bodypart.perimeter[7] ||
-              currentVert === bodypart.perimeter[8]
-            ) {
-              currentVert = random(bodypart.perimeter);
-            }
-            modifiableVerts.push(currentVert);
-          }
-        }
       }
     }
   }
@@ -857,90 +980,6 @@ function checkInsideArray(item, array) {
       return true;
     } else {
       return false;
-    }
-  }
-}
-
-// select a body part with s key, deselect with d key
-function keyPressed() {
-  // loop back to the start of the array
-  if (highlightedIndex >= bodyParts.length) {
-    highlightedIndex = 0;
-  }
-
-  // define the highlight color
-  let highlightColor = {
-    r: 207,
-    g: 112,
-    b: 157,
-    a: 40,
-  };
-
-  // define the normal unhighlighted color
-  let normalColor = {
-    r: 88,
-    g: 224,
-    b: 135,
-    a: 10,
-  };
-
-  // loop through the bodyparts
-  let currentIndex = highlightedIndex;
-  // when current index is at 0, cannot substract 1 to get the previous bodypart
-  if (currentIndex === 0) {
-    // the last selected bodypart will be the last of the array
-    let lastIndex = 13;
-    // 83 -> S
-    if (keyCode === 83) {
-      // change the selected bodypart color to the highlight color
-      bodyParts[currentIndex].color.r = highlightColor.r;
-      bodyParts[currentIndex].color.g = highlightColor.g;
-      bodyParts[currentIndex].color.b = highlightColor.b;
-      bodyParts[currentIndex].color.a = highlightColor.a;
-      // reset the last bodypart color to normal
-      bodyParts[lastIndex].color.r = normalColor.r;
-      bodyParts[lastIndex].color.g = normalColor.g;
-      bodyParts[lastIndex].color.b = normalColor.b;
-      bodyParts[lastIndex].color.a = normalColor.a;
-      // add 1 to the counter
-      highlightedIndex += 1;
-
-      // 68 -> D
-    } else if (keyCode === 68) {
-      // reset the highlighted bodypart selected color to normal
-      bodyParts[currentIndex].color.r = normalColor.r;
-      bodyParts[currentIndex].color.g = normalColor.g;
-      bodyParts[currentIndex].color.b = normalColor.b;
-      bodyParts[currentIndex].color.a = normalColor.a;
-    }
-    // when current index is not at 0, substract 1 to get the previous bodypart
-  } else {
-    let previousIndex = currentIndex - 1;
-    // 83 -> S
-    if (keyCode === 83) {
-      // reset the last bodypart selected color to normal
-      bodyParts[currentIndex].color.r = highlightColor.r;
-      bodyParts[currentIndex].color.g = highlightColor.g;
-      bodyParts[currentIndex].color.b = highlightColor.b;
-      bodyParts[currentIndex].color.a = highlightColor.a;
-
-      // change the selected bodypart color to the highlight color
-      bodyParts[previousIndex].color.r = normalColor.r;
-      bodyParts[previousIndex].color.g = normalColor.g;
-      bodyParts[previousIndex].color.b = normalColor.b;
-      bodyParts[previousIndex].color.a = normalColor.a;
-
-      // add 1 to the counter
-      highlightedIndex += 1;
-
-      // 68 -> D
-    } else if (keyCode === 68) {
-      // reset the highlighted bodypart selected color to normal
-      // now previous because we counted +1 when selecting it
-      bodyParts[previousIndex].color.r = normalColor.r;
-      bodyParts[previousIndex].color.g = normalColor.g;
-      bodyParts[previousIndex].color.b = normalColor.b;
-      bodyParts[previousIndex].color.a = normalColor.a;
     }
   }
 }

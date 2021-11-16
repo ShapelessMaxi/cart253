@@ -30,6 +30,9 @@ class Body {
 
     // define the density of atoms
     this.atomRatio = 0.015;
+
+    // keep track of the bodypart being selected
+    this.selected = false;
   }
 
   // calculate the possible spaw area and the density of atoms, and the center of the box
