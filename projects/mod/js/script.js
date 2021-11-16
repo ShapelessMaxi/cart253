@@ -42,6 +42,9 @@ let t = 1;
 let highlightWave;
 let highlightedIndex = 0;
 
+//  define variables for the background
+let backgroundLines = [];
+
 // define variables for the ui
 let frameLines = [];
 let ui;
@@ -61,6 +64,9 @@ let stretchInstruction;
 function setup() {
   // create canvas
   createCanvas(750, 750);
+
+  // create background lines
+  createBackgroundLines();
 
   // create the ui
   createUi();
@@ -101,6 +107,17 @@ function setup() {
   createLeftLeg();
   // create the left foot object
   createLeftFoot();
+}
+
+// create some lines in the background
+function createBackgroundLines() {
+  let numOfLines = 5;
+  for (let i = 0; i < numOfLines; i++) {
+    let x = random(0, width);
+    let y = random(0, height);
+    let currentLine = new BackgroundLine(x, y);
+    backgroundLines.push(currentLine);
+  }
 }
 
 // create the ui
@@ -856,6 +873,13 @@ function createLeftFoot() {
 function draw() {
   // background
   background(14, 19, 28);
+
+  // display background animation
+  for (let i = 0; i < backgroundLines.length; i++) {
+    let currentLine = backgroundLines[i];
+    currentLine.display();
+    currentLine.movement();
+  }
 
   // display the ui
   ui.display();

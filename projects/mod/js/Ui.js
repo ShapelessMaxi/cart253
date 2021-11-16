@@ -8,15 +8,15 @@ class Ui {
       r: 175,
       g: 175,
       b: 175,
-      a: 50,
+      a: 25,
     };
 
     // define the color of the shape
     this.color = {
-      r: 255,
-      g: 255,
-      b: 255,
-      a: 15,
+      r: 75,
+      g: 75,
+      b: 75,
+      a: 85,
     };
 
     // define the border thickness
