@@ -726,20 +726,14 @@ function draw() {
   // generative algorithm activated by pressing any key (only affects head for now)
   if (keyIsPressed === true) {
     let head = bodyParts[0];
-    let numOfVerts = 2;
-    stretch(head, numOfVerts);
+    let numOfVerts = 9;
+    let intensity = 2;
+    stretch(head, numOfVerts, intensity);
   }
-
-  console.log(bodyParts[0].spawnBox.boxArea);
 }
 
-// lets try to make a gen algorithm, activate when you press a key
-/*
-when the shape gets too weird, the program crashes.
-possible solutions:
-look at neighboor verts,,,.. and do what lol
-*/
-function stretch(bodypart, numOfVerts) {
+// stretch a body part in a weird way
+function stretch(bodypart, numOfVerts, intensity) {
   // store all verts that will be modified here
   let modifiableVerts = [];
 
@@ -756,43 +750,16 @@ function stretch(bodypart, numOfVerts) {
   // torso is the ony body part that only the third and the seventh vertex are not fixed
   let torso = bodyParts[1];
   if (bodypart === torso) {
-    for (let i = 0; i < numOfVerts; i++) {
-      let currentVert = random(bodypart.perimeter);
-      while (
-        currentVert === bodypart.perimeter[0] ||
-        currentVert === bodypart.perimeter[1] ||
-        currentVert === bodypart.perimeter[3] ||
-        currentVert === bodypart.perimeter[4] ||
-        currentVert === bodypart.perimeter[5] ||
-        currentVert === bodypart.perimeter[7] ||
-        currentVert === bodypart.perimeter[8]
-      ) {
-        currentVert = random(bodypart.perimeter);
-      }
-      modifiableVerts.push(currentVert);
-    }
-  } else {
-    // checks if the bodypart is inside this array, returns true or false
-    let insideFixed2Array = checkInsideArray(bodypart, fixed2Array);
-    if (insideFixed2Array) {
-      for (let i = 0; i < numOfVerts; i++) {
-        let currentVert = random(bodypart.perimeter);
-        while (
-          currentVert === bodypart.perimeter[0] ||
-          currentVert === bodypart.perimeter[8]
-        ) {
-          currentVert = random(bodypart.perimeter);
-        }
-        modifiableVerts.push(currentVert);
-      }
+    if (numOfVerts >= 3) {
+      // get out of the method if the number of verts to modify is bigger han the number of verts that can move
+      return;
     } else {
-      // if not the torso and not in the fixed 2 array, it will be right/left soulder, arm, thigh and leg
-      // for these parts: the first, fifth, sixth and last vertex should not be moved (connect with other body part)
-      let insideFixed4Array = checkInsideArray(bodypart, fixed2Array);
       for (let i = 0; i < numOfVerts; i++) {
         let currentVert = random(bodypart.perimeter);
         while (
           currentVert === bodypart.perimeter[0] ||
+          currentVert === bodypart.perimeter[1] ||
+          currentVert === bodypart.perimeter[3] ||
           currentVert === bodypart.perimeter[4] ||
           currentVert === bodypart.perimeter[5] ||
           currentVert === bodypart.perimeter[7] ||
@@ -803,11 +770,52 @@ function stretch(bodypart, numOfVerts) {
         modifiableVerts.push(currentVert);
       }
     }
+  } else {
+    if (numOfVerts >= 8) {
+      // get out of the method if the number of verts to modify is bigger han the number of verts that can move
+      return;
+    } else {
+      // checks if the bodypart is inside this array, returns true or false
+      let insideFixed2Array = checkInsideArray(bodypart, fixed2Array);
+      if (insideFixed2Array) {
+        for (let i = 0; i < numOfVerts; i++) {
+          let currentVert = random(bodypart.perimeter);
+          while (
+            currentVert === bodypart.perimeter[0] ||
+            currentVert === bodypart.perimeter[8]
+          ) {
+            currentVert = random(bodypart.perimeter);
+          }
+          modifiableVerts.push(currentVert);
+        }
+      } else {
+        if (numOfVerts >= 5) {
+          // get out of the method if the number of verts to modify is bigger han the number of verts that can move
+          return;
+        } else {
+          // if not the torso and not in the fixed 2 array, it will be right/left soulder, arm, thigh and leg
+          // for these parts: the first, fifth, sixth and last vertex should not be moved (connect with other body part)
+          for (let i = 0; i < numOfVerts; i++) {
+            let currentVert = random(bodypart.perimeter);
+            while (
+              currentVert === bodypart.perimeter[0] ||
+              currentVert === bodypart.perimeter[4] ||
+              currentVert === bodypart.perimeter[5] ||
+              currentVert === bodypart.perimeter[7] ||
+              currentVert === bodypart.perimeter[8]
+            ) {
+              currentVert = random(bodypart.perimeter);
+            }
+            modifiableVerts.push(currentVert);
+          }
+        }
+      }
+    }
   }
 
   // this determines how the vertices move
   // maybe link this with the name value? (the sum of each letter converted into ASCII?)
-  let strecthValue = sin(frameCount) * 4;
+  let strecthValue = sin(frameCount) * intensity;
 
   // apply the movement to the selected vertices
   for (let i = 0; i < modifiableVerts.length; i++) {
@@ -831,6 +839,7 @@ function stretch(bodypart, numOfVerts) {
   }
 }
 
+// check if an item is inside an array
 function checkInsideArray(item, array) {
   for (let i = 0; i < array.length; i++) {
     let currentItem = array[i];
