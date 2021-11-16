@@ -13,7 +13,7 @@ class Frame {
     };
 
     // define the line thickness
-    this.thickness = 6;
+    this.thickness = 5;
   }
 
   display() {

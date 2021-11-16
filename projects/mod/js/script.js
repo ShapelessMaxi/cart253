@@ -45,6 +45,17 @@ let highlightedIndex = 0;
 // define variables for the ui
 let frameLines = [];
 let ui;
+let nameUi;
+
+//define variables for the user's name
+let name = `maxi`; // user input in the future
+let nameText; // Instruction object
+
+// define variables for instructions
+let instructions = [];
+let selectInstruction;
+let deselectInstruction;
+let stretchInstruction;
 
 // create the canvas, the body parts and populate the body parts with atoms
 function setup() {
@@ -53,6 +64,12 @@ function setup() {
 
   // create the ui
   createUi();
+
+  // create the name text to display
+  createNameText(name);
+
+  // create instructions
+  createInstructions();
 
   // create the head object
   createHead();
@@ -86,6 +103,7 @@ function setup() {
   createLeftFoot();
 }
 
+// create the ui
 function createUi() {
   // create the framing lines
   let x1 = 75;
@@ -101,8 +119,12 @@ function createUi() {
 
   // create the main ui shape
   createMainShape();
+
+  // create the name ui box
+  createNameUi();
 }
 
+// create the framing lines of the ui
 function createFrameLine(x1, y1, x2, y2) {
   let va = createVector(x1, y1);
   let vb = createVector(x2, y2);
@@ -112,6 +134,7 @@ function createFrameLine(x1, y1, x2, y2) {
   frameLines.push(frameLine);
 }
 
+// create the main box shape of the ui
 function createMainShape() {
   let va = createVector(25, 425);
   let vb = createVector(125, 425);
@@ -123,6 +146,93 @@ function createMainShape() {
   let vg = createVector(25, 725);
 
   ui = new Ui(va, vb, vc, vd, ve, vf, vi, vg);
+}
+
+// create the name ui
+function createNameUi() {
+  let va = createVector(125, -10);
+  let vb = createVector(625, -10);
+  let vc = createVector(625, 75);
+  let vd = createVector(575, 75);
+  let ve = createVector(550, 60);
+  let vf = createVector(200, 60);
+  let vi = createVector(175, 75);
+  let vg = createVector(125, 75);
+
+  nameUi = new Ui(va, vb, vc, vd, ve, vf, vi, vg);
+}
+
+// create the name text so it can be displayed
+function createNameText(name) {
+  let stringBefore = name;
+  let stringAfter = undefined;
+  let alignMode = CENTER;
+  let x = width / 2;
+  let y = 35;
+  nameText = new Instruction(x, y, alignMode, stringBefore, stringAfter);
+
+  // set the discover parameter to true (maybe something cool to do in the futur with that??)
+  nameText.discovered = true;
+  // change the size of the text
+  nameText.size = 22;
+}
+
+// create instructions
+function createInstructions() {
+  let firstColumnX = 75;
+  let secondColumnX = 675;
+
+  let firstRowY = 500;
+  let secondRowY = 550;
+
+  createSelectInstruction(firstColumnX, firstRowY);
+  createDeselectInstruction(secondColumnX, firstRowY);
+  createStretchInstruction(firstColumnX, secondRowY);
+}
+
+// create the select instruction
+function createSelectInstruction(x, y) {
+  let stringBefore = `press 'S' to ... .  .`;
+  let stringAfter = `press 'S' to select a part of your body`;
+  let alignMode = LEFT;
+  selectInstruction = new Instruction(
+    x,
+    y,
+    alignMode,
+    stringBefore,
+    stringAfter
+  );
+  instructions.push(selectInstruction);
+}
+
+// create the deselect instruction
+function createDeselectInstruction(x, y) {
+  let stringBefore = `press 'D' to ... .  .`;
+  let stringAfter = `press 'D' to deselect a part of your body`;
+  let alignMode = RIGHT;
+  deselectInstruction = new Instruction(
+    x,
+    y,
+    alignMode,
+    stringBefore,
+    stringAfter
+  );
+  instructions.push(deselectInstruction);
+}
+
+// create the strech instruction
+function createStretchInstruction(x, y) {
+  let stringBefore = `press '1' to ... .  .`;
+  let stringAfter = `press '1' to strech ?`;
+  let alignMode = LEFT;
+  stretchInstruction = new Instruction(
+    x,
+    y,
+    alignMode,
+    stringBefore,
+    stringAfter
+  );
+  instructions.push(stretchInstruction);
 }
 
 // create a body part using a total of 18 parameters (9 (x,y) coordinate points).
@@ -749,8 +859,24 @@ function draw() {
 
   // display the ui
   ui.display();
+  nameUi.display();
+  nameText.display(nameText.stringBefore);
   frameLines[0].display();
-  frameLines[1].display();
+  frameLines[1].display() - 15;
+
+  // resets the frame line color (changes when algorithm are activated)
+  frameLines[0].color.a = 75;
+  frameLines[1].color.a = 75;
+
+  // display the instructions
+  for (let i = 0; i < instructions.length; i++) {
+    let currentInstruction = instructions[i];
+    if (!currentInstruction.discovered) {
+      currentInstruction.display(currentInstruction.stringBefore);
+    } else {
+      currentInstruction.display(currentInstruction.stringAfter);
+    }
+  }
 
   // displaying body parts
   for (let i = 0; i < bodyParts.length; i++) {
@@ -808,6 +934,11 @@ function selectDeselect() {
     let lastIndex = 13;
     // 83 -> `S` key
     if (keyCode === 83) {
+      // discover the select instruction
+      if (!selectInstruction.discovered) {
+        selectInstruction.discovered = true;
+      }
+
       // change the selected bodypart color to the highlight color
       selectedColorChange(currentIndex);
       // keep track of the selected bodypart
@@ -825,16 +956,21 @@ function selectDeselect() {
     } else if (keyCode === 68) {
       // reset the highlighted bodypart selected color to normal
       // now previous because we counted +1 when selecting it
-      deselectedColorChange(previousIndex);
+      deselectedColorChange(lastIndex);
 
       // keep track of the deselected bodypart
-      bodyParts[previousIndex].selected = false;
+      bodyParts[lastIndex].selected = false;
     }
   } else {
     // when current index is not at 0, substract 1 to get the previous bodypart
     let previousIndex = currentIndex - 1;
     // 83 -> `S` key
     if (keyCode === 83) {
+      // discover the select instruction
+      if (!selectInstruction.discovered) {
+        selectInstruction.discovered = true;
+      }
+
       // reset the last bodypart selected color to normal
       selectedColorChange(currentIndex);
       // keep track of the selected bodypart
@@ -850,6 +986,11 @@ function selectDeselect() {
 
       // 68 -> `D` key
     } else if (keyCode === 68) {
+      // discover the deselect instruction
+      if (!deselectInstruction.discovered) {
+        deselectInstruction.discovered = true;
+      }
+
       // reset the highlighted bodypart selected color to normal
       // now previous because we counted +1 when selecting it
       deselectedColorChange(previousIndex);
@@ -919,6 +1060,11 @@ function strecthSelected() {
     for (let i = 0; i < bodyParts.length; i++) {
       let currentBodyPart = bodyParts[i];
       if (currentBodyPart.selected) {
+        // discover the select instruction
+        if (!stretchInstruction.discovered) {
+          stretchInstruction.discovered = true;
+        }
+
         stretch(currentBodyPart, intensity);
       }
     }
@@ -1022,6 +1168,10 @@ function stretch(bodypart, intensity) {
       currentVert.y += strecthValue;
     }
   }
+
+  // make the ui frame lines a bit more vibrant
+  frameLines[0].color.a = 190;
+  frameLines[1].color.a = 190;
 }
 
 // check if an item is inside an array

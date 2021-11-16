@@ -16,7 +16,7 @@ class Ui {
       r: 255,
       g: 255,
       b: 255,
-      a: 45,
+      a: 15,
     };
 
     // define the border thickness
