@@ -37,6 +37,23 @@ left leg - bodyParts[12]
 left foot - bodyParts[13]
 */
 
+// define variables used for the heartbeat oscillators
+let firstBeat;
+let firstDelay;
+let secondBeat;
+let secondDelay;
+
+// define variables for the repetition and the on/off fucntion of the heartbeat
+let heartbeatPlaying = false;
+let heartMetronome;
+// time in milliseconds of the delay between each heartbeats, lower num = faster heartbeat
+let heartbeatPace = {
+  current: 2200,
+  min: 1700,
+  max: 2700,
+};
+let changePaceInterval;
+
 // define variables for the highlighted body part animation
 let t = 1;
 let highlightWave;
@@ -60,10 +77,17 @@ let selectInstruction;
 let deselectInstruction;
 let stretchInstruction;
 
-// create the canvas, the body parts and populate the body parts with atoms
+// create the canvas, the ui and the body parts
+// create the sounds (heartbeats)
 function setup() {
   // create canvas
   createCanvas(750, 750);
+
+  // audio starts only when user interacts with the webpage
+  userStartAudio();
+
+  // create oscillators for the heartbeat
+  createHeartbeat();
 
   // create background lines
   createBackgroundLines();
@@ -107,6 +131,83 @@ function setup() {
   createLeftLeg();
   // create the left foot object
   createLeftFoot();
+}
+
+// create the 2 beats with delays forming the heartbeat
+function createHeartbeat() {
+  createFirstBeat();
+  createSecondBeat();
+}
+
+// create the oscillators for the first beat of the heart beat and a delay
+function createFirstBeat() {
+  // create the first heartbeat
+  let amp = 0.6;
+  let freq = 70;
+  let type = `sine`;
+  firstBeat = new Heartbeat(amp, freq, type);
+  firstBeat.createOscillator();
+
+  // create the first delay
+  let delayAmp = 1;
+  let delayTime = 0.2;
+  let feedback = 0.1;
+  firstDelay = new HeartDelay(delayAmp, delayTime, feedback);
+  firstDelay.createDelay(firstBeat);
+}
+
+// create the oscillators for the second beat of the heart beat and a delay
+function createSecondBeat() {
+  // create the second heartbeat
+  let amp = 0.9;
+  let freq = 75;
+  let type = `sine`;
+  secondBeat = new Heartbeat(amp, freq, type);
+  secondBeat.createOscillator();
+
+  // create the second delay
+  let delayAmp = 0.2;
+  let delayTime = 0.1;
+  let feedback = 0.2;
+  secondDelay = new HeartDelay(delayAmp, delayTime, feedback);
+  secondDelay.createDelay(secondBeat);
+}
+
+// start and stop the heart oscillators (once)
+function singleHeartbeat() {
+  // start the main heartbeat oscillator with a 0.13 second delay
+  firstBeat.oscillator.start(0.38);
+  // stop the main heartbeat oscillator after 0.1 second
+  firstBeat.oscillator.stop(0.48);
+
+  // start the secondary heartbeat oscillator a bit before the main heartbeat
+  secondBeat.oscillator.start();
+  // stop the secondary heartbeat oscillator after 0.1 second
+  secondBeat.oscillator.stop(0.1);
+
+  // keep track of the heartbeat playing
+  heartbeatPlaying = true;
+}
+
+// set the interval that plays the heartbeat
+function heartbeatInterval() {
+  // set interval to change the pace of the heartbeat
+  changePaceInterval = setInterval(changePace, heartbeatPace.current);
+
+  // set interval so the single heart beat is repeated every 2 seconds
+  heartMetronome = setInterval(singleHeartbeat, heartbeatPace.current);
+}
+
+// change the pace of the heartbeat at every heartbeat
+function changePace() {
+  let speedRandomizer = random(0.8, 1.2);
+  heartbeatPace.current *= speedRandomizer;
+  heartbeatPace.current = constrain(
+    heartbeatPace.current,
+    heartbeatPace.min,
+    heartbeatPace.max
+  );
+  return heartbeatPace.current;
 }
 
 // create some lines in the background
@@ -931,6 +1032,19 @@ function draw() {
 
   // makes the highlighted bodypart blink slowly
   highlightAnimation();
+}
+
+// start and stop the heartbeat when you click
+function mousePressed() {
+  if (!heartbeatPlaying) {
+    // start the heartbeat oscillators
+    heartbeatInterval();
+  } else if (heartbeatPlaying) {
+    // clear the interval (stop the timer)
+    clearInterval(heartMetronome);
+    // keep track of the heartbeat not playing anymore
+    heartbeatPlaying = false;
+  }
 }
 
 // select/deselect
