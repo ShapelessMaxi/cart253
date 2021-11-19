@@ -2,7 +2,6 @@ class Ui {
   constructor(va, vb, vc, vd, ve, vf, vi, vg) {
     // vertices created with createVector() in main script
     this.perimeter = [va, vb, vc, vd, ve, vf, vi, vg];
-
     // define the border color of the shape
     this.borderColor = {
       r: 180,
@@ -10,7 +9,6 @@ class Ui {
       b: 180,
       a: 25,
     };
-
     // define the color of the shape
     this.color = {
       r: 75,
@@ -18,7 +16,6 @@ class Ui {
       b: 75,
       a: 85,
     };
-
     // define the border thickness
     this.borderThickness = 8;
   }
@@ -29,7 +26,6 @@ class Ui {
     noStroke();
     fill(this.color.r, this.color.g, this.color.b, this.color.a);
     beginShape();
-
     // line below is from collide2D librairy documentation -> https://github.com/bmoren/p5.collide2D#collidelinepoly
     for (let { x, y } of this.perimeter) vertex(x, y);
     endShape(CLOSE);
@@ -45,7 +41,6 @@ class Ui {
       this.borderColor.a
     );
     beginShape();
-    // line below is from collide2D librairy documentation -> https://github.com/bmoren/p5.collide2D#collidelinepoly
     for (let { x, y } of this.perimeter) vertex(x, y);
     endShape(CLOSE);
     pop();

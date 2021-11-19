@@ -17,9 +17,8 @@ class BackgroundLine {
 
   movement() {
     this.y1 -= this.speed;
-
-    // spawns at the bottom of the screen when it reachss the top
-    // the 'top' is a really small value so theres a delay before the lines respawn
+    // spawns at the bottom of the screen when it reaches the top
+    // the 'top' is a really small value, creating a delay before the lines respawn
     let delay = -3500;
     if (this.y2 < delay) {
       this.y1 = height;

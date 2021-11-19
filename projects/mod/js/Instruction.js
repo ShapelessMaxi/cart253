@@ -15,14 +15,12 @@ class Instruction {
     };
     this.align = alignMode;
 
-    // keep track of the discovery of the Instruction
-    this.discovered = false;
-
     // define what the instruction says before discovery
     this.stringBefore = stringBefore;
-
     // define what the instruction says after discovery
     this.stringAfter = stringAfter;
+    // keep track of the discovery of the Instruction
+    this.discovered = false;
   }
 
   display(string) {

@@ -14,6 +14,8 @@ also im using p5.2dcollide librairy to confine atoms into the bodyparts (complex
 */
 
 "use strict";
+// define variables for the states
+let currentState;
 
 // store all body parts here
 let bodyParts = [];
@@ -42,7 +44,6 @@ let firstBeat;
 let firstDelay;
 let secondBeat;
 let secondDelay;
-
 // define variables for the repetition and the on/off fucntion of the heartbeat
 let heartbeatPlaying = false;
 let heartMetronome;
@@ -50,9 +51,10 @@ let heartMetronome;
 let heartbeatPace = {
   current: 2200,
   min: 1700,
-  max: 2700,
+  max: 2200,
 };
 let changePaceInterval;
+let slowPaceInterval;
 
 // define variables for the highlighted body part animation
 let t = 1;
@@ -66,7 +68,6 @@ let backgroundLines = [];
 let frameLines = [];
 let ui;
 let nameUi;
-
 //define variables for the user's name
 let name = `maxi`; // user input in the future
 let nameText; // Instruction object
@@ -82,6 +83,9 @@ let stretchInstruction;
 function setup() {
   // create canvas
   createCanvas(750, 750);
+
+  // // create a new state object
+  // currentState = new Title();
 
   // audio starts only when user interacts with the webpage
   userStartAudio();
@@ -135,21 +139,22 @@ function setup() {
 
 // create the 2 beats with delays forming the heartbeat
 function createHeartbeat() {
-  createFirstBeat();
-  createSecondBeat();
+  let generalAmp = 0.09; // this affects the 2 heartbeats and the 2 delays
+  createFirstBeat(generalAmp);
+  createSecondBeat(generalAmp);
 }
 
 // create the oscillators for the first beat of the heart beat and a delay
-function createFirstBeat() {
+function createFirstBeat(generalAmp) {
   // create the first heartbeat
-  let amp = 0.6;
+  let amp = generalAmp * 0.6;
   let freq = 70;
   let type = `sine`;
   firstBeat = new Heartbeat(amp, freq, type);
   firstBeat.createOscillator();
 
   // create the first delay
-  let delayAmp = 1;
+  let delayAmp = generalAmp * 1;
   let delayTime = 0.2;
   let feedback = 0.1;
   firstDelay = new HeartDelay(delayAmp, delayTime, feedback);
@@ -157,16 +162,16 @@ function createFirstBeat() {
 }
 
 // create the oscillators for the second beat of the heart beat and a delay
-function createSecondBeat() {
+function createSecondBeat(generalAmp) {
   // create the second heartbeat
-  let amp = 0.9;
+  let amp = generalAmp * 0.9;
   let freq = 75;
   let type = `sine`;
   secondBeat = new Heartbeat(amp, freq, type);
   secondBeat.createOscillator();
 
   // create the second delay
-  let delayAmp = 0.2;
+  let delayAmp = generalAmp * 0.2;
   let delayTime = 0.1;
   let feedback = 0.2;
   secondDelay = new HeartDelay(delayAmp, delayTime, feedback);
@@ -185,21 +190,39 @@ function singleHeartbeat() {
   // stop the secondary heartbeat oscillator after 0.1 second
   secondBeat.oscillator.stop(0.1);
 
-  // keep track of the heartbeat playing
-  heartbeatPlaying = true;
+  // clear the heartbeat metronome interval and restart it after every heart beat (reset the pace)
+  resetHeartbeatMetronome();
 }
 
 // set the interval that plays the heartbeat
 function heartbeatInterval() {
+  // define the speedUp variable as 1 (no speed up)
+  let speedUp = 1;
+
   // set interval to change the pace of the heartbeat
-  changePaceInterval = setInterval(changePace, heartbeatPace.current);
+  changePaceInterval = setInterval(changePace, heartbeatPace.current, speedUp);
+
+  // set interval to slow down the pace of the heartbeat if its goin too fast
+  let paceThreshold = 1900;
+  let slowingAgent = 10;
+  if (heartbeatPace.current < paceThreshold) {
+    slowPaceInterval = setInterval(
+      slowPace,
+      heartbeatPace.current,
+      slowingAgent
+    );
+  }
 
   // set interval so the single heart beat is repeated every 2 seconds
   heartMetronome = setInterval(singleHeartbeat, heartbeatPace.current);
 }
 
 // change the pace of the heartbeat at every heartbeat
-function changePace() {
+function changePace(speedUp) {
+  heartbeatPace.current = heartbeatPace.current / speedUp;
+  heartbeatPace.max = heartbeatPace.max / speedUp;
+  heartbeatPace.min = heartbeatPace.min / speedUp;
+
   let speedRandomizer = random(0.8, 1.2);
   heartbeatPace.current *= speedRandomizer;
   heartbeatPace.current = constrain(
@@ -208,6 +231,29 @@ function changePace() {
     heartbeatPace.max
   );
   return heartbeatPace.current;
+}
+
+// slowly bring back the heartbeat to a peacefull pace
+function slowPace(slowingAgent) {
+  heartbeatPace.current += slowingAgent;
+
+  let normalMinPace = 1700;
+  if (heartbeatPace.min < normalMinPace) {
+    heartbeatPace.min += slowingAgent;
+  }
+
+  let normalMaxPace = 2700;
+  if (heartbeatPace.max < normalMaxPace) {
+    heartbeatPace.max += slowingAgent;
+  }
+
+  return heartbeatPace.current;
+}
+
+// reset the metronome (update the pace)
+function resetHeartbeatMetronome() {
+  clearInterval(heartMetronome);
+  heartbeatInterval();
 }
 
 // create some lines in the background
@@ -975,6 +1021,13 @@ function draw() {
   // background
   background(5, 8, 10);
 
+  // start the heartbeat
+  if (!heartbeatPlaying) {
+    // start the heartbeat oscillators
+    heartbeatInterval();
+    heartbeatPlaying = true;
+  }
+
   // display background animation
   for (let i = 0; i < backgroundLines.length; i++) {
     let currentLine = backgroundLines[i];
@@ -987,7 +1040,7 @@ function draw() {
   nameUi.display();
   nameText.display(nameText.stringBefore);
   frameLines[0].display();
-  frameLines[1].display() - 15;
+  frameLines[1].display();
 
   // resets the frame line color (changes when algorithm are activated)
   frameLines[0].color.a = 75;
@@ -1032,19 +1085,6 @@ function draw() {
 
   // makes the highlighted bodypart blink slowly
   highlightAnimation();
-}
-
-// start and stop the heartbeat when you click
-function mousePressed() {
-  if (!heartbeatPlaying) {
-    // start the heartbeat oscillators
-    heartbeatInterval();
-  } else if (heartbeatPlaying) {
-    // clear the interval (stop the timer)
-    clearInterval(heartMetronome);
-    // keep track of the heartbeat not playing anymore
-    heartbeatPlaying = false;
-  }
 }
 
 // select/deselect
@@ -1202,8 +1242,14 @@ function strecthSelected() {
         if (!stretchInstruction.discovered) {
           stretchInstruction.discovered = true;
         }
-
+        // activate the strech method
         stretch(currentBodyPart, intensity);
+
+        // speed up the heartbeat
+        if (heartbeatPace.current > 800) {
+          let speedUp = 1.8;
+          changePace(speedUp);
+        }
       }
     }
   }

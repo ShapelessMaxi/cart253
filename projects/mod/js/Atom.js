@@ -5,10 +5,8 @@ class Atom {
     // position is defined in the populate() method of the Body class
     this.x = x;
     this.y = y;
-
     // for now, size is a random value between 4 and 6. eventualy make it a variable to be able to play with it
     this.size = random(3, 4);
-
     // define the color of the atoms, eventualy make (r, g and b) a variable to be able to play with em
     this.color = {
       r: 125,
@@ -19,7 +17,6 @@ class Atom {
 
     // keeps track of overlap with other atoms
     this.overlapping = undefined;
-
     // keeps track of being outside of the polygon shape it's associated with (body part)
     this.outside = undefined;
   }

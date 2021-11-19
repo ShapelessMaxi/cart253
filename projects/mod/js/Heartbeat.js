@@ -1,6 +1,6 @@
 class Heartbeat {
   constructor(amp, freq, type) {
-    this.oscillator = undefined;
+    this.oscillator;
     this.amp = amp;
     this.freq = freq;
     this.type = type;
