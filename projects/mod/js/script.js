@@ -11,6 +11,35 @@ to learn more about the program plan, the concept, the story and everything
 in-between, see the proposal's pdf.
 
 also im using p5.2dcollide librairy to confine atoms into the bodyparts (complex polygons).
+
+
+**********ascii code algorithm thing
+it wont actually be ascii code, idk what to do with the numbers. ill make my own
+letter to number code with numbers usable for a rgb value.
+
+1- in a class, define the code for every letter (a-z)
+  i.e.: let a = 0; b = 5; (?? figure this out lol)
+2- define a min (3) and a max of characters for the name?
+  would like not too, but i think if the name has too many characters, it'll give me really intense values...
+3- look at the amount of letters in the name
+4- each value in the currentCharactersArray will be r, g or b values
+  3 letter name -> r = 1st letter, g = 2nd letter, b = 3rd letter
+  if more than 3 letters, distribute the letters semi-equally.
+  4 letter name -> r = 1st + 4th letter, g = 2nd letter, b = 3rd letter
+  5 letter name -> r = 1st + 4th letter, g = 2nd + 5th  letter, b = 3rd letter
+  6 letter name -> r = 1st + 4th letter, g = 2nd + 5th  letter, b = 3rd + 6th letter
+  (etc) basically loop through the array and assign it to a new array (r array, g array, b array) in order
+5- compile every value in r, g and b array (addition?, average? -> depends on the actual codes chosen)
+6- assign a part of the atoms array this color (probabilistic approach)
+  this is run only once at startup of game state.
+
+**********antena algorithm
+looking at math logarithmic and other functions, would it be possible to make a kind of antena grow
+from a random vertex of the body part selected?
+-pause the use of the algorithm while its growing slowly
+-color= name code?, random?
+-draw with what? (how do you draw a curve....?)
+-accompanied by weird sound?
 */
 
 "use strict";
@@ -45,11 +74,9 @@ let firstDelay;
 let secondBeat;
 let secondDelay;
 // define variables for the repetition and the on/off fucntion of the heartbeat
-let heartbeatPlaying = false;
 let heartMetronome;
-// time in milliseconds of the delay between each heartbeats, lower num = faster heartbeat
 let heartbeatPace = {
-  current: 2200,
+  current: 2200, // time in milliseconds of the delay between each heartbeats, lower num = faster heartbeat
   min: 1700,
   max: 2200,
 };
@@ -77,6 +104,8 @@ let instructions = [];
 let selectInstruction;
 let deselectInstruction;
 let stretchInstruction;
+let internalGrowthInstruction;
+let internalShrinkageInstruction;
 
 // create the canvas, the ui and the body parts
 // create the sounds (heartbeats)
@@ -84,24 +113,24 @@ function setup() {
   // create canvas
   createCanvas(750, 750);
 
-  // // create a new state object
+  // lets keep this for a 'im-less-tired day' (or next studio/office time)
+  // create a new state object
   // currentState = new Title();
 
   // audio starts only when user interacts with the webpage
   userStartAudio();
-
   // create oscillators for the heartbeat
   createHeartbeat();
+  // start the heartbeat
+  heartbeatInterval();
 
   // create background lines
   createBackgroundLines();
 
   // create the ui
   createUi();
-
   // create the name text to display
   createNameText(name);
-
   // create instructions
   createInstructions();
 
@@ -139,7 +168,7 @@ function setup() {
 
 // create the 2 beats with delays forming the heartbeat
 function createHeartbeat() {
-  let generalAmp = 0.09; // this affects the 2 heartbeats and the 2 delays
+  let generalAmp = 0.04; // this affects the 2 heartbeats and the 2 delays
   createFirstBeat(generalAmp);
   createSecondBeat(generalAmp);
 }
@@ -346,12 +375,16 @@ function createInstructions() {
   let firstColumnX = 75;
   let secondColumnX = 675;
 
-  let firstRowY = 500;
+  let firstRowY = 500; // first row has bigger spacing
   let secondRowY = 550;
+  let thirdRowY = 575;
+  let fourthRowY = 600;
 
   createSelectInstruction(firstColumnX, firstRowY);
   createDeselectInstruction(secondColumnX, firstRowY);
   createStretchInstruction(firstColumnX, secondRowY);
+  createInternalGrowInstruction(firstColumnX, thirdRowY);
+  createInternalShrinkageInstruction(firstColumnX, fourthRowY);
 }
 
 // create the select instruction
@@ -397,6 +430,36 @@ function createStretchInstruction(x, y) {
     stringAfter
   );
   instructions.push(stretchInstruction);
+}
+
+// create the internal growth instruction
+function createInternalGrowInstruction(x, y) {
+  let stringBefore = `press '2' for ... .  .`;
+  let stringAfter = `press '2' for internal growth ?`;
+  let alignMode = LEFT;
+  internalGrowthInstruction = new Instruction(
+    x,
+    y,
+    alignMode,
+    stringBefore,
+    stringAfter
+  );
+  instructions.push(internalGrowthInstruction);
+}
+
+// create the internal shrinkage instruction
+function createInternalShrinkageInstruction(x, y) {
+  let stringBefore = `press '3' for ... .  .`;
+  let stringAfter = `press '3' for internal shrinkage ?`;
+  let alignMode = LEFT;
+  internalShrinkageInstruction = new Instruction(
+    x,
+    y,
+    alignMode,
+    stringBefore,
+    stringAfter
+  );
+  instructions.push(internalShrinkageInstruction);
 }
 
 // create a body part using a total of 18 parameters (9 (x,y) coordinate points).
@@ -1021,13 +1084,6 @@ function draw() {
   // background
   background(5, 8, 10);
 
-  // start the heartbeat
-  if (!heartbeatPlaying) {
-    // start the heartbeat oscillators
-    heartbeatInterval();
-    heartbeatPlaying = true;
-  }
-
   // display background animation
   for (let i = 0; i < backgroundLines.length; i++) {
     let currentLine = backgroundLines[i];
@@ -1089,12 +1145,17 @@ function draw() {
 
 // select/deselect
 // strecth algorithm
+// internal growth / shrinkage method
 function keyPressed() {
   // select a body part with `S` key, deselect with `D` key
   selectDeselect();
 
   // generative algorithm that stretch the selected bodypart in a weird way
   strecthSelected();
+
+  // interactive method that makes the atoms grow or shrink
+  internalGrowth();
+  internalShrinkage();
 }
 
 // select the next bodypart, or deselect the current selected bodypart
@@ -1228,6 +1289,12 @@ function highlightAnimation() {
   }
 }
 
+// make the ui frame lines a bit more vibrant
+function frameLightUp() {
+  frameLines[0].color.a = 190;
+  frameLines[1].color.a = 190;
+}
+
 // generative algorithm activated by pressing `1` key
 function strecthSelected() {
   // define the intesity of the streching
@@ -1354,8 +1421,60 @@ function stretch(bodypart, intensity) {
   }
 
   // make the ui frame lines a bit more vibrant
-  frameLines[0].color.a = 190;
-  frameLines[1].color.a = 190;
+  frameLightUp();
+}
+
+// make the atoms of the selected grow semi-randomly
+function internalGrowth() {
+  // 50 -> `2` key
+  if (keyCode === 50) {
+    for (let i = 0; i < bodyParts.length; i++) {
+      let currentBodyPart = bodyParts[i];
+      if (currentBodyPart.selected) {
+        // discover the select instruction
+        if (!internalGrowthInstruction.discovered) {
+          internalGrowthInstruction.discovered = true;
+        }
+        // start the growth
+        let chance = random();
+        if (chance < 0.5) {
+          let growValue = random(0, 2);
+          currentBodyPart.atomSize.max += growValue;
+        }
+        // speed up the heartbeat
+        if (heartbeatPace.current > 800) {
+          let speedUp = 1.8;
+          changePace(speedUp);
+        }
+        // make the ui frame lines a bit more vibrant
+        frameLightUp();
+      }
+    }
+  }
+}
+
+// make the atoms of the selected shrink semi-randomly
+function internalShrinkage() {
+  // 51 -> `3` key
+  if (keyCode === 51) {
+    for (let i = 0; i < bodyParts.length; i++) {
+      let currentBodyPart = bodyParts[i];
+      if (currentBodyPart.selected) {
+        // discover the select instruction
+        if (!internalShrinkageInstruction.discovered) {
+          internalShrinkageInstruction.discovered = true;
+        }
+        // start the growth
+        let chance = random();
+        if (chance < 0.5) {
+          let growValue = random(0, 2);
+          currentBodyPart.atomSize.max -= growValue;
+        }
+        // make the ui frame lines a bit more vibrant
+        frameLightUp();
+      }
+    }
+  }
 }
 
 // check if an item is inside an array

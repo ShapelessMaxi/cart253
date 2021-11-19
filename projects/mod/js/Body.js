@@ -27,9 +27,13 @@ class Body {
 
     // store the atoms inside an array
     this.atomArray = [];
-
     // define the density of atoms
     this.atomRatio = 0.015;
+    // define the size of atoms in this body part
+    this.atomSize = {
+      min: 3,
+      max: 4,
+    };
 
     // keep track of the bodypart being selected
     this.selected = false;
@@ -84,7 +88,9 @@ class Body {
     for (let i = 0; i < numAtoms; i++) {
       let currentAtom = new Atom(
         random(this.spawnBox.xMinBorder, this.spawnBox.xMaxBorder),
-        random(this.spawnBox.yMinBorder, this.spawnBox.yMaxBorder)
+        random(this.spawnBox.yMinBorder, this.spawnBox.yMaxBorder),
+        this.atomSize.min,
+        this.atomSize.max
       );
 
       // 7.5% of the time, don't check if atoms overlap (fix algorithm crash)
