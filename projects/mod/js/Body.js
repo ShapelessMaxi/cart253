@@ -1,8 +1,8 @@
 // every Body object is some kind of irregular polygon populated by a semi-regular density of atoms.
 
 class Body {
-  // give the constructor each vertices coordinates as vectors.
-  constructor(va, vb, vc, vd, ve, vf, vg, vh, vi) {
+  // the constructor is given a perimeter when object is created
+  constructor(perimeter) {
     // define the color of the shape
     this.color = {
       r: 88,
@@ -12,7 +12,7 @@ class Body {
     };
 
     // vertices created with createVector() in main script
-    this.perimeter = [va, vb, vc, vd, ve, vf, vg, vh, vi];
+    this.perimeter = perimeter;
 
     // define spawn box related variables
     this.spawnBox = {
