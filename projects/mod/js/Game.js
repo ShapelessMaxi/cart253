@@ -33,6 +33,10 @@ class Game extends State {
     // create all the body parts
     this.createBodyParts();
 
+    // define variables for the extend algorithm
+    this.angle = 1;
+    this.x = 0;
+
     // define variables used for the heartbeat oscillators
     this.firstBeat;
     this.firstDelay;
@@ -455,7 +459,7 @@ class Game extends State {
 
     // generative algorithm that extends an external growth
     // press '4'
-    this.extend();
+    this.extendSelected();
   }
 
   // select the next bodypart, or deselect the current selected bodypart
@@ -796,7 +800,7 @@ class Game extends State {
   }
 
   // grow an external shape from one of the selected body part's vertex
-  extend() {
+  extendSelected() {
     // single out the extend instruction from instructions array
     let extendInstruction = this.instructions[5];
 
@@ -809,8 +813,42 @@ class Game extends State {
           if (!extendInstruction.discovered) {
             extendInstruction.discovered = true;
           }
+
+          // activate the extend method
+          let intensity = 10; // intensity of the curve
+          this.extend(currentBodyPart, intensity);
+
+          // speed up the heartbeat (make a function soon)
+          if (this.heartbeatPace.current > 800) {
+            let speedUp = 1.8;
+            this.changePace(speedUp);
+          }
         }
       }
+    }
+  }
+
+  // dunno why it doesnt work lol
+  // generative algorithm using hyperbolic arc-cosine from Math object
+  // from -> https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/acosh
+  extend(bodypart, intensity) {
+    // select a random vertex to be the origin of the growth
+    let origin = random(bodypart.perimeter);
+    let numOfSteps = 15;
+
+    for (let j = 0; j < numOfSteps; j++) {
+      let r = Math.acosh(this.angle) * intensity;
+
+      push();
+      translate(origin.x, origin.y);
+      fill(255, 0, 0);
+      noStroke();
+      ellipse(j, r, 100);
+      pop();
+
+      this.angle += 0.1;
+
+      console.log(r);
     }
   }
 
