@@ -5,21 +5,19 @@ arc cosinus hyperbolique
 "use strict";
 
 let circle = {
-  x: 0,
-  y: 0,
+  x: undefined,
+  y: undefined,
   size: 10,
-  color: 255,
 };
 
 let t = 0;
-let i = 15;
-let u = -50;
+let f = 150;
 
 /**
 Description of setup
 */
 function setup() {
-  createCanvas(100, 100);
+  createCanvas(300, 300);
   background(0);
 }
 
@@ -29,9 +27,6 @@ Description of draw()
 function draw() {
   // goes down and left
   dlCurve();
-
-  // goes up and right
-  // ulCurve();
 
   // goes up and right
   urCurve();
@@ -51,30 +46,15 @@ function dlCurve() {
 }
 
 function urCurve() {
-  let y = Math.acosh(i);
+  let y = Math.acosh(f);
   y *= 25;
 
   push();
   noStroke();
   fill(0, 255, 255, 10);
-  ellipse(i, y, circle.size);
+  ellipse(f, y, circle.size);
   pop();
 
-  i -= 0.1;
-  console.log(i, y);
+  f -= 0.1;
+  // console.log(i, y);
 }
-//
-// function ulCurve() {
-//   let y = Math.acosh(u);
-//   y *= -20;
-//
-//   push();
-//   noStroke();
-//   fill(0, 0, 255, 10);
-//   ellipse(u, y, circle.size);
-//   pop();
-//
-//   u += 0.1;
-//
-//   console.log(u, y);
-// }
