@@ -790,7 +790,7 @@ class Game extends State {
 
     // set interval to change the pace of the heartbeat
     this.changePaceInterval = setInterval(
-      this.changePace,
+      this.changePace.bind(this),
       this.heartbeatPace.current,
       speedUp
     );
@@ -800,7 +800,7 @@ class Game extends State {
     let slowingAgent = 10;
     if (this.heartbeatPace.current < paceThreshold) {
       this.slowPaceInterval = setInterval(
-        slowPace,
+        this.slowPace.bind(this),
         this.heartbeatPace.current,
         slowingAgent
       );
@@ -808,7 +808,7 @@ class Game extends State {
 
     // set interval so the single heart beat is repeated every 2 seconds
     this.heartMetronome = setInterval(
-      this.singleHeartbeat,
+      this.singleHeartbeat.bind(this),
       this.heartbeatPace.current
     );
   }
@@ -848,7 +848,7 @@ class Game extends State {
 
   // reset the metronome (update the pace)
   resetHeartbeatMetronome() {
-    this.clearInterval(this.heartMetronome);
+    clearInterval(this.heartMetronome);
     this.heartbeatInterval();
   }
 
@@ -1115,8 +1115,8 @@ class Game extends State {
   // select the next bodypart, or deselect the current selected bodypart
   selectDeselect() {
     // loop back to the start of the array
-    if (highlightedIndex >= this.bodyParts.length) {
-      highlightedIndex = 0;
+    if (this.highlightedIndex >= this.bodyParts.length) {
+      this.highlightedIndex = 0;
     }
 
     // loop through the bodyparts
@@ -1170,7 +1170,7 @@ class Game extends State {
         this.bodyParts[currentIndex].selected = true;
 
         // change the selected bodypart color to the highlight color
-        deselectedColorChange(previousIndex);
+        this.deselectedColorChange(previousIndex);
         // keep track of the deselected bodypart
         this.bodyParts[previousIndex].selected = false;
 
@@ -1303,17 +1303,17 @@ class Game extends State {
       // define the number of vertices that will be modified (torso only has 2 not-fixed vertices)
       let numOfVerts = floor(random(1, 3));
       for (let i = 0; i < numOfVerts; i++) {
-        let currentVert = random(this.bodypart.perimeter);
+        let currentVert = random(bodypart.perimeter);
         while (
-          currentVert === this.bodypart.perimeter[0] ||
-          currentVert === this.bodypart.perimeter[1] ||
-          currentVert === this.bodypart.perimeter[3] ||
-          currentVert === this.bodypart.perimeter[4] ||
-          currentVert === this.bodypart.perimeter[5] ||
-          currentVert === this.bodypart.perimeter[7] ||
-          currentVert === this.bodypart.perimeter[8]
+          currentVert === bodypart.perimeter[0] ||
+          currentVert === bodypart.perimeter[1] ||
+          currentVert === bodypart.perimeter[3] ||
+          currentVert === bodypart.perimeter[4] ||
+          currentVert === bodypart.perimeter[5] ||
+          currentVert === bodypart.perimeter[7] ||
+          currentVert === bodypart.perimeter[8]
         ) {
-          currentVert = random(this.bodypart.perimeter);
+          currentVert = random(bodypart.perimeter);
         }
         modifiableVerts.push(currentVert);
       }
@@ -1322,15 +1322,15 @@ class Game extends State {
       let numOfVerts = floor(random(2, 8));
       // checks if the bodypart is inside this array, returns true or false
       // for these parts: the first and the last vertex should not be moved (connect with other body part)
-      let insideFixed2Array = checkInsideArray(bodypart, fixed2Array);
+      let insideFixed2Array = this.checkInsideArray(bodypart, fixed2Array);
       if (insideFixed2Array) {
         for (let i = 0; i < numOfVerts; i++) {
-          let currentVert = random(this.bodypart.perimeter);
+          let currentVert = random(bodypart.perimeter);
           while (
-            currentVert === this.bodypart.perimeter[0] ||
-            currentVert === this.bodypart.perimeter[8]
+            currentVert === bodypart.perimeter[0] ||
+            currentVert === bodypart.perimeter[8]
           ) {
-            currentVert = random(this.bodypart.perimeter);
+            currentVert = random(bodypart.perimeter);
           }
           modifiableVerts.push(currentVert);
         }
@@ -1340,15 +1340,15 @@ class Game extends State {
         // if not the torso and not in the fixed 2 array, it will be right/left soulder, arm, thigh and leg
         // for these parts: the first, fifth, sixth and last vertex should not be moved (connect with other body part)
         for (let i = 0; i < numOfVerts; i++) {
-          let currentVert = random(this.bodypart.perimeter);
+          let currentVert = random(bodypart.perimeter);
           while (
-            currentVert === this.bodypart.perimeter[0] ||
-            currentVert === this.bodypart.perimeter[4] ||
-            currentVert === this.bodypart.perimeter[5] ||
-            currentVert === this.bodypart.perimeter[7] ||
-            currentVert === this.bodypart.perimeter[8]
+            currentVert === bodypart.perimeter[0] ||
+            currentVert === bodypart.perimeter[4] ||
+            currentVert === bodypart.perimeter[5] ||
+            currentVert === bodypart.perimeter[7] ||
+            currentVert === bodypart.perimeter[8]
           ) {
-            currentVert = random(this.bodypart.perimeter);
+            currentVert = random(bodypart.perimeter);
           }
           modifiableVerts.push(currentVert);
         }
@@ -1362,7 +1362,7 @@ class Game extends State {
     for (let i = 0; i < modifiableVerts.length; i++) {
       let currentVert = modifiableVerts[i];
 
-      if (currentVert.x < this.bodypart.spawnBox.xCenter) {
+      if (currentVert.x < bodypart.spawnBox.xCenter) {
         // the modifable vert is left of the center, to expand we substract the value
         currentVert.x -= strecthValue;
       } else {
@@ -1370,7 +1370,7 @@ class Game extends State {
         currentVert.x += strecthValue;
       }
 
-      if (currentVert.y < this.bodypart.spawnBox.yCenter) {
+      if (currentVert.y < bodypart.spawnBox.yCenter) {
         // the modifable vert is higher than the center, to expand we substract the value
         currentVert.y -= strecthValue;
       } else {
@@ -1401,7 +1401,7 @@ class Game extends State {
             currentBodyPart.atomSize.max += growValue;
           }
           // speed up the heartbeat
-          if (heartbeatPace.current > 800) {
+          if (this.heartbeatPace.current > 800) {
             let speedUp = 1.8;
             this.changePace(speedUp);
           }

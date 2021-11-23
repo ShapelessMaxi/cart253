@@ -64,3 +64,7 @@ function setup() {
 function draw() {
   currentState.update();
 }
+
+function keyPressed() {
+  currentState.keyPressed();
+}
