@@ -12,6 +12,8 @@ let circle = {
 };
 
 let t = 0;
+let i = 15;
+let u = -50;
 
 /**
 Description of setup
@@ -25,25 +27,54 @@ function setup() {
 Description of draw()
 */
 function draw() {
-  background(0, 0, 0, 15);
+  // goes down and left
+  dlCurve();
+
+  // goes up and right
+  // ulCurve();
+
+  // goes up and right
+  urCurve();
+}
+
+function dlCurve() {
   let y = Math.acosh(t);
-  y *= 10;
+  y *= 20;
 
   push();
   noStroke();
-  fill(255, 200, 200);
+  fill(255, 200, 200, 10);
   ellipse(t, y, circle.size);
   pop();
 
   t += 0.1;
-
-  console.log(t, y);
 }
 
-function displayCircle(x) {
+function urCurve() {
+  let y = Math.acosh(i);
+  y *= 25;
+
   push();
   noStroke();
-  fill(255, 20, 20, 100);
-  ellipse(circle.x, x, circle.size);
+  fill(0, 255, 255, 10);
+  ellipse(i, y, circle.size);
   pop();
+
+  i -= 0.1;
+  console.log(i, y);
 }
+//
+// function ulCurve() {
+//   let y = Math.acosh(u);
+//   y *= -20;
+//
+//   push();
+//   noStroke();
+//   fill(0, 0, 255, 10);
+//   ellipse(u, y, circle.size);
+//   pop();
+//
+//   u += 0.1;
+//
+//   console.log(u, y);
+// }
