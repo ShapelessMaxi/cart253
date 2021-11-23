@@ -64,13 +64,8 @@ class Game extends State {
     this.name = `maxi`; // user input in the future
     this.nameText; // Instruction object
 
-    // define variables for instructions
+    // store all instructions here
     this.instructions = [];
-    this.selectInstruction;
-    this.deselectInstruction;
-    this.stretchInstruction;
-    this.internalGrowthInstruction;
-    this.internalShrinkageInstruction;
 
     // create oscillators for the heartbeat
     this.createHeartbeat();
@@ -339,87 +334,37 @@ class Game extends State {
     let secondRowY = 550;
     let thirdRowY = 575;
     let fourthRowY = 600;
+    let fifthRowY = 625;
 
-    this.createSelectInstruction(firstColumnX, firstRowY);
-    this.createDeselectInstruction(secondColumnX, firstRowY);
-    this.createStretchInstruction(firstColumnX, secondRowY);
-    this.createInternalGrowInstruction(firstColumnX, thirdRowY);
-    this.createInternalShrinkageInstruction(firstColumnX, fourthRowY);
+    this.createInstruction(firstColumnX, firstRowY, `S`, `select`);
+    this.createInstruction(secondColumnX, firstRowY, `D`, `deselect`);
+    this.createInstruction(firstColumnX, secondRowY, `1`, `stretch`);
+    this.createInstruction(firstColumnX, thirdRowY, `2`, `grow`);
+    this.createInstruction(firstColumnX, fourthRowY, `3`, `shrink`);
+    this.createInstruction(firstColumnX, fifthRowY, `4`, `extend`);
   }
 
-  // create the select instruction
-  createSelectInstruction(x, y) {
-    let stringBefore = `press 'S' to ... .  .`;
-    let stringAfter = `press 'S' to select a part of your body`;
-    let alignMode = LEFT;
-    this.selectInstruction = new Instruction(
+  // create an instruction using parameters given in the createInstructions() method
+  createInstruction(x, y, key, instruction) {
+    let stringBefore = `press '${key}' to ... .  .`;
+    let stringAfter = `press '${key}' to ${instruction} ..?`;
+
+    // help!! get it to be cuter
+    let alignMode;
+    if (x === 75) {
+      alignMode = LEFT;
+    } else {
+      alignMode = RIGHT;
+    }
+
+    let currentInstruction = new Instruction(
       x,
       y,
       alignMode,
       stringBefore,
       stringAfter
     );
-    this.instructions.push(this.selectInstruction);
-  }
-
-  // create the deselect instruction
-  createDeselectInstruction(x, y) {
-    let stringBefore = `press 'D' to ... .  .`;
-    let stringAfter = `press 'D' to deselect a part of your body`;
-    let alignMode = RIGHT;
-    this.deselectInstruction = new Instruction(
-      x,
-      y,
-      alignMode,
-      stringBefore,
-      stringAfter
-    );
-    this.instructions.push(this.deselectInstruction);
-  }
-
-  // create the strech instruction
-  createStretchInstruction(x, y) {
-    let stringBefore = `press '1' to ... .  .`;
-    let stringAfter = `press '1' to strech ?`;
-    let alignMode = LEFT;
-    this.stretchInstruction = new Instruction(
-      x,
-      y,
-      alignMode,
-      stringBefore,
-      stringAfter
-    );
-    this.instructions.push(this.stretchInstruction);
-  }
-
-  // create the internal growth instruction
-  createInternalGrowInstruction(x, y) {
-    let stringBefore = `press '2' for ... .  .`;
-    let stringAfter = `press '2' for internal growth ?`;
-    let alignMode = LEFT;
-    this.internalGrowthInstruction = new Instruction(
-      x,
-      y,
-      alignMode,
-      stringBefore,
-      stringAfter
-    );
-    this.instructions.push(this.internalGrowthInstruction);
-  }
-
-  // create the internal shrinkage instruction
-  createInternalShrinkageInstruction(x, y) {
-    let stringBefore = `press '3' for ... .  .`;
-    let stringAfter = `press '3' for internal shrinkage ?`;
-    let alignMode = LEFT;
-    this.internalShrinkageInstruction = new Instruction(
-      x,
-      y,
-      alignMode,
-      stringBefore,
-      stringAfter
-    );
-    this.instructions.push(this.internalShrinkageInstruction);
+    this.instructions.push(currentInstruction);
   }
 
   // draw the background, the ui, the body and the atoms
@@ -493,20 +438,32 @@ class Game extends State {
   // select/deselect
   // strecth algorithm
   // internal growth / shrinkage method
+  // extend algorithm
   keyPressed() {
     // select a body part with `S` key, deselect with `D` key
     this.selectDeselect();
 
     // generative algorithm that stretch the selected bodypart in a weird way
+    // press '1'
     this.strecthSelected();
 
     // interactive method that makes the atoms grow or shrink
+    // press '2'
     this.internalGrowth();
+    // press '3'
     this.internalShrinkage();
+
+    // generative algorithm that extends an external growth
+    // press '4'
+    this.extend();
   }
 
   // select the next bodypart, or deselect the current selected bodypart
   selectDeselect() {
+    // single out the select and deselect instruction from instructions array
+    let selectInstruction = this.instructions[0];
+    let deselectInstruction = this.instructions[1];
+
     // loop back to the start of the array
     if (this.highlightedIndex >= this.bodyParts.length) {
       this.highlightedIndex = 0;
@@ -521,8 +478,8 @@ class Game extends State {
       // 83 -> `S` key
       if (keyCode === 83) {
         // discover the select instruction
-        if (!this.selectInstruction.discovered) {
-          this.selectInstruction.discovered = true;
+        if (!selectInstruction.discovered) {
+          selectInstruction.discovered = true;
         }
 
         // change the selected bodypart color to the highlight color
@@ -553,8 +510,8 @@ class Game extends State {
       // 83 -> `S` key
       if (keyCode === 83) {
         // discover the select instruction
-        if (!this.selectInstruction.discovered) {
-          this.selectInstruction.discovered = true;
+        if (!selectInstruction.discovered) {
+          selectInstruction.discovered = true;
         }
 
         // reset the last bodypart selected color to normal
@@ -573,8 +530,8 @@ class Game extends State {
         // 68 -> `D` key
       } else if (keyCode === 68) {
         // discover the deselect instruction
-        if (!this.deselectInstruction.discovered) {
-          this.deselectInstruction.discovered = true;
+        if (!deselectInstruction.discovered) {
+          deselectInstruction.discovered = true;
         }
 
         // reset the highlighted bodypart selected color to normal
@@ -650,6 +607,9 @@ class Game extends State {
 
   // generative algorithm activated by pressing `1` key
   strecthSelected() {
+    // single out the stretch instruction from instructions array
+    let stretchInstruction = this.instructions[2];
+
     // define the intesity of the streching
     let intensity = random(3, 6);
 
@@ -659,8 +619,8 @@ class Game extends State {
         let currentBodyPart = this.bodyParts[i];
         if (currentBodyPart.selected) {
           // discover the select instruction
-          if (!this.stretchInstruction.discovered) {
-            this.stretchInstruction.discovered = true;
+          if (!stretchInstruction.discovered) {
+            stretchInstruction.discovered = true;
           }
           // activate the strech method
           this.stretch(currentBodyPart, intensity);
@@ -778,14 +738,17 @@ class Game extends State {
 
   // make the atoms of the selected grow semi-randomly
   internalGrowth() {
+    // single out the internal growth instruction from instructions array
+    let internalGrowthInstruction = this.instructions[3];
+
     // 50 -> `2` key
     if (keyCode === 50) {
       for (let i = 0; i < this.bodyParts.length; i++) {
         let currentBodyPart = this.bodyParts[i];
         if (currentBodyPart.selected) {
           // discover the select instruction
-          if (!this.internalGrowthInstruction.discovered) {
-            this.internalGrowthInstruction.discovered = true;
+          if (!internalGrowthInstruction.discovered) {
+            internalGrowthInstruction.discovered = true;
           }
           // start the growth
           let chance = random();
@@ -807,14 +770,17 @@ class Game extends State {
 
   // make the atoms of the selected shrink semi-randomly
   internalShrinkage() {
+    // single out the internal shrinkage instruction from instructions array
+    let internalShrinkageInstruction = this.instructions[4];
+
     // 51 -> `3` key
     if (keyCode === 51) {
       for (let i = 0; i < this.bodyParts.length; i++) {
         let currentBodyPart = this.bodyParts[i];
         if (currentBodyPart.selected) {
           // discover the select instruction
-          if (!this.internalShrinkageInstruction.discovered) {
-            this.internalShrinkageInstruction.discovered = true;
+          if (!internalShrinkageInstruction.discovered) {
+            internalShrinkageInstruction.discovered = true;
           }
           // start the growth
           let chance = random();
@@ -824,6 +790,25 @@ class Game extends State {
           }
           // make the ui frame lines a bit more vibrant
           this.frameLightUp();
+        }
+      }
+    }
+  }
+
+  // grow an external shape from one of the selected body part's vertex
+  extend() {
+    // single out the extend instruction from instructions array
+    let extendInstruction = this.instructions[5];
+
+    // 52 -> `4` key
+    if (keyCode === 52) {
+      for (let i = 0; i < this.bodyParts.length; i++) {
+        let currentBodyPart = this.bodyParts[i];
+        if (currentBodyPart.selected) {
+          // discover the select instruction
+          if (!extendInstruction.discovered) {
+            extendInstruction.discovered = true;
+          }
         }
       }
     }
