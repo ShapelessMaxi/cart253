@@ -57,7 +57,7 @@ function setup() {
   userStartAudio();
 
   // create a new state object
-  currentState = new Menu();
+  currentState = new Game();
 }
 
 // display elements specified in the the state classes

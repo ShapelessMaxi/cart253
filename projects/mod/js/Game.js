@@ -297,8 +297,9 @@ class Game extends State {
     let vf = createVector(725, 425);
     let vi = createVector(725, 725);
     let vg = createVector(25, 725);
+    let perimeter = [va, vb, vc, vd, ve, vf, vi, vg];
 
-    this.ui = new Ui(va, vb, vc, vd, ve, vf, vi, vg);
+    this.ui = new Ui(perimeter);
   }
 
   // create the name ui
@@ -311,8 +312,9 @@ class Game extends State {
     let vf = createVector(200, 60);
     let vi = createVector(175, 75);
     let vg = createVector(125, 75);
+    let perimeter = [va, vb, vc, vd, ve, vf, vi, vg];
 
-    this.nameUi = new Ui(va, vb, vc, vd, ve, vf, vi, vg);
+    this.nameUi = new Ui(perimeter);
   }
 
   // create the name text so it can be displayed
@@ -835,7 +837,7 @@ class Game extends State {
   extend(bodypart, intensity) {
     // select a random vertex to be the origin of the growth
     let origin = random(bodypart.perimeter);
-    let numOfSteps = 15;
+    let numOfSteps = 500;
 
     for (let j = 0; j < numOfSteps; j++) {
       let r = Math.acosh(this.angle) * intensity;

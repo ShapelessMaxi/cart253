@@ -4,4 +4,6 @@ class State {
   update() {}
 
   keyPressed() {}
+
+  mousePressed() {}
 }
