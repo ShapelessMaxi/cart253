@@ -26,4 +26,6 @@ class Frame {
     line(this.va.x, this.va.y, this.vb.x, this.vb.y);
     pop();
   }
+
+  flash() {}
 }

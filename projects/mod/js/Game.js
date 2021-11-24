@@ -6,6 +6,7 @@ class Game extends State {
   // create the ui and the body parts
   // create the sounds (heartbeats)
   constructor() {
+    // call the parent class
     super();
 
     // store all body parts here

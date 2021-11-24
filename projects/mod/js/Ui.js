@@ -1,7 +1,7 @@
 class Ui {
-  constructor(va, vb, vc, vd, ve, vf, vi, vg) {
+  constructor(perimeter) {
     // vertices created with createVector() in main script
-    this.perimeter = [va, vb, vc, vd, ve, vf, vi, vg];
+    this.perimeter = perimeter;
     // define the border color of the shape
     this.borderColor = {
       r: 180,
