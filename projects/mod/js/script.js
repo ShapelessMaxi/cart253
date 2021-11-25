@@ -47,6 +47,16 @@ from a random vertex of the body part selected?
 // define variables for the states
 let currentState; // possible state objects : Intro, Menu, Game
 
+// define variables used for sounds
+let gameSoundtrack;
+let introSoundtrack;
+
+// preload the sounds
+function preload() {
+  gameSoundtrack = loadSound(`assets/sounds/soundtrack.wav`);
+  introSoundtrack = loadSound(`assets/sounds/guitar.wav`);
+}
+
 // create the canvas, the ui and the body parts
 // create the sounds (heartbeats)
 function setup() {
@@ -57,7 +67,7 @@ function setup() {
   userStartAudio();
 
   // create a new state object
-  currentState = new Game();
+  currentState = new Intro();
 }
 
 // display elements specified in the the state classes

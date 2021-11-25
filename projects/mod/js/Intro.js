@@ -3,6 +3,10 @@ class Intro extends State {
     super();
 
     this.font = `Helvetica`;
+
+    introSoundtrack.play();
+    introSoundtrack.amp(0.008);
+    introSoundtrack.loop();
   }
 
   update() {

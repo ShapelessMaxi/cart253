@@ -38,6 +38,9 @@ class Game extends State {
     this.angle = 1;
     this.x = 0;
 
+    // define variables used for the ambiant/background sound
+    // this.soundtrack;
+
     // define variables used for the heartbeat oscillators
     this.firstBeat;
     this.firstDelay;
@@ -76,6 +79,11 @@ class Game extends State {
     this.createHeartbeat();
     // start the heartbeat
     this.heartbeatInterval();
+
+    //play soundtrack
+    gameSoundtrack.play();
+    gameSoundtrack.amp(0.01);
+    gameSoundtrack.loop();
 
     // create background lines
     this.createBackgroundLines();
