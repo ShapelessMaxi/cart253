@@ -37,6 +37,7 @@ class Game extends State {
     // define variables for the extend algorithm
     this.angle = 1;
     this.x = 0;
+    this.particleArray = [];
 
     // define variables used for the ambiant/background sound
     // this.soundtrack;
@@ -350,6 +351,7 @@ class Game extends State {
     let thirdRowY = 575;
     let fourthRowY = 600;
     let fifthRowY = 625;
+    let sixthRowY = 650;
 
     this.createInstruction(firstColumnX, firstRowY, `S`, `select`);
     this.createInstruction(secondColumnX, firstRowY, `D`, `deselect`);
@@ -357,6 +359,7 @@ class Game extends State {
     this.createInstruction(firstColumnX, thirdRowY, `2`, `grow`);
     this.createInstruction(firstColumnX, fourthRowY, `3`, `shrink`);
     this.createInstruction(firstColumnX, fifthRowY, `4`, `extend`);
+    this.createInstruction(firstColumnX, sixthRowY, `5`, `withdraw`);
   }
 
   // create an instruction using parameters given in the createInstructions() method
@@ -446,6 +449,13 @@ class Game extends State {
       }
     }
 
+    // display the particles in the particle array
+    // array is filled with extend() method
+    for (let i = 0; i < this.particleArray.length; i++) {
+      let currentParticle = this.particleArray[i];
+      currentParticle.display();
+    }
+
     // makes the highlighted bodypart blink slowly
     this.highlightAnimation();
   }
@@ -453,7 +463,7 @@ class Game extends State {
   // select/deselect
   // strecth algorithm
   // internal growth / shrinkage method
-  // extend algorithm
+  // extend algorithm / remove extension method
   keyPressed() {
     // select a body part with `S` key, deselect with `D` key
     this.selectDeselect();
@@ -468,9 +478,13 @@ class Game extends State {
     // press '3'
     this.internalShrinkage();
 
+    // define the length of the acosh curve
+    let numOfSteps = 100;
     // generative algorithm that extends an external growth
     // press '4'
-    this.extendSelected();
+    this.extendSelected(numOfSteps);
+    // press '5' to remove first extension
+    this.removeExtension(numOfSteps);
   }
 
   // select the next bodypart, or deselect the current selected bodypart
@@ -811,7 +825,7 @@ class Game extends State {
   }
 
   // grow an external shape from one of the selected body part's vertex
-  extendSelected() {
+  extendSelected(numOfSteps) {
     // single out the extend instruction from instructions array
     let extendInstruction = this.instructions[5];
 
@@ -827,39 +841,59 @@ class Game extends State {
 
           // activate the extend method
           let intensity = 10; // intensity of the curve
-          this.extend(currentBodyPart, intensity);
+          this.extend(
+            numOfSteps,
+            currentBodyPart,
+            intensity,
+            this.particleArray
+          );
 
           // speed up the heartbeat (make a function soon)
           if (this.heartbeatPace.current > 800) {
             let speedUp = 1.8;
             this.changePace(speedUp);
           }
+          // make the ui frame lines a bit more vibrant
+          this.frameLightUp();
         }
       }
     }
   }
 
-  // dunno why it doesnt work lol
   // generative algorithm using hyperbolic arc-cosine from Math object
   // from -> https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/acosh
-  extend(bodypart, intensity) {
+  extend(numOfSteps, bodypart, intensity, storageArray) {
     // select a random vertex to be the origin of the growth
     let origin = random(bodypart.perimeter);
-    let numOfSteps = 500;
+
+    // reset the angle every time the method is called
+    this.angle = 1;
 
     for (let j = 0; j < numOfSteps; j++) {
       let r = Math.acosh(this.angle) * intensity;
 
-      push();
-      translate(origin.x, origin.y);
-      fill(255, 0, 0);
-      noStroke();
-      ellipse(j, r, 100);
-      pop();
+      let currentStep = new Particle(origin.x, origin.y, j, r);
 
-      this.angle += 0.1;
+      this.angle += 0.5;
 
-      console.log(r);
+      storageArray.push(currentStep);
+    }
+  }
+
+  // remove the first acosh curve generated with extend algorithm
+  removeExtension(numOfSteps) {
+    if (keyCode === 53) {
+      if (this.particleArray.length > 0) {
+        // single out the removeExtension instruction from instructions array
+        let removeExtensionInstruction = this.instructions[6];
+        // discover the select instruction
+        if (!removeExtensionInstruction.discovered) {
+          removeExtensionInstruction.discovered = true;
+        }
+      }
+      for (let i = 0; i < numOfSteps; i++) {
+        this.particleArray.shift();
+      }
     }
   }
 
