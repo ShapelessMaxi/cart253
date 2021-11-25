@@ -1,4 +1,4 @@
-// COMMENT THIS BETTER, MAKE TEXT AND UI AND BUTTONS POSITION ETC SOME VARIABLES AND STUFF
+// COMMENT THIS BETTER hehe
 class Menu extends State {
   constructor() {
     // call the parent class
@@ -20,7 +20,7 @@ class Menu extends State {
 
     // define variables for the name input box
     this.nameInput;
-    // look at this for text box -> https://creative-coding.decontextualize.com/text-and-type/
+    // look at this for text box -> https://p5js.org/reference/#/p5/key
 
     // define variables for the button
     this.button = {
@@ -121,8 +121,10 @@ class Menu extends State {
 
   // link alpha to noise value for a flashing effect
   flash() {
+    let minAlpha = -100;
+    let maxAlpha = 300;
     let noiseValue = noise(frameCount);
-    noiseValue = map(noiseValue, 0, 1, -100, 300);
+    noiseValue = map(noiseValue, 0, 1, minAlpha, maxAlpha);
     for (let i = 0; i < this.flashingLines.length; i++) {
       let currentLine = this.flashingLines[i];
       currentLine.color.a = noiseValue;

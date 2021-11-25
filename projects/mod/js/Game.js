@@ -454,6 +454,7 @@ class Game extends State {
     for (let i = 0; i < this.particleArray.length; i++) {
       let currentParticle = this.particleArray[i];
       currentParticle.display();
+      currentParticle.flicker();
     }
 
     // makes the highlighted bodypart blink slowly
@@ -479,7 +480,7 @@ class Game extends State {
     this.internalShrinkage();
 
     // define the length of the acosh curve
-    let numOfSteps = 100;
+    let numOfSteps = 150;
     // generative algorithm that extends an external growth
     // press '4'
     this.extendSelected(numOfSteps);
@@ -840,7 +841,7 @@ class Game extends State {
           }
 
           // activate the extend method
-          let intensity = 10; // intensity of the curve
+          let intensity = random(0, 50); // intensity of the curve
           this.extend(
             numOfSteps,
             currentBodyPart,
@@ -872,11 +873,55 @@ class Game extends State {
     for (let j = 0; j < numOfSteps; j++) {
       let r = Math.acosh(this.angle) * intensity;
 
-      let currentStep = new Particle(origin.x, origin.y, j, r);
+      // check if selected vertex is left from center of the body part (return true or false)
+      let isLeft = this.checkLeft(origin.x, bodypart.spawnBox.xCenter);
 
-      this.angle += 0.5;
+      // check if selected vertex is higher than center of the body part (return true or false)
+      let isTop = this.checkTop(origin.y, bodypart.spawnBox.yCenter);
 
-      storageArray.push(currentStep);
+      // if the vertex selected is left from the center of the body part, draw the curve from right to left
+      // j needs to be negative
+      if (isLeft) {
+        let newX = -j;
+
+        // if the vertex selected is higher than the center of the body part, draw the curve from bottom to top
+        // r needs to be negative
+        if (isTop) {
+          let newY = -r;
+          let currentStep = new Particle(origin.x, origin.y, newX, newY);
+          storageArray.push(currentStep);
+
+          // if the vertex selected is lower than the center of the body part, draw the curve from bottom to top
+          // r needs to be negative
+        } else {
+          let newY = r;
+          let currentStep = new Particle(origin.x, origin.y, newX, newY);
+          storageArray.push(currentStep);
+        }
+
+        // if the vertex selected is right from the center of the body part, draw the curve from right to left
+        // j needs to be positive
+      } else {
+        let newX = j;
+
+        // if the vertex selected is higher than the center of the body part, draw the curve from bottom to top
+        // r needs to be negative
+        if (isTop) {
+          let newY = -r;
+          let currentStep = new Particle(origin.x, origin.y, newX, newY);
+          storageArray.push(currentStep);
+
+          // if the vertex selected is lower than the center of the body part, draw the curve from bottom to top
+          // r needs to be negative
+        } else {
+          let newY = r;
+          let currentStep = new Particle(origin.x, origin.y, newX, newY);
+          storageArray.push(currentStep);
+        }
+      }
+
+      // increase the angle given to the acosh equation
+      this.angle += 0.05;
     }
   }
 
@@ -894,6 +939,24 @@ class Game extends State {
       for (let i = 0; i < numOfSteps; i++) {
         this.particleArray.shift();
       }
+    }
+  }
+
+  // check if a point is left or right of another point
+  checkLeft(x1, x2) {
+    if (x1 < x2) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  // check if a point is higher or lower than another point
+  checkTop(y1, y2) {
+    if (y1 < y2) {
+      return true;
+    } else {
+      return false;
     }
   }
 

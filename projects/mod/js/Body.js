@@ -71,9 +71,9 @@ class Body {
 
     // find the center of the box
     this.spawnBox.xCenter =
-      (this.spawnBox.xMaxBorder - this.spawnBox.xMinBorder) / 2;
+      (this.spawnBox.xMaxBorder + this.spawnBox.xMinBorder) / 2;
     this.spawnBox.yCenter =
-      (this.spawnBox.yMaxBorder - this.spawnBox.yMinBorder) / 2;
+      (this.spawnBox.yMaxBorder + this.spawnBox.yMinBorder) / 2;
   }
 
   // populate the polyganal shape with atoms
