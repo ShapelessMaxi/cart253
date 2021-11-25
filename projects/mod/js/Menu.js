@@ -15,8 +15,9 @@ class Menu extends State {
     this.secondUi;
     this.font = "Helvetica"; // change this font in the future
     this.slogan = {
-      x: 500,
+      x: 0,
       y: 635,
+      x2: 800,
     };
 
     // all the keycodes for the letters are stored here
@@ -103,8 +104,11 @@ class Menu extends State {
 
     //play the noise sound
     menuNoise.play();
-    menuNoise.amp(0.008);
+    menuNoise.amp(0.013);
     menuNoise.loop();
+
+    // lower the intro music volume
+    introSoundtrack.amp(0.004);
   }
 
   update() {
@@ -318,8 +322,8 @@ class Menu extends State {
     // keycode 8 -> backspace
     // delete last item of array
     if (keyCode === 8) {
-      if (this.nameArray.length > 0) {
-        this.nameArray.pop();
+      if (nameArray.length > 0) {
+        nameArray.pop();
       }
     }
   }
@@ -401,14 +405,23 @@ class Menu extends State {
       this.slogan.x,
       this.slogan.y
     );
+    text(
+      `THIS IS VERY IMPORTANT AND WILL BE OF USE DURING THIS PROCESS`,
+      this.slogan.x2,
+      this.slogan.y
+    );
     pop();
   }
 
   // takes care of the scrolling movement and the wrapping of the slogan
   wrapSlogan() {
     this.slogan.x -= 2;
+    this.slogan.x2 -= 2;
     if (this.slogan.x < -625) {
-      this.slogan.x = 750;
+      this.slogan.x = 1000;
+    }
+    if (this.slogan.x2 < -625) {
+      this.slogan.x2 = 1000;
     }
   }
 }

@@ -6,8 +6,8 @@ class Intro extends State {
 
     // define variables for the button
     this.button = {
-      x: 455,
-      y: 150,
+      x: 100,
+      y: 700,
       w: 500,
       h: 400,
       corner: 10,
@@ -39,39 +39,76 @@ class Intro extends State {
       },
     };
 
+    this.firstAnswer = `yes`; // make an animation that switches between yes and no with noise
+    this.secondAnswer = `ya`; // make an animation that switches between ya and nmno with noise
+    this.thirdAnswer = `best`; // make an animation that switches between best and worse with noise
+
     // play the intro music
     introSoundtrack.play();
-    introSoundtrack.amp(0.005);
+    introSoundtrack.amp(0.007);
     introSoundtrack.loop();
   }
 
   update() {
+    // call the parent class
     super.update();
 
-    background(255, 80, 80);
+    // draw the background
+    background(180, 80, 80);
 
+    // apply text animation
+    this.flicker();
+
+    // draw the text
     this.displayText();
 
-    this.drawButton();
+    // draw continue button
+    this.drawIntroButton();
   }
 
   // look at this to animate the tex -> https://creative-coding.decontextualize.com/text-and-type/
   displayText() {
     push();
     textAlign(LEFT);
-    textSize(20);
+    textSize(18);
     textFont(this.font);
-    fill(100, 250, 100);
+    fill(200, 250, 190);
     text(
-      `if you are here, reading this, chances are you're the owner of a body.`,
+      `Oi!
+hey yea you! if you're here, reading this, chances are you're the owner of a body.
+do you like it ?    ${this.firstAnswer}
+uh? what was that?    ${this.secondAnswer}
+yeah i get it.. .
+sometimes, it feels heavy, right? but also sometimes SOoo light, rigth?!
+
+do you also think this body would be the ship you navigate the world with,
+u know, doing things.. like grabbing stuff and all that.
+every so often you feel it is actually limiting you, right. ..?
+oh! like going place! can you GO Places if you dont have a physical body?
+probably not... but who am i to tell you for sure...
+
+anyway, the only thing i can tell you with confidence is;
+ur body, it should be yours, and you should be able to control it? YEA! maybe?
+
+that would be fun! right?
+imagine not being confortable with the body you have..
+maybe its too.. feminine? masculine? androgynous? Ding!
+now ur gender cannot be perceived in your physical appearance!
+
+imagine getting called some bad word coz ur skin is like, a color that ppl dont like,
+maybe a specific shade of brown? who likes  brown, right! ha!
+now u can just change it!!
+what?
+isn't that the    ${this.thirdAnswer}`,
       25,
-      300
+      60
     );
+    text(`idea ever ??????`, 218, 623);
     pop();
   }
 
   // draw the continue button
-  drawButton() {
+  drawIntroButton() {
     // change the color and position of the button depeding on the user's mouse position
     this.hoverButton();
 
@@ -86,6 +123,7 @@ class Intro extends State {
     // defining the position of the 'continue' text according to the position of the button
     this.button.text.x = this.button.x + 25;
     this.button.text.y = this.button.y + 55;
+
     // draw the shadow
     push();
     rectMode(CORNER);
@@ -115,7 +153,7 @@ class Intro extends State {
     // draw the main rectangle shape
     push();
     noStroke();
-    rectMode(CORNER);
+    // rectMode(CORNER);
     fill(
       this.button.color.r,
       this.button.color.g,
@@ -180,5 +218,22 @@ class Intro extends State {
     );
     // returns true or false
     return isHovering;
+  }
+
+  // link alpha to noise value for a flashing effect
+  flicker() {
+    let binaryValues = [0, 0, 0, 0, 1, 1, 1];
+    let currentValue = random(binaryValues);
+    if (frameCount % 3 === 0) {
+      if (currentValue === 0) {
+        this.firstAnswer = `YES`;
+        this.secondAnswer = `YA`;
+        this.thirdAnswer = `BEST`;
+      } else {
+        this.firstAnswer = `NO`;
+        this.secondAnswer = `MNO`;
+        this.thirdAnswer = `WORST`;
+      }
+    }
   }
 }

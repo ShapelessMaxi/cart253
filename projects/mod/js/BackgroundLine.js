@@ -5,7 +5,7 @@ class BackgroundLine {
     this.x2 = x;
     this.y2;
     this.size = random(50, 115);
-    this.thickness = 2;
+    this.thickness = 4;
     this.color = {
       r: 150,
       g: 20,

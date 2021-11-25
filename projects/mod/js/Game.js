@@ -85,14 +85,14 @@ class Game extends State {
 
     // play soundtrack
     gameSoundtrack.play();
-    gameSoundtrack.amp(0.01);
+    gameSoundtrack.amp(0.0038);
     gameSoundtrack.loop();
 
-    // stop intro music
-    introSoundtrack.stop();
+    // fade out intro music
+    introSoundtrack.setVolume(0, 15);
 
     // lower the amp of the menu noise
-    menuNoise.amp(0.002);
+    menuNoise.amp(0.003);
 
     // create background lines
     this.createBackgroundLines();
@@ -138,7 +138,7 @@ class Game extends State {
 
   // create the 2 beats with delays forming the heartbeat
   createHeartbeat() {
-    let generalAmp = 0.04; // this affects the 2 heartbeats and the 2 delays
+    let generalAmp = 0.035; // this affects the 2 heartbeats and the 2 delays
     this.createFirstBeat(generalAmp);
     this.createSecondBeat(generalAmp);
   }
@@ -489,7 +489,7 @@ class Game extends State {
     this.internalShrinkage();
 
     // define the length of the acosh curve
-    let numOfSteps = 150;
+    let numOfSteps = 300;
     // generative algorithm that extends an external growth
     // press '4'
     this.extendSelected(numOfSteps);
