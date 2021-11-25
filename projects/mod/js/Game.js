@@ -9,6 +9,9 @@ class Game extends State {
     // call the parent class
     super();
 
+    // hide the cursor
+    noCursor();
+
     // store all body parts here
     this.bodyParts = [];
     // below is the list of body parts with their index number (order of creation), useful for future reference?
@@ -70,7 +73,6 @@ class Game extends State {
     this.ui;
     this.nameUi;
     //define variables for the user's name
-    this.name = `maxi`; // user input in the future
     this.nameText; // Instruction object
 
     // store all instructions here
@@ -89,13 +91,16 @@ class Game extends State {
     // stop intro music
     introSoundtrack.stop();
 
+    // lower the amp of the menu noise
+    menuNoise.amp(0.002);
+
     // create background lines
     this.createBackgroundLines();
 
     // create the ui
     this.createUi();
     // create the name text to display
-    this.createNameText(this.name);
+    this.createNameText(nameString);
     // create instructions
     this.createInstructions();
   }
@@ -330,8 +335,8 @@ class Game extends State {
   }
 
   // create the name text so it can be displayed
-  createNameText(name) {
-    let stringBefore = name;
+  createNameText(nameString) {
+    let stringBefore = nameString;
     let stringAfter = undefined;
     let alignMode = CENTER;
     let x = width / 2;

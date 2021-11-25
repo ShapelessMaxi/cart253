@@ -50,11 +50,20 @@ let currentState; // possible state objects : Intro, Menu, Game
 // define variables used for sounds
 let gameSoundtrack;
 let introSoundtrack;
+let menuNoise;
+
+// define variable for the fonts used
+let font;
+
+// define variables for the name
+let nameArray = [];
+let nameString;
 
 // preload the sounds
 function preload() {
   gameSoundtrack = loadSound(`assets/sounds/soundtrack.wav`);
   introSoundtrack = loadSound(`assets/sounds/guitar.wav`);
+  menuNoise = loadSound(`assets/sounds/noise.wav`);
 }
 
 // create the canvas, the ui and the body parts

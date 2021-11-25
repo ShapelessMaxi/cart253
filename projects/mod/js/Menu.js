@@ -12,15 +12,56 @@ class Menu extends State {
 
     // define variables for the ui
     this.ui;
+    this.secondUi;
     this.font = "Helvetica"; // change this font in the future
     this.slogan = {
       x: 500,
       y: 635,
     };
 
-    // define variables for the name input box
-    this.nameInput;
-    // look at this for text box -> https://p5js.org/reference/#/p5/key
+    // all the keycodes for the letters are stored here
+    this.validKeyCodes = [
+      65,
+      66,
+      67,
+      68,
+      69,
+      70,
+      71,
+      72,
+      73,
+      74,
+      75,
+      76,
+      77,
+      78,
+      79,
+      80,
+      81,
+      82,
+      83,
+      84,
+      85,
+      86,
+      87,
+      88,
+      89,
+      90,
+    ];
+    // variables used for the name box and text display
+    this.name = {
+      x: 20,
+      y: 385,
+      size: 40,
+      color: 0,
+    };
+    this.nameBox = {
+      x: 0,
+      y: 350,
+      w: 750,
+      h: 40,
+      color: 175,
+    };
 
     // define variables for the button
     this.button = {
@@ -59,6 +100,11 @@ class Menu extends State {
 
     // create the ui
     this.createUi();
+
+    //play the noise sound
+    menuNoise.play();
+    menuNoise.amp(0.008);
+    menuNoise.loop();
   }
 
   update() {
@@ -70,14 +116,13 @@ class Menu extends State {
 
     // draw the ui
     this.ui.display();
+    this.secondUi.display();
     this.displayText();
     this.displaySlogan();
     this.wrapSlogan();
 
-    // draw the name input box
-    this.nameInput = createInput();
-    this.nameInput.position(windowWidth / 4, windowHeight / 2);
-    this.nameInput.size(300);
+    // display the name typed and the name box
+    this.displayName();
 
     // draw the continue button
     this.drawButton();
@@ -134,7 +179,7 @@ class Menu extends State {
   // create the ui
   createUi() {
     this.createMainShape();
-    this.createNameBox();
+    this.createSecondShape();
   }
 
   //create the main shape for the ui
@@ -150,23 +195,29 @@ class Menu extends State {
     let perimeter = [va, vb, vc, vd, ve, vf, vi, vg];
 
     this.ui = new Ui(perimeter);
+
+    // change the color
+    this.ui.color.r = 0;
+    this.ui.color.g = 0;
+    this.ui.color.b = 0;
+    this.ui.color.a = 200;
   }
 
   // create the input box for the user's name
-  createNameBox() {
+  createSecondShape() {
     let va = createVector(0, 200);
     let vb = createVector(750, 200);
     let vc = createVector(750, 645);
     let vd = createVector(0, 645);
     let perimeter = [va, vb, vc, vd];
 
-    this.ui = new Ui(perimeter);
+    this.secondUi = new Ui(perimeter);
 
     // change the color
-    this.ui.color.r = 0;
-    this.ui.color.g = 0;
-    this.ui.color.b = 0;
-    this.ui.color.a = 150;
+    this.secondUi.color.r = 50;
+    this.secondUi.color.g = 20;
+    this.secondUi.color.b = 20;
+    this.secondUi.color.a = 150;
   }
 
   // draw the continue button
@@ -246,7 +297,30 @@ class Menu extends State {
     // check if mouse is hovering
     let isHovering = this.checkHover();
     if (isHovering) {
-      currentState = new Game();
+      if (nameArray.length > 0) {
+        currentState = new Game();
+      }
+    }
+  }
+
+  // keep track of which key has been typed (for name)
+  keyPressed() {
+    // check if the key pressed is a letter (valid keyCode)
+    for (let i = 0; i < this.validKeyCodes.length; i++) {
+      let currentKey = this.validKeyCodes[i];
+      if (currentKey === keyCode) {
+        nameArray.push(key);
+      } else {
+        // thats not a letter, invalid
+      }
+    }
+
+    // keycode 8 -> backspace
+    // delete last item of array
+    if (keyCode === 8) {
+      if (this.nameArray.length > 0) {
+        this.nameArray.pop();
+      }
     }
   }
 
@@ -289,6 +363,29 @@ class Menu extends State {
     textFont(this.font);
     fill(200, 200, 200, 100);
     text(`ENTER UR NAME`, -12, 300);
+    pop();
+  }
+
+  // display the name
+  displayName() {
+    // draw the name box
+    push();
+    noStroke();
+    fill(this.nameBox.color);
+    rect(this.nameBox.x, this.nameBox.y, this.nameBox.w, this.nameBox.h);
+    pop();
+
+    // from -> https://developer.mozilla.org/fr/docs/Web/JavaScript/Reference/Global_Objects/Array/join
+    // join the items in the name array as a string
+    nameString = nameArray.join(``);
+
+    // draw the name
+    push();
+    textAlign(LEFT);
+    textSize(this.name.size);
+    textFont(this.font);
+    fill(this.name.color);
+    text(nameString, this.name.x, this.name.y);
     pop();
   }
 

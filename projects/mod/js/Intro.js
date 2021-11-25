@@ -59,10 +59,14 @@ class Intro extends State {
   displayText() {
     push();
     textAlign(LEFT);
-    textSize(40);
+    textSize(20);
     textFont(this.font);
-    fill(200, 200, 200, 100);
-    text(`ding dong what is life`, 25, 300);
+    fill(100, 250, 100);
+    text(
+      `if you are here, reading this, chances are you're the owner of a body.`,
+      25,
+      300
+    );
     pop();
   }
 
