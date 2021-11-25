@@ -81,10 +81,13 @@ class Game extends State {
     // start the heartbeat
     this.heartbeatInterval();
 
-    //play soundtrack
+    // play soundtrack
     gameSoundtrack.play();
     gameSoundtrack.amp(0.01);
     gameSoundtrack.loop();
+
+    // stop intro music
+    introSoundtrack.stop();
 
     // create background lines
     this.createBackgroundLines();
@@ -367,9 +370,10 @@ class Game extends State {
     let stringBefore = `press '${key}' to ... .  .`;
     let stringAfter = `press '${key}' to ${instruction} ..?`;
 
-    // help!! get it to be cuter
+    // set alignMode depending on which column the instruction is in
     let alignMode;
-    if (x === 75) {
+    let firstColumnX = 75; // ??can this be a bit cuter?
+    if (x === firstColumnX) {
       alignMode = LEFT;
     } else {
       alignMode = RIGHT;

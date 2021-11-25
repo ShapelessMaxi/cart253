@@ -243,12 +243,11 @@ class Menu extends State {
 
   // click the button to go to next state
   mousePressed() {
-    console.log(`heyyyyyyy`);
-    // // check if mouse is hovering
-    // let isHovering = this.checkHover();
-    // if (isHovering) {
-    //   currentState = new Game();
-    // }
+    // check if mouse is hovering
+    let isHovering = this.checkHover();
+    if (isHovering) {
+      currentState = new Game();
+    }
   }
 
   // apply some color and position change to the button

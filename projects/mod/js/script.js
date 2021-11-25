@@ -67,7 +67,7 @@ function setup() {
   userStartAudio();
 
   // create a new state object
-  currentState = new Game();
+  currentState = new Intro();
 }
 
 // display elements specified in the the state classes
@@ -77,4 +77,8 @@ function draw() {
 
 function keyPressed() {
   currentState.keyPressed();
+}
+
+function mousePressed() {
+  currentState.mousePressed();
 }
