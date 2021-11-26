@@ -9,7 +9,7 @@ class BackgroundLeaf {
       r: 65,
       g: 80,
       b: 30,
-      a: 2,
+      a: 1.8,
     };
     this.speed = random(0.8, 1.4);
     this.horizontalSpeed = random(0, 2);

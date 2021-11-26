@@ -53,17 +53,25 @@ let introSoundtrack;
 let menuNoise;
 
 // define variable for the fonts used
-let font = `Helvetica`;
+let fontSerif;
+let fontSans;
+let fontSansThin;
 
 // define variables for the name
 let nameArray = [];
 let nameString;
 
-// preload the sounds
+// preload the sounds and the fonts
 function preload() {
+  // sounds
   gameSoundtrack = loadSound(`assets/sounds/soundtrack.wav`);
   introSoundtrack = loadSound(`assets/sounds/guitar.wav`);
   menuNoise = loadSound(`assets/sounds/noise.wav`);
+
+  // fonts
+  fontSerif = loadFont(`assets/fonts/ZillaSlab-Regular.ttf`);
+  fontSans = loadFont(`assets/fonts/Chivo-Bold.ttf`);
+  fontSansThin = loadFont(`assets/fonts/Chivo-Light.ttf`);
 }
 
 // create the canvas, the ui and the body parts

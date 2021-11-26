@@ -5,7 +5,7 @@ class StoryLine {
     this.marginLeft = 15;
     this.marginTop = 70;
     this.verticalSpacing = 22;
-    this.size = 18;
+    this.size = 20;
     this.color = {
       r: 165,
       g: 195,
@@ -31,7 +31,7 @@ class StoryLine {
     push();
     textAlign(LEFT, CENTER);
     textSize(this.size);
-    textFont(font);
+    textFont(fontSerif);
     fill(this.color.r, this.color.g, this.color.b, this.color.a);
     text(this.string, x, y);
     pop();

@@ -13,7 +13,6 @@ class Menu extends State {
     // define variables for the ui
     this.ui;
     this.secondUi;
-    this.font = "Helvetica"; // change this font in the future
     this.slogan = {
       x: 0,
       y: 635,
@@ -238,8 +237,8 @@ class Menu extends State {
     this.button.secondShadow.h = this.button.firstShadow.h;
 
     // defining the position of the 'continue' text according to the position of the button
-    this.button.text.x = this.button.x + 25;
-    this.button.text.y = this.button.y + 55;
+    this.button.text.x = this.button.x + 16;
+    this.button.text.y = this.button.y + 45;
     // draw the shadow
     push();
     rectMode(CORNER);
@@ -288,11 +287,11 @@ class Menu extends State {
     // draw the 'continue' text
     push();
     textAlign(LEFT, CENTER);
-    textSize(40);
-    textFont(this.font);
+    textSize(46);
+    textFont(fontSans);
     fill(0, 0, 0, 100);
     let triangle = `\u25B6`;
-    text(`${triangle}   CONTINUE`, this.button.text.x, this.button.text.y);
+    text(`— CONTINUE`, this.button.text.x, this.button.text.y);
     pop();
   }
 
@@ -363,10 +362,10 @@ class Menu extends State {
   displayText() {
     push();
     textAlign(LEFT);
-    textSize(94);
-    textFont(this.font);
+    textSize(100);
+    textFont(fontSans);
     fill(200, 200, 200, 100);
-    text(`ENTER UR NAME`, -12, 300);
+    text(`ENTER UR NAME`, -16, 300);
     pop();
   }
 
@@ -387,7 +386,7 @@ class Menu extends State {
     push();
     textAlign(LEFT);
     textSize(this.name.size);
-    textFont(this.font);
+    textFont(fontSans);
     fill(this.name.color);
     text(nameString, this.name.x, this.name.y);
     pop();
@@ -398,7 +397,7 @@ class Menu extends State {
     push();
     textAlign(LEFT);
     textSize(18);
-    textFont(this.font);
+    textFont(fontSans);
     fill(200, 200, 200, 100);
     text(
       `THIS IS VERY IMPORTANT AND WILL BE OF USE DURING THIS PROCESS`,

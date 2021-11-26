@@ -5,8 +5,7 @@ class Instruction {
     this.y = y;
 
     // define the formating of the text
-    this.size = 14;
-    this.font = "Helvetica"; // change this font in the future
+    this.size = 20;
     this.color = {
       r: 255,
       g: 255,
@@ -27,7 +26,7 @@ class Instruction {
     push();
     textAlign(this.align);
     textSize(this.size);
-    textFont(this.font);
+    textFont(fontSansThin);
     fill(this.color.r, this.color.g, this.color.b, this.color.a);
     text(string, this.x, this.y);
     pop();

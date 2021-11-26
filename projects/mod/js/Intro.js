@@ -10,8 +10,8 @@ class Intro extends State {
     this.button = {
       x: undefined, // defined in hover method
       y: undefined,
-      w: 400,
-      h: 300,
+      w: 305,
+      h: 108,
       corner: 10,
       color: {
         r: 240,
@@ -37,7 +37,7 @@ class Intro extends State {
       },
       text: {
         x: 755,
-        y: 505,
+        y: 600,
       },
     };
 
@@ -189,19 +189,19 @@ class Intro extends State {
     }
 
     if (this.firstAnswer.created) {
-      let x = 146;
-      let y = 136;
+      let x = 149;
+      let y = 137;
       this.displayAnswer(this.firstAnswer, x, y);
       this.answerAppear(this.firstAnswer);
     }
     if (this.secondAnswer.created) {
-      let x = 183;
+      let x = 191;
       let y = 159;
       this.displayAnswer(this.secondAnswer, x, y);
       this.answerAppear(this.secondAnswer);
     }
     if (this.thirdAnswer.created) {
-      let x = 128;
+      let x = 133;
       let y = 665;
       this.displayAnswer(this.thirdAnswer, x, y);
       this.answerAppear(this.thirdAnswer);
@@ -215,11 +215,18 @@ class Intro extends State {
       this.drawIntroButton();
     }
 
-    // display the background leaves
-    for (let i = 0; i < this.backgroundLeaves.length; i++) {
-      let currentLeaf = this.backgroundLeaves[i];
-      currentLeaf.display();
-      currentLeaf.movement();
+    // display the background leaves every 1, 12, and 51 frames for a flickering effect
+    // (there's 3x 51 to have the leaves brigther at that step)
+    let framecountSteps = [1, 12, 51, 51, 51];
+    for (let i = 0; i < framecountSteps.length; i++) {
+      let currentFramecount = framecountSteps[i];
+      if (frameCount % currentFramecount === 0) {
+        for (let i = 0; i < this.backgroundLeaves.length; i++) {
+          let currentLeaf = this.backgroundLeaves[i];
+          currentLeaf.display();
+          currentLeaf.movement();
+        }
+      }
     }
   }
 
@@ -228,7 +235,7 @@ class Intro extends State {
     push();
     textAlign(CENTER);
     textSize(45);
-    textFont(font);
+    textFont(fontSerif);
     fill(255, 200, 200, 100);
     text(`click the mouse to start`, width / 2, height / 4);
     pop();
@@ -245,8 +252,8 @@ class Intro extends State {
     this.button.secondShadow.h = this.button.firstShadow.h;
 
     // defining the position of the 'continue' text according to the position of the button
-    this.button.text.x = this.button.x + 25;
-    this.button.text.y = this.button.y + 55;
+    this.button.text.x = this.button.x + 18;
+    this.button.text.y = this.button.y + 45;
 
     // draw the shadow
     push();
@@ -296,11 +303,10 @@ class Intro extends State {
     // draw the 'continue' text
     push();
     textAlign(LEFT, CENTER);
-    textSize(40);
-    textFont(font);
+    textSize(46);
+    textFont(fontSans);
     fill(0, 0, 0, 100);
-    let triangle = `\u25B6`;
-    text(`${triangle}   CONTINUE`, this.button.text.x, this.button.text.y);
+    text(`— CONTINUE`, this.button.text.x, this.button.text.y);
     pop();
 
     // change the color and position of the button depeding on the user's mouse position
@@ -380,7 +386,7 @@ class Intro extends State {
     push();
     textAlign(LEFT, CENTER);
     textSize(20);
-    textFont(font);
+    textFont(fontSans);
     fill(answer.color.r, answer.color.g, answer.color.b, answer.color.a);
     text(`${answer.str}`, x, y);
     pop();

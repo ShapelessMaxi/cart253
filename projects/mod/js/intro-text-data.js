@@ -9,10 +9,10 @@ let textData = {
     str: `hey yea you! if you're here, reading this, chances are you're the owner of a body.`,
   },
   line3: {
-    str: `do you like it ?            .`,
+    str: `do you like it ?`,
   },
   line4: {
-    str: `uh? what was that?             ?`,
+    str: `uh? what was that?`,
   },
   line5: {
     str: `yeah i get it.. .`,
@@ -51,7 +51,7 @@ let textData = {
     str: `maybe its too.. feminine? masculine? `,
   },
   line17: {
-    str: `now u look like the complete opposite of whatever that is!`,
+    str: `now u look like the complete opposite!!! whatever that is!`,
   },
   line18: {
     str: `imagine getting denied something coz ur skin is uhh, a color that ppl dont like,`,
