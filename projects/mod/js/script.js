@@ -53,7 +53,7 @@ let introSoundtrack;
 let menuNoise;
 
 // define variable for the fonts used
-let font;
+let font = `Helvetica`;
 
 // define variables for the name
 let nameArray = [];

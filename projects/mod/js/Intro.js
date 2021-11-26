@@ -1,8 +1,10 @@
 class Intro extends State {
   constructor() {
+    // call the parent class
     super();
 
-    this.font = `Helvetica`;
+    // keep track of the number of times the user has clicked
+    this.clickCount = 0;
 
     // define variables for the button
     this.button = {
@@ -39,9 +41,40 @@ class Intro extends State {
       },
     };
 
-    this.firstAnswer = `yes`; // make an animation that switches between yes and no with noise
-    this.secondAnswer = `ya`; // make an animation that switches between ya and nmno with noise
-    this.thirdAnswer = `best`; // make an animation that switches between best and worse with noise
+    // define variables for flickering answers
+    this.firstAnswer = {
+      created: false,
+      str: `YES`,
+      color: {
+        r: 45,
+        g: 205,
+        b: 235,
+        a: 0,
+      },
+    };
+    this.secondAnswer = {
+      created: false,
+      str: `YA`,
+      color: {
+        r: 45,
+        g: 205,
+        b: 235,
+        a: 0,
+      },
+    };
+    this.thirdAnswer = {
+      created: false,
+      str: `WORSE`,
+      color: {
+        r: 45,
+        g: 205,
+        b: 235,
+        a: 0,
+      },
+    };
+
+    // store all the text lines here
+    this.storylines = [];
 
     // play the intro music
     introSoundtrack.play();
@@ -49,61 +82,128 @@ class Intro extends State {
     introSoundtrack.loop();
   }
 
+  // create the first paragraph
+  createParagraph1() {
+    this.createStoryLine(textData.line1.str, 1);
+    this.createStoryLine(textData.line2.str, 2);
+    this.createStoryLine(textData.line3.str, 3);
+
+    this.createStoryLine(textData.line4.str, 4);
+    this.createStoryLine(textData.line5.str, 5);
+    this.createStoryLine(textData.line6.str, 6);
+    this.createStoryLine(``, 7);
+  }
+
+  // ceate the second paragraph
+  createParagraph2() {
+    this.createStoryLine(textData.line7.str, 8);
+    this.createStoryLine(textData.line8.str, 9);
+    this.createStoryLine(textData.line9.str, 10);
+    this.createStoryLine(textData.line10.str, 11);
+    this.createStoryLine(textData.line11.str, 12);
+    this.createStoryLine(``, 13);
+  }
+
+  // create the third paragraph
+  createParagraph3() {
+    this.createStoryLine(textData.line12.str, 14);
+    this.createStoryLine(textData.line13.str, 15);
+    this.createStoryLine(textData.line14.str, 16);
+    this.createStoryLine(``, 17);
+  }
+
+  // create the fourth paragraph
+  createParagraph4() {
+    this.createStoryLine(textData.line15.str, 18);
+    this.createStoryLine(textData.line16.str, 19);
+    this.createStoryLine(textData.line17.str, 20);
+    this.createStoryLine(``, 21);
+  }
+
+  // create the fifth paragraph
+  createParagraph5() {
+    this.createStoryLine(textData.line18.str, 22);
+    this.createStoryLine(textData.line19.str, 23);
+    this.createStoryLine(textData.line20.str, 24);
+    this.createStoryLine(``, 25);
+  }
+
+  // create the sixth paragraph
+  createParagraph6() {
+    this.createStoryLine(textData.line21.str, 26);
+    this.createStoryLine(textData.line22.str, 27);
+    this.createStoryLine(textData.line23.str, 27);
+  }
+
+  createStoryLine(string, lineNumber) {
+    let currentLine = new StoryLine(string, lineNumber);
+    this.storylines.push(currentLine);
+  }
+
   update() {
     // call the parent class
     super.update();
 
     // draw the background
-    background(180, 80, 80);
+    background(10, 15, 18);
+
+    // display start instructions
+    if (this.clickCount === 0) {
+      this.startInstructions();
+    }
+
+    // display the story
+    for (let i = 0; i < this.storylines.length; i++) {
+      // if its the last line of the story, apply offset
+      // last line is actualy made of 3 steps :
+      // 1- string, 2- flickering answer, 3- string
+      if (i === this.storylines.length - 1) {
+        let currentLine = this.storylines[i];
+        currentLine.display(200);
+        currentLine.appear();
+      } else {
+        let currentLine = this.storylines[i];
+        currentLine.display();
+        currentLine.appear();
+      }
+    }
+
+    if (this.firstAnswer.created) {
+      let x = 145;
+      let y = 116;
+      this.displayAnswer(this.firstAnswer, x, y);
+      this.answerAppear(this.firstAnswer);
+    }
+    if (this.secondAnswer.created) {
+      let x = 183;
+      let y = 138;
+      this.displayAnswer(this.secondAnswer, x, y);
+      this.answerAppear(this.secondAnswer);
+    }
+    if (this.thirdAnswer.created) {
+      let x = 128;
+      let y = 645;
+      this.displayAnswer(this.thirdAnswer, x, y);
+      this.answerAppear(this.thirdAnswer);
+    }
 
     // apply text animation
     this.flicker();
 
-    // draw the text
-    this.displayText();
-
     // draw continue button
-    this.drawIntroButton();
+    if (this.clickCount > 0) {
+      this.drawIntroButton();
+    }
   }
 
-  // look at this to animate the tex -> https://creative-coding.decontextualize.com/text-and-type/
-  displayText() {
+  // display start instructions
+  startInstructions() {
     push();
-    textAlign(LEFT);
-    textSize(18);
-    textFont(this.font);
-    fill(200, 250, 190);
-    text(
-      `Oi!
-hey yea you! if you're here, reading this, chances are you're the owner of a body.
-do you like it ?    ${this.firstAnswer}
-uh? what was that?    ${this.secondAnswer}
-yeah i get it.. .
-sometimes, it feels heavy, right? but also sometimes SOoo light, rigth?!
-
-do you also think this body would be the ship you navigate the world with,
-u know, doing things.. like grabbing stuff and all that.
-every so often you feel it is actually limiting you, right. ..?
-oh! like going place! can you GO Places if you dont have a physical body?
-probably not... but who am i to tell you for sure...
-
-anyway, the only thing i can tell you with confidence is;
-ur body, it should be yours, and you should be able to control it? YEA! maybe?
-
-that would be fun! right?
-imagine not being confortable with the body you have..
-maybe its too.. feminine? masculine? androgynous? Ding!
-now ur gender cannot be perceived in your physical appearance!
-
-imagine getting called some bad word coz ur skin is like, a color that ppl dont like,
-maybe a specific shade of brown? who likes  brown, right! ha!
-now u can just change it!!
-what?
-isn't that the    ${this.thirdAnswer}`,
-      25,
-      60
-    );
-    text(`idea ever ??????`, 218, 623);
+    textAlign(CENTER);
+    textSize(45);
+    textFont(font);
+    fill(255);
+    text(`click the mouse to start`, width / 2, height / 4);
     pop();
   }
 
@@ -173,7 +273,7 @@ isn't that the    ${this.thirdAnswer}`,
     push();
     textAlign(LEFT, CENTER);
     textSize(40);
-    textFont(this.font);
+    textFont(font);
     fill(0, 0, 0, 100);
     let triangle = `\u25B6`;
     text(`${triangle}   CONTINUE`, this.button.text.x, this.button.text.y);
@@ -182,6 +282,23 @@ isn't that the    ${this.thirdAnswer}`,
 
   // click the button to go to next state
   mousePressed() {
+    this.clickCount += 1;
+    if (this.clickCount === 1) {
+      setTimeout(this.createParagraph1.bind(this), 1000);
+      setTimeout(this.createAnswer.bind(this), 1000, this.firstAnswer);
+      setTimeout(this.createAnswer.bind(this), 1000, this.secondAnswer);
+      setTimeout(this.createParagraph2.bind(this), 11000);
+      setTimeout(this.createParagraph3.bind(this), 21000);
+      setTimeout(this.createParagraph4.bind(this), 31000);
+      setTimeout(this.createParagraph5.bind(this), 41000);
+      setTimeout(this.createParagraph6.bind(this), 51000);
+      setTimeout(this.createAnswer.bind(this), 51000, this.thirdAnswer);
+
+      this.clickCount += 1;
+    } else {
+      this.clickCount += 1;
+    }
+
     // check if mouse is hovering
     let isHovering = this.checkHover();
     if (isHovering) {
@@ -220,19 +337,42 @@ isn't that the    ${this.thirdAnswer}`,
     return isHovering;
   }
 
-  // link alpha to noise value for a flashing effect
+  // keeps track of which answer has been created
+  createAnswer(answer) {
+    answer.created = true;
+  }
+
+  // make the answers appear slowly
+  answerAppear(answer) {
+    answer.color.a += 0.35;
+    answer.color.a = constrain(answer.color.a, 0, 255);
+  }
+
+  // display the answers
+  displayAnswer(answer, x, y) {
+    push();
+    textAlign(LEFT, CENTER);
+    textSize(20);
+    textFont(font);
+    fill(answer.color.r, answer.color.g, answer.color.b, answer.color.a);
+    text(`${answer.str}`, x, y);
+    pop();
+  }
+
+  // switches between two answers
   flicker() {
     let binaryValues = [0, 0, 0, 0, 1, 1, 1];
     let currentValue = random(binaryValues);
+
     if (frameCount % 3 === 0) {
       if (currentValue === 0) {
-        this.firstAnswer = `YES`;
-        this.secondAnswer = `YA`;
-        this.thirdAnswer = `BEST`;
+        this.firstAnswer.str = `YES`;
+        this.secondAnswer.str = `YA`;
+        this.thirdAnswer.str = `BEST`;
       } else {
-        this.firstAnswer = `NO`;
-        this.secondAnswer = `MNO`;
-        this.thirdAnswer = `WORST`;
+        this.firstAnswer.str = `NO`;
+        this.secondAnswer.str = `MNO`;
+        this.thirdAnswer.str = `WORST`;
       }
     }
   }
