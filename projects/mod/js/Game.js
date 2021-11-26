@@ -85,14 +85,14 @@ class Game extends State {
 
     // play soundtrack
     gameSoundtrack.play();
-    gameSoundtrack.amp(0.0038);
+    gameSoundtrack.amp(0.15);
     gameSoundtrack.loop();
 
     // fade out intro music
     introSoundtrack.setVolume(0, 15);
 
     // lower the amp of the menu noise
-    menuNoise.amp(0.003);
+    menuNoise.amp(0.018);
 
     // create background lines
     this.createBackgroundLines();
@@ -138,7 +138,7 @@ class Game extends State {
 
   // create the 2 beats with delays forming the heartbeat
   createHeartbeat() {
-    let generalAmp = 0.035; // this affects the 2 heartbeats and the 2 delays
+    let generalAmp = 0.8; // this affects the 2 heartbeats and the 2 delays
     this.createFirstBeat(generalAmp);
     this.createSecondBeat(generalAmp);
   }

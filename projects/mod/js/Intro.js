@@ -8,10 +8,10 @@ class Intro extends State {
 
     // define variables for the button
     this.button = {
-      x: 100,
-      y: 700,
-      w: 500,
-      h: 400,
+      x: undefined, // defined in hover method
+      y: undefined,
+      w: 400,
+      h: 300,
       corner: 10,
       color: {
         r: 240,
@@ -46,9 +46,9 @@ class Intro extends State {
       created: false,
       str: `YES`,
       color: {
-        r: 45,
-        g: 205,
-        b: 235,
+        r: 40,
+        g: 100,
+        b: 90,
         a: 0,
       },
     };
@@ -56,9 +56,9 @@ class Intro extends State {
       created: false,
       str: `YA`,
       color: {
-        r: 45,
-        g: 205,
-        b: 235,
+        r: 40,
+        g: 100,
+        b: 90,
         a: 0,
       },
     };
@@ -66,9 +66,9 @@ class Intro extends State {
       created: false,
       str: `WORSE`,
       color: {
-        r: 45,
-        g: 205,
-        b: 235,
+        r: 40,
+        g: 100,
+        b: 90,
         a: 0,
       },
     };
@@ -76,10 +76,29 @@ class Intro extends State {
     // store all the text lines here
     this.storylines = [];
 
+    // store all background leaves here
+    this.backgroundLeaves = [];
+
+    // create a bunch of leaves
+    this.createLeaves();
+
     // play the intro music
     introSoundtrack.play();
-    introSoundtrack.amp(0.007);
+    introSoundtrack.amp(0.017);
     introSoundtrack.loop();
+  }
+
+  // create a bunch of leaves in the background
+  createLeaves() {
+    let numOfLeaves = 100;
+    for (let i = 0; i < numOfLeaves; i++) {
+      let x = random(0, width);
+      let y = random(-50, height);
+      let w = random(250, 300);
+      let h = random(150, 200);
+      let currentLeaf = new BackgroundLeaf(x, y, w, h);
+      this.backgroundLeaves.push(currentLeaf);
+    }
   }
 
   // create the first paragraph
@@ -135,6 +154,7 @@ class Intro extends State {
     this.createStoryLine(textData.line23.str, 27);
   }
 
+  //create a line of the text
   createStoryLine(string, lineNumber) {
     let currentLine = new StoryLine(string, lineNumber);
     this.storylines.push(currentLine);
@@ -169,20 +189,20 @@ class Intro extends State {
     }
 
     if (this.firstAnswer.created) {
-      let x = 145;
-      let y = 116;
+      let x = 146;
+      let y = 136;
       this.displayAnswer(this.firstAnswer, x, y);
       this.answerAppear(this.firstAnswer);
     }
     if (this.secondAnswer.created) {
       let x = 183;
-      let y = 138;
+      let y = 159;
       this.displayAnswer(this.secondAnswer, x, y);
       this.answerAppear(this.secondAnswer);
     }
     if (this.thirdAnswer.created) {
       let x = 128;
-      let y = 645;
+      let y = 665;
       this.displayAnswer(this.thirdAnswer, x, y);
       this.answerAppear(this.thirdAnswer);
     }
@@ -194,6 +214,13 @@ class Intro extends State {
     if (this.clickCount > 0) {
       this.drawIntroButton();
     }
+
+    // display the background leaves
+    for (let i = 0; i < this.backgroundLeaves.length; i++) {
+      let currentLeaf = this.backgroundLeaves[i];
+      currentLeaf.display();
+      currentLeaf.movement();
+    }
   }
 
   // display start instructions
@@ -202,16 +229,13 @@ class Intro extends State {
     textAlign(CENTER);
     textSize(45);
     textFont(font);
-    fill(255);
+    fill(255, 200, 200, 100);
     text(`click the mouse to start`, width / 2, height / 4);
     pop();
   }
 
   // draw the continue button
   drawIntroButton() {
-    // change the color and position of the button depeding on the user's mouse position
-    this.hoverButton();
-
     // defining the position of the shadows according to the position of the button
     this.button.firstShadow.x = this.button.x - 20;
     this.button.firstShadow.y = this.button.y + 5;
@@ -278,6 +302,9 @@ class Intro extends State {
     let triangle = `\u25B6`;
     text(`${triangle}   CONTINUE`, this.button.text.x, this.button.text.y);
     pop();
+
+    // change the color and position of the button depeding on the user's mouse position
+    this.hoverButton();
   }
 
   // click the button to go to next state
@@ -314,11 +341,11 @@ class Intro extends State {
 
     if (isHovering) {
       this.button.x = 457;
-      this.button.y = 451;
+      this.button.y = 652;
       this.button.color.a = 255;
     } else {
       this.button.x = 455;
-      this.button.y = 450;
+      this.button.y = 650;
       this.button.color.a = 180;
     }
   }
@@ -345,7 +372,7 @@ class Intro extends State {
   // make the answers appear slowly
   answerAppear(answer) {
     answer.color.a += 0.35;
-    answer.color.a = constrain(answer.color.a, 0, 255);
+    answer.color.a = constrain(answer.color.a, 0, 200);
   }
 
   // display the answers

@@ -14,7 +14,7 @@ class Ui {
       r: 75,
       g: 75,
       b: 75,
-      a: 85,
+      a: 50,
     };
     // define the border thickness
     this.borderThickness = 8;
