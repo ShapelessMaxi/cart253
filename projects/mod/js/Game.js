@@ -1,6 +1,5 @@
 /* this is the Game class extending the State class */
-/* it takes care of creating the different elements in that specific state,
-including the body parts, the ui, the heartbeat sound, the modifying methods and some small animations */
+/* it takes care of creating the different elements in that specific state*/
 
 class Game extends State {
   // create the ui and the body parts
@@ -42,9 +41,6 @@ class Game extends State {
     this.x = 0;
     this.particleArray = [];
 
-    // define variables used for the ambiant/background sound
-    // this.soundtrack;
-
     // define variables used for the heartbeat oscillators
     this.firstBeat;
     this.firstDelay;
@@ -70,7 +66,7 @@ class Game extends State {
 
     // define variables for the ui
     this.frameLines = [];
-    this.ui;
+    this.uiShape;
     this.nameUi;
     //define variables for the user's name
     this.nameText; // Instruction object
@@ -132,7 +128,7 @@ class Game extends State {
       let vertex = createVector(data[i].x, data[i].y);
       perimeter.push(vertex);
     }
-    let currentBodyPart = new Body(perimeter);
+    let currentBodyPart = new Bodypart(perimeter);
     this.bodyParts.push(currentBodyPart);
   }
 
@@ -150,14 +146,17 @@ class Game extends State {
     let freq = 70;
     let type = `sine`;
     this.firstBeat = new Heartbeat(amp, freq, type);
-    this.firstBeat.createOscillator();
 
     // create the first delay
     let delayAmp = generalAmp * 1;
     let delayTime = 0.2;
     let feedback = 0.1;
-    this.firstDelay = new HeartDelay(delayAmp, delayTime, feedback);
-    this.firstDelay.createDelay(this.firstBeat);
+    this.firstDelay = new HeartDelay(
+      delayAmp,
+      delayTime,
+      feedback,
+      this.firstBeat
+    );
   }
 
   // create the oscillators for the second beat of the heart beat and a delay
@@ -167,14 +166,17 @@ class Game extends State {
     let freq = 75;
     let type = `sine`;
     this.secondBeat = new Heartbeat(amp, freq, type);
-    this.secondBeat.createOscillator();
 
     // create the second delay
     let delayAmp = generalAmp * 0.2;
     let delayTime = 0.1;
     let feedback = 0.2;
-    this.secondDelay = new HeartDelay(delayAmp, delayTime, feedback);
-    this.secondDelay.createDelay(this.secondBeat);
+    this.secondDelay = new HeartDelay(
+      delayAmp,
+      delayTime,
+      feedback,
+      this.secondBeat
+    );
   }
 
   // start and stop the heart oscillators (once)
@@ -256,8 +258,9 @@ class Game extends State {
     return this.heartbeatPace.current;
   }
 
-  // reset the metronome (update the pace)
+  // reset the metronome and update the pace
   resetHeartbeatMetronome() {
+    // clear the interval
     clearInterval(this.heartMetronome);
     this.heartbeatInterval();
   }
@@ -299,7 +302,7 @@ class Game extends State {
     let va = createVector(x1, y1);
     let vb = createVector(x2, y2);
 
-    let frameLine = new Frame(va, vb);
+    let frameLine = new Frameline(va, vb);
     // store the frame lines here
     this.frameLines.push(frameLine);
   }
@@ -316,7 +319,7 @@ class Game extends State {
     let vg = createVector(25, 725);
     let perimeter = [va, vb, vc, vd, ve, vf, vi, vg];
 
-    this.ui = new Ui(perimeter);
+    this.uiShape = new UiShape(perimeter);
   }
 
   // create the name ui
@@ -331,7 +334,7 @@ class Game extends State {
     let vg = createVector(125, 75);
     let perimeter = [va, vb, vc, vd, ve, vf, vi, vg];
 
-    this.nameUi = new Ui(perimeter);
+    this.nameUi = new UiShape(perimeter);
   }
 
   // create the name text so it can be displayed
@@ -411,7 +414,7 @@ class Game extends State {
     }
 
     // display the ui
-    this.ui.display();
+    this.uiShape.display();
     this.nameUi.display();
     this.nameText.display(this.nameText.stringBefore);
     this.frameLines[0].display();
@@ -425,9 +428,9 @@ class Game extends State {
     for (let i = 0; i < this.instructions.length; i++) {
       let currentInstruction = this.instructions[i];
       if (!currentInstruction.discovered) {
-        currentInstruction.display(currentInstruction.stringBefore);
+        currentInstruction.display();
       } else {
-        currentInstruction.display(currentInstruction.stringAfter);
+        currentInstruction.display();
       }
     }
 
@@ -969,7 +972,7 @@ class Game extends State {
     }
   }
 
-  // check if an item is inside an array
+  // check if an item is inside an array, return true or false
   checkInsideArray(item, array) {
     for (let i = 0; i < array.length; i++) {
       let currentItem = array[i];

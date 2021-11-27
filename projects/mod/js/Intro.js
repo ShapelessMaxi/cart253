@@ -1,3 +1,6 @@
+/* this is the Intro class extending the State class */
+/* it takes care of creating the different elements in that specific state*/
+
 class Intro extends State {
   constructor() {
     // call the parent class
@@ -188,18 +191,21 @@ class Intro extends State {
       }
     }
 
+    // make the first answer appear at the same time of the rest of the paragraph
     if (this.firstAnswer.created) {
       let x = 149;
       let y = 137;
       this.displayAnswer(this.firstAnswer, x, y);
       this.answerAppear(this.firstAnswer);
     }
+    // make the second answer appear
     if (this.secondAnswer.created) {
       let x = 191;
       let y = 159;
       this.displayAnswer(this.secondAnswer, x, y);
       this.answerAppear(this.secondAnswer);
     }
+    // make the third answer appear
     if (this.thirdAnswer.created) {
       let x = 133;
       let y = 665;

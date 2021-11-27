@@ -1,26 +1,31 @@
-// class taking care of displaying and moving the background 'leaves' in the intro
+// create a falling leaf in the background of intro state
 class BackgroundLeaf {
   constructor(x, y, w, h) {
+    // position and size is defined in intro state (createLeaf method)
     this.x = x;
     this.y = y;
     this.w = w;
     this.h = h;
+
+    // define the color of the leaf
     this.color = {
       r: 65,
       g: 80,
       b: 30,
       a: 1.8,
     };
-    this.speed = random(0.8, 1.4);
+
+    // define the speed of the movement
+    this.verticalSpeed = random(0.8, 1.4);
     this.horizontalSpeed = random(0, 2);
   }
 
   // takes care of moving the leaves
   movement() {
-    // moves slowly from top to bottom
-    this.y += this.speed;
+    // move from top to bottom
+    this.y += this.verticalSpeed;
 
-    // if the leaves moves from left to right, bigger chance of contining moving in that direction
+    // if the leaves moves from left to right, bigger chance of continuing moving in that direction
     if (this.horizontalSpeed < 0) {
       let chance = random(0, 1);
       if (chance < 0.95) {

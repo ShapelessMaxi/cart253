@@ -1,12 +1,15 @@
-// comment this also fdgagdsa
+// create a particle used to draw the acosh curve in the extend method of the game state
 class Particle {
   constructor(originX, originY, newX, r) {
+    // position defined in the extend method
     this.origin = {
       x: originX,
       y: originY,
     };
     this.x = newX;
     this.y = r;
+
+    // define the size and the color
     this.size = 8;
     this.color = {
       r: 160,
@@ -16,6 +19,7 @@ class Particle {
     };
   }
 
+  // display the particle
   display() {
     push();
     noStroke();
@@ -25,6 +29,7 @@ class Particle {
     pop();
   }
 
+  // make the particle flicker
   flicker() {
     let minAlpha = 0;
     let maxAlpha = 60;

@@ -1,7 +1,8 @@
-// every Body object is some kind of irregular polygon populated by a semi-regular density of atoms.
+// every Body object is an irregular polygon of 7 segments and 9 vertices
+// populated by a semi-regular density of atoms
 
-class Body {
-  // the constructor is given a perimeter when object is created
+class Bodypart {
+  // the constructor is given a perimeter when object is created in the game state
   constructor(perimeter) {
     // define the color of the shape
     this.color = {
@@ -103,6 +104,7 @@ class Body {
       // check if current atom is outside polygon perimeter
       this.checkOutside(currentAtom);
 
+      // respawn the atom if its overlapping with another or if outside of the perimeter
       while (currentAtom.overlapping || currentAtom.outside) {
         currentAtom.x = random(
           this.spawnBox.xMinBorder,

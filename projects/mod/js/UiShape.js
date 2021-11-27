@@ -1,4 +1,5 @@
-class Ui {
+// create a ui shape
+class UiShape {
   constructor(perimeter) {
     // vertices created with createVector() in main script
     this.perimeter = perimeter;

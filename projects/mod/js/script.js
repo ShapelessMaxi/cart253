@@ -19,6 +19,7 @@ letter to number code with numbers usable for a rgb value.
 
 1- in a class, define the code for every letter (a-z)
   i.e.: let a = 0; b = 5; (?? figure this out lol)
+
 2- define a min (3) and a max of characters for the name?
   would like not too, but i think if the name has too many characters, it'll give me really intense values...
 3- look at the amount of letters in the name
@@ -32,20 +33,12 @@ letter to number code with numbers usable for a rgb value.
 5- compile every value in r, g and b array (addition?, average? -> depends on the actual codes chosen)
 6- assign a part of the atoms array this color (probabilistic approach)
   this is run only once at startup of game state.
-
-**********antena algorithm
-looking at math logarithmic and other functions, would it be possible to make a kind of antena grow
-from a random vertex of the body part selected?
--pause the use of the algorithm while its growing slowly
--color= name code?, random?
--draw with what? (ellipse?)
-  Math.acosh() -> figure out how to change starting point and direction...
--accompanied by weird sound?
 */
 
 "use strict";
-// define variables for the states
-let currentState; // possible state objects : Intro, Menu, Game
+
+// define variables for changing state
+let currentState; // possible states: Intro, Menu, Game
 
 // define variables used for sounds
 let gameSoundtrack;
@@ -83,19 +76,25 @@ function setup() {
   // audio starts only when user interacts with the webpage
   userStartAudio();
 
-  // create a new state object
-  currentState = new Intro();
+  // create a new state object, the program starts with the intro state
+  currentState = new Game();
 }
 
-// display elements specified in the the state classes
+// display elements (specified in the the state classes)
 function draw() {
   currentState.update();
 }
 
+// intro state: nothing
+// menu state: used when typing the name
+// game state: used for different method (ie: select/deselect, grow/shrink, etc.)
 function keyPressed() {
   currentState.keyPressed();
 }
 
+// intro state: start the narrative, click continue button
+// menu state: click continue button
+// game state: nothing
 function mousePressed() {
   currentState.mousePressed();
 }

@@ -1,3 +1,4 @@
+// creates instructions displayed in the game state ui
 class Instruction {
   constructor(x, y, alignMode, stringBefore, stringAfter) {
     // define the position of the text
@@ -6,13 +7,13 @@ class Instruction {
 
     // define the formating of the text
     this.size = 20;
+    this.align = alignMode;
     this.color = {
       r: 255,
       g: 255,
       b: 255,
       a: 100,
     };
-    this.align = alignMode;
 
     // define what the instruction says before discovery
     this.stringBefore = stringBefore;
@@ -22,7 +23,14 @@ class Instruction {
     this.discovered = false;
   }
 
-  display(string) {
+  // display the instruction
+  display() {
+    let string;
+    if (!this.discovered) {
+      string = this.stringBefore;
+    } else {
+      string = this.stringAfter;
+    }
     push();
     textAlign(this.align);
     textSize(this.size);

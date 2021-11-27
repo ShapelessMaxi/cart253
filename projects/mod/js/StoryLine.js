@@ -1,7 +1,11 @@
-// class taking care of displaying and making the intro text appear
+// create a line of text to form a story in the intro state
 class StoryLine {
   constructor(string, lineNumber) {
+    // define in the createStoryline method
     this.string = string;
+    this.lineNumber = lineNumber;
+
+    // define the formatting of the text
     this.marginLeft = 15;
     this.marginTop = 70;
     this.verticalSpacing = 22;
@@ -12,22 +16,25 @@ class StoryLine {
       b: 200,
       a: 0,
     };
-    this.lineNumber = lineNumber;
+
+    // define the speed
     this.appearingSpeed = 0.35;
   }
 
-  // display the lines of the text
+  // display the line of text
   display(xShift) {
     // xShift is an optinal variable, if not given as a parameter, it is undefined
+    // in case we need to move a line horizontaly
+    // used for the very last line of the story
     if (xShift === undefined) {
       xShift = 0;
     }
 
-    // takes care of the position of the lines
+    // takes care of the position of the line
     let x = this.marginLeft + xShift;
     let y = this.marginTop + this.lineNumber * this.verticalSpacing;
 
-    // draw the text lines
+    // draw the text line
     push();
     textAlign(LEFT, CENTER);
     textSize(this.size);
@@ -37,10 +44,10 @@ class StoryLine {
     pop();
   }
 
-  // the text appear slowly
+  // makes the text appear slowly
   appear() {
     this.color.a += this.appearingSpeed;
-    // constraining it so it doesn't go up to 255
+    // constraining it so it doesn't get fully opaque
     this.color.a = constrain(this.color.a, 0, 200);
   }
 }

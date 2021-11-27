@@ -1,4 +1,6 @@
-// COMMENT THIS BETTER hehe
+/* this is the Menu class extending the State class */
+/* it takes care of creating the different elements in that specific state*/
+
 class Menu extends State {
   constructor() {
     // call the parent class
@@ -139,6 +141,7 @@ class Menu extends State {
     this.flash();
   }
 
+  // create some lines with Frameline class
   createFlashingLines() {
     let x1 = width - 100;
     let y1 = 0;
@@ -162,7 +165,7 @@ class Menu extends State {
     let va = createVector(x1, y1);
     let vb = createVector(x2, y2);
 
-    let frameLine = new Frame(va, vb);
+    let frameLine = new Frameline(va, vb);
     // store the frame lines here
     this.flashingLines.push(frameLine);
   }

@@ -1,6 +1,8 @@
-class Frame {
+// create a frameline (line framing the canvas, kinda)
+// used in the menu and game state
+class Frameline {
   constructor(va, vb) {
-    // vertices created with createVector() in main script
+    // vertices defined in the createFrameLine method (game) and the createFlashingLines methd (menu)
     this.va = va;
     this.vb = vb;
 
@@ -16,8 +18,8 @@ class Frame {
     this.thickness = 5;
   }
 
+  // display the line
   display() {
-    // display the border
     push();
     noFill();
     strokeCap(SQUARE);
@@ -26,6 +28,4 @@ class Frame {
     line(this.va.x, this.va.y, this.vb.x, this.vb.y);
     pop();
   }
-
-  flash() {}
 }
