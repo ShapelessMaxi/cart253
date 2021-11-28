@@ -19,6 +19,26 @@ letter to number code with numbers usable for a rgb value.
 
 1- in a class, define the code for every letter (a-z)
   i.e.: let a = 0; b = 5; (?? figure this out lol)
+  rgb values range form 0 to 255,.
+  theres 26 letters possible
+  map? 0-25 to 0-255
+  255/26 = 9.8 kinda
+  a - 0 - 0
+  b - 1 - 10
+  c - 2 - 20
+  d - 3 - 30
+  e - 4 - 40
+  f - 5 - 50
+  m - 13 - 130
+  y - 25 - 250
+  z - 26 - 260
+  z kinda goes over a bit, but basicaly its the full range (= 255), and y is (= 250), so its still different...
+  easy to convert, we can use a loop thingy
+  array of the alphabet -> index * 10 = code
+  array of the name -> check the index by checking if nameLetter === alphabetLetter, if true, return the index and multiply by 10.
+  check if the 0, 2nd, 5th, 8th index in name array exist, if yes, add and divide by number of entreie and giv it to user.r variable.
+
+    -? store these values in a dictionnary? we dont really need to keep track of the code value since its so easy to just convert letter to code
 
 2- define a min (3) and a max of characters for the name?
   would like not too, but i think if the name has too many characters, it'll give me really intense values...
