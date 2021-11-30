@@ -1,5 +1,5 @@
-Reflection letter
-Addressed to Pippin and Sharon
+#Reflection letter
+##Addressed to Pippin and Sharon
 
 We’re already at the end of the semester… these few months we’re a blur for me. It was a big transition phase as multiple things happened in my work, emotional/personal and university life (I’ll spare you the details...).
 Even though I wish I was in a better mental space this semester, I think this specific class was a great way for me to focus my head on something that was not anxiety inducing. It’s so easy to get lost in code, and to hyper focus on debugging! I think programming has become somewhat of a meditative process for me and somewhat of an escape.
