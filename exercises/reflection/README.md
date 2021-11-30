@@ -9,4 +9,4 @@ I’m really happy and impressed with this class. It was personal, even though i
 Another thing I appreciated a lot is your openness to different people and projects. I loved the fact that no matter how ‘normal’ or unusual, no matter how simple or complex, no matter what the project was, really, you were there to encourage us. Some of the things I particularly enjoy in art is experimentation, being all over the place and making the weirdest things. In the context of educational institutions, this trait isn’t particularly appreciated by many.
 Overall, the JavaScript journey was way more fun than I thought it would be, challenging and rewarding. I’m looking forward to the next coding class and, for sure, this is a skill I want to continue developing and using in the future.
 
-# _- see ya! maxi_
+_- see ya! maxi_
