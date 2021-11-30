@@ -12,7 +12,7 @@ class BackgroundLeaf {
       r: 65,
       g: 80,
       b: 30,
-      a: 1.8,
+      a: 9,
     };
 
     // define the speed of the movement

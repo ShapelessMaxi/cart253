@@ -1,7 +1,7 @@
 // every Body object is an irregular polygon of 7 segments and 9 vertices
 // populated by a semi-regular density of atoms
 
-class Bodypart {
+class BodyPart {
   // the constructor is given a perimeter when object is created in the game state
   constructor(perimeter) {
     // define the color of the shape
@@ -35,6 +35,9 @@ class Bodypart {
       min: 3,
       max: 4,
     };
+
+    // keep track of the percentage of colorized atoms
+    this.colorizedAtoms = 0;
 
     // keep track of the bodypart being selected
     this.selected = false;
@@ -172,7 +175,7 @@ class Bodypart {
     push();
     fill(this.color.r, this.color.g, this.color.b, this.color.a);
     noStroke();
-    beginShape();
+    beginShape(QUAD_STRIP);
     // line below is from collide2D librairy documentation -> https://github.com/bmoren/p5.collide2D#collidelinepoly
     for (let { x, y } of this.perimeter) vertex(x, y);
     endShape(CLOSE);
@@ -184,7 +187,7 @@ class Bodypart {
     // loop trough
     for (let j = 0; j < this.atomArray.length; j++) {
       let currentAtom = this.atomArray[j];
-      currentAtom.display();
+      currentAtom.display(this.colorizedAtoms);
     }
   }
 }

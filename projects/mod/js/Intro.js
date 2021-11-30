@@ -79,6 +79,16 @@ class Intro extends State {
     // store all the text lines here
     this.storylines = [];
 
+    // define variables for the animation of the color of the 'click to start' instruction
+    this.startColor = {
+      r: 255,
+      g: 200,
+      b: 200,
+      a: 100,
+    };
+    this.t = 0;
+    this.alphaWave;
+
     // store all background leaves here
     this.backgroundLeaves = [];
 
@@ -93,7 +103,7 @@ class Intro extends State {
 
   // create a bunch of leaves in the background
   createLeaves() {
-    let numOfLeaves = 100;
+    let numOfLeaves = 50;
     for (let i = 0; i < numOfLeaves; i++) {
       let x = random(0, width);
       let y = random(-50, height);
@@ -170,9 +180,10 @@ class Intro extends State {
     // draw the background
     background(10, 15, 18);
 
-    // display start instructions
+    // display start instructions with the alpha animation
     if (this.clickCount === 0) {
       this.startInstructions();
+      this.alphaAnimation();
     }
 
     // display the story
@@ -242,9 +253,26 @@ class Intro extends State {
     textAlign(CENTER);
     textSize(45);
     textFont(fontSerif);
-    fill(255, 200, 200, 100);
+    fill(
+      this.startColor.r,
+      this.startColor.g,
+      this.startColor.b,
+      this.startColor.a
+    );
     text(`click the mouse to start`, width / 2, height / 4);
     pop();
+  }
+
+  // makes the highlighted bodypart blink slowly
+  alphaAnimation() {
+    let animationSpeed = 0.035;
+    let darkestAlpha = 15;
+    let lightestAlpha = 200;
+
+    this.alphaWave = sin(this.t);
+    this.alphaWave = map(this.alphaWave, -1, 1, darkestAlpha, lightestAlpha);
+    this.t += animationSpeed;
+    this.startColor.a = this.alphaWave;
   }
 
   // draw the continue button

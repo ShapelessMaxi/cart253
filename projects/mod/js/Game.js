@@ -61,7 +61,7 @@ class Game extends State {
     this.highlightWave;
     this.highlightedIndex = 0;
 
-    //  define variables for the background
+    // define variables for the background
     this.backgroundLines = [];
 
     // define variables for the ui
@@ -70,6 +70,36 @@ class Game extends State {
     this.nameUi;
     //define variables for the user's name
     this.nameText; // Instruction object
+
+    // define variables for the conversion of the name
+    this.alphabet = [
+      `a`,
+      `b`,
+      `c`,
+      `d`,
+      `e`,
+      `f`,
+      `g`,
+      `h`,
+      `i`,
+      `j`,
+      `k`,
+      `l`,
+      `m`,
+      `n`,
+      `o`,
+      `p`,
+      `q`,
+      `r`,
+      `s`,
+      `t`,
+      `u`,
+      `v`,
+      `w`,
+      `x`,
+      `y`,
+      `z`,
+    ];
 
     // store all instructions here
     this.instructions = [];
@@ -93,10 +123,13 @@ class Game extends State {
     // create background lines
     this.createBackgroundLines();
 
+    // convert the name into r,g,b values
+    this.convertName();
+
     // create the ui
     this.createUi();
     // create the name text to display
-    this.createNameText(nameString);
+    this.createNameText();
     // create instructions
     this.createInstructions();
   }
@@ -128,7 +161,7 @@ class Game extends State {
       let vertex = createVector(data[i].x, data[i].y);
       perimeter.push(vertex);
     }
-    let currentBodyPart = new Bodypart(perimeter);
+    let currentBodyPart = new BodyPart(perimeter);
     this.bodyParts.push(currentBodyPart);
   }
 
@@ -145,17 +178,16 @@ class Game extends State {
     let amp = generalAmp * 0.6;
     let freq = 70;
     let type = `sine`;
-    this.firstBeat = new Heartbeat(amp, freq, type);
-
-    // create the first delay
     let delayAmp = generalAmp * 1;
     let delayTime = 0.2;
     let feedback = 0.1;
-    this.firstDelay = new HeartDelay(
+    this.firstBeat = new HeartBeat(
+      amp,
+      freq,
+      type,
       delayAmp,
       delayTime,
-      feedback,
-      this.firstBeat
+      feedback
     );
   }
 
@@ -165,17 +197,16 @@ class Game extends State {
     let amp = generalAmp * 0.9;
     let freq = 75;
     let type = `sine`;
-    this.secondBeat = new Heartbeat(amp, freq, type);
-
-    // create the second delay
     let delayAmp = generalAmp * 0.2;
     let delayTime = 0.1;
     let feedback = 0.2;
-    this.secondDelay = new HeartDelay(
+    this.secondBeat = new HeartBeat(
+      amp,
+      freq,
+      type,
       delayAmp,
       delayTime,
-      feedback,
-      this.secondBeat
+      feedback
     );
   }
 
@@ -338,7 +369,7 @@ class Game extends State {
   }
 
   // create the name text so it can be displayed
-  createNameText(nameString) {
+  createNameText() {
     let stringBefore = nameString;
     let stringAfter = undefined;
     let alignMode = CENTER;
@@ -346,46 +377,46 @@ class Game extends State {
     let y = 35;
     this.nameText = new Instruction(x, y, alignMode, stringBefore, stringAfter);
 
-    // set the discover parameter to true (maybe something cool to do in the futur with that??)
-    this.nameText.discovered = true;
-    // change the size of the text
+    // change the size, the font and the color of the text
     this.nameText.size = 22;
+    this.nameText.font = fontSans;
+    this.nameText.color.r = nameColor.r;
+    this.nameText.color.g = nameColor.g;
+    this.nameText.color.b = nameColor.b;
   }
 
   // create instructions
   createInstructions() {
-    let firstColumnX = 75;
-    let secondColumnX = 675;
+    let firstColumn = 75;
+    let secondColumn = 675;
 
-    let firstRowY = 500; // first row has bigger spacing
-    let secondRowY = 550;
-    let thirdRowY = 575;
-    let fourthRowY = 600;
-    let fifthRowY = 625;
-    let sixthRowY = 650;
+    let firstRow = 500; // first row has bigger spacing
+    let secondRow = 550;
+    let thirdRow = 575;
+    let fourthRow = 600;
+    let fifthRow = 625;
+    let sixthRow = 650;
 
-    this.createInstruction(firstColumnX, firstRowY, `S`, `select`);
-    this.createInstruction(secondColumnX, firstRowY, `D`, `deselect`);
-    this.createInstruction(firstColumnX, secondRowY, `1`, `stretch`);
-    this.createInstruction(firstColumnX, thirdRowY, `2`, `grow`);
-    this.createInstruction(firstColumnX, fourthRowY, `3`, `shrink`);
-    this.createInstruction(firstColumnX, fifthRowY, `4`, `extend`);
-    this.createInstruction(firstColumnX, sixthRowY, `5`, `withdraw`);
+    // first row, 'main' instructions (if you dont have anything selected, you cant interact)
+    this.createInstruction(firstColumn, firstRow, LEFT, `S`, `select`);
+    this.createInstruction(secondColumn, firstRow, RIGHT, `D`, `deselect`);
+
+    // first column, key used : 0-4
+    this.createInstruction(firstColumn, secondRow, LEFT, `0`, `stretch`);
+    this.createInstruction(firstColumn, thirdRow, LEFT, `1`, `grow`);
+    this.createInstruction(firstColumn, fourthRow, LEFT, `2`, `shrink`);
+    this.createInstruction(firstColumn, fifthRow, LEFT, `3`, `extend`);
+    this.createInstruction(firstColumn, sixthRow, LEFT, `4`, `withdraw`);
+
+    // second column, key used : 5-9
+    this.createInstruction(secondColumn, secondRow, RIGHT, `5`, `colorize`);
+    this.createInstruction(secondColumn, thirdRow, RIGHT, `6`, `decolorize`);
   }
 
   // create an instruction using parameters given in the createInstructions() method
-  createInstruction(x, y, key, instruction) {
+  createInstruction(x, y, alignMode, key, instruction) {
     let stringBefore = `press '${key}' to ... .  .`;
     let stringAfter = `press '${key}' to ${instruction} ..?`;
-
-    // set alignMode depending on which column the instruction is in
-    let alignMode;
-    let firstColumnX = 75; // ??can this be a bit cuter?
-    if (x === firstColumnX) {
-      alignMode = LEFT;
-    } else {
-      alignMode = RIGHT;
-    }
 
     let currentInstruction = new Instruction(
       x,
@@ -395,6 +426,105 @@ class Game extends State {
       stringAfter
     );
     this.instructions.push(currentInstruction);
+  }
+
+  // conversion of the name into r,g,b values
+  convertName() {
+    // check the position of each letter and store into 3 arrays
+    // r array -> index[0], [3], [6], [...]
+    let rPosition = 0; // keep track of the increment
+    let rValues = []; // store the converted values of the letters here
+    let rSum = 0; // store the sum of the r values here
+    let rMean = 0; // store the mean value of all the r values here
+
+    // g array -> index[1], [4], [7], [...]
+    let gPosition = 1; // keep track of the increment
+    let gValues = []; // store the converted values of the letters here
+    let gSum = 0; // store the sum of the g values here
+    let gMean = 0; // store the mean value of all the g values here
+
+    // b array -> index[2], [5], [8], [...]
+    let bPosition = 2; // keep track of the increment
+    let bValues = []; // store the converted values of the letters here
+    let bSum = 0; // store the sum of the b values here
+    let bMean = 0; // store the mean value of all the b values here
+
+    // loop through the name array containing the letters of the name
+    for (let i = 0; i < nameArray.length; i++) {
+      let currentLetter = nameArray[i];
+
+      // get the alphabet index the current letter corresponds to
+      let alphabetIndex = this.checkAplhabetIndex(currentLetter);
+
+      // apply the conersion value
+      let currentValue = alphabetIndex * 10;
+
+      // store the letters and the converted values in the corresponding arrays
+      if (i === rPosition) {
+        // store the converted value here
+        rValues.push(currentValue);
+
+        // go to next r position (+3 from the last)
+        rPosition += 3;
+      } else if (i === gPosition) {
+        // store the converted value here
+        gValues.push(currentValue);
+
+        // go to next g position (+3 from the last)
+        gPosition += 3;
+      } else if (i === bPosition) {
+        // store the converted value here
+        bValues.push(currentValue);
+
+        // go to next b position (+3 from the last)
+        bPosition += 3;
+      }
+    }
+
+    // calculate the final color value
+    // check if theres enough letters to convert
+    if (nameArray.length === 1) {
+      // only 1 letter to convert, g and b are default values
+      nameColor.r = this.calculateColorValue(rSum, rValues);
+      nameColor.g = 100;
+      nameColor.b = 100;
+    } else if (nameArray.length === 2) {
+      // only 2 letter to convert, b is default value
+      nameColor.r = this.calculateColorValue(rSum, rValues);
+      nameColor.g = this.calculateColorValue(gSum, gValues);
+      nameColor.b = 100;
+    } else {
+      // 3 letters or more to convert, no default values
+      nameColor.r = this.calculateColorValue(rSum, rValues);
+      nameColor.g = this.calculateColorValue(gSum, gValues);
+      nameColor.b = this.calculateColorValue(bSum, bValues);
+    }
+  }
+
+  // check if an item is inside an array, return true or false
+  checkAplhabetIndex(letter) {
+    let j = 0;
+    while (j < this.alphabet.length) {
+      let currentAlphabetLetter = this.alphabet[j];
+      if (letter.toLowerCase() === currentAlphabetLetter) {
+        return j;
+      } else {
+        j++;
+      }
+    }
+  }
+
+  // calculate the mean of the array
+  calculateColorValue(sum, valuesArray) {
+    for (let i = 0; i < valuesArray.length; i++) {
+      let currentValue = valuesArray[i];
+      sum += currentValue;
+    }
+    let mean = sum / valuesArray.length;
+
+    // map the mean to have a lighter color (dark color on dark background isnt really satisfying..)
+    mean = map(mean, 0, 255, 100, 255);
+    return mean;
   }
 
   // draw the background, the ui, the body and the atoms
@@ -416,7 +546,7 @@ class Game extends State {
     // display the ui
     this.uiShape.display();
     this.nameUi.display();
-    this.nameText.display(this.nameText.stringBefore);
+    this.nameText.display();
     this.frameLines[0].display();
     this.frameLines[1].display();
 
@@ -477,27 +607,34 @@ class Game extends State {
   // strecth algorithm
   // internal growth / shrinkage method
   // extend algorithm / remove extension method
+  // colorize / decolorize
   keyPressed() {
     // select a body part with `S` key, deselect with `D` key
     this.selectDeselect();
 
     // generative algorithm that stretch the selected bodypart in a weird way
-    // press '1'
+    // press '0'
     this.strecthSelected();
 
     // interactive method that makes the atoms grow or shrink
-    // press '2'
+    // press '1'
     this.internalGrowth();
-    // press '3'
+    // press '2'
     this.internalShrinkage();
 
     // define the length of the acosh curve
     let numOfSteps = 300;
     // generative algorithm that extends an external growth
-    // press '4'
+    // press '3'
     this.extendSelected(numOfSteps);
-    // press '5' to remove first extension
+    // press '4' to remove first extension
     this.removeExtension(numOfSteps);
+
+    // interactive method that makes the atoms change color (defined by user name)
+    // press '5' to colorize some of the atoms
+    this.colorize();
+    // press '65' to dcolorize some of the atoms
+    this.decolorize();
   }
 
   // select the next bodypart, or deselect the current selected bodypart
@@ -655,8 +792,8 @@ class Game extends State {
     // define the intesity of the streching
     let intensity = random(3, 6);
 
-    // 49 -> `1` key
-    if (keyCode === 49) {
+    // 48 and 96 -> `0` key
+    if (keyCode === 48 || keyCode === 96) {
       for (let i = 0; i < this.bodyParts.length; i++) {
         let currentBodyPart = this.bodyParts[i];
         if (currentBodyPart.selected) {
@@ -672,6 +809,9 @@ class Game extends State {
             let speedUp = 1.8;
             this.changePace(speedUp);
           }
+
+          // make the ui frame lines a bit more vibrant
+          this.frameLightUp();
         }
       }
     }
@@ -750,6 +890,12 @@ class Game extends State {
       }
     }
 
+    // make the selected vertices move
+    this.stretchMovement(bodypart, intensity, modifiableVerts);
+  }
+
+  // apply a movement to vertices of a body part
+  stretchMovement(bodypart, intensity, modifiableVerts) {
     // this determines how the vertices move
     let strecthValue = sin(frameCount) * intensity;
 
@@ -773,9 +919,6 @@ class Game extends State {
         currentVert.y += strecthValue;
       }
     }
-
-    // make the ui frame lines a bit more vibrant
-    this.frameLightUp();
   }
 
   // make the atoms of the selected grow semi-randomly
@@ -783,8 +926,8 @@ class Game extends State {
     // single out the internal growth instruction from instructions array
     let internalGrowthInstruction = this.instructions[3];
 
-    // 50 -> `2` key
-    if (keyCode === 50) {
+    // 49 and 97 -> `1` key
+    if (keyCode === 49 || keyCode === 97) {
       for (let i = 0; i < this.bodyParts.length; i++) {
         let currentBodyPart = this.bodyParts[i];
         if (currentBodyPart.selected) {
@@ -815,8 +958,8 @@ class Game extends State {
     // single out the internal shrinkage instruction from instructions array
     let internalShrinkageInstruction = this.instructions[4];
 
-    // 51 -> `3` key
-    if (keyCode === 51) {
+    // 50 and 98 -> `2` key
+    if (keyCode === 50 || keyCode === 98) {
       for (let i = 0; i < this.bodyParts.length; i++) {
         let currentBodyPart = this.bodyParts[i];
         if (currentBodyPart.selected) {
@@ -842,8 +985,8 @@ class Game extends State {
     // single out the extend instruction from instructions array
     let extendInstruction = this.instructions[5];
 
-    // 52 -> `4` key
-    if (keyCode === 52) {
+    // 51 and 99 -> `3` key
+    if (keyCode === 51 || keyCode === 99) {
       for (let i = 0; i < this.bodyParts.length; i++) {
         let currentBodyPart = this.bodyParts[i];
         if (currentBodyPart.selected) {
@@ -866,6 +1009,7 @@ class Game extends State {
             let speedUp = 1.8;
             this.changePace(speedUp);
           }
+
           // make the ui frame lines a bit more vibrant
           this.frameLightUp();
         }
@@ -939,7 +1083,8 @@ class Game extends State {
 
   // remove the first acosh curve generated with extend algorithm
   removeExtension(numOfSteps) {
-    if (keyCode === 53) {
+    // 52 and 100 -> `4` key
+    if (keyCode === 52 || keyCode === 100) {
       if (this.particleArray.length > 0) {
         // single out the removeExtension instruction from instructions array
         let removeExtensionInstruction = this.instructions[6];
@@ -950,6 +1095,71 @@ class Game extends State {
       }
       for (let i = 0; i < numOfSteps; i++) {
         this.particleArray.shift();
+      }
+    }
+  }
+
+  // algorithm to add more color to the atoms
+  colorize() {
+    // single out the extend instruction from instructions array
+    let colorizeInstruction = this.instructions[7];
+
+    // 53 and 101 -> `5` key
+    if (keyCode === 53 || keyCode === 101) {
+      for (let i = 0; i < this.bodyParts.length; i++) {
+        let currentBodyPart = this.bodyParts[i];
+        if (currentBodyPart.selected) {
+          // discover the select instruction
+          if (!colorizeInstruction.discovered) {
+            colorizeInstruction.discovered = true;
+          }
+
+          // up the percentage of colorized atoms for this bodypart
+          currentBodyPart.colorizedAtoms += 0.05;
+          currentBodyPart.colorizedAtoms = constrain(
+            currentBodyPart.colorizedAtoms,
+            0,
+            1
+          );
+
+          // speed up the heartbeat (make a function soon)
+          if (this.heartbeatPace.current > 800) {
+            let speedUp = 1.8;
+            this.changePace(speedUp);
+          }
+
+          // make the ui frame lines a bit more vibrant
+          this.frameLightUp();
+        }
+      }
+    }
+  }
+
+  // algorithm to substract color to the atoms
+  decolorize() {
+    // single out the extend instruction from instructions array
+    let decolorizeInstruction = this.instructions[8];
+
+    // 54 and 102 -> `6` key
+    if (keyCode === 54 || keyCode === 102) {
+      for (let i = 0; i < this.bodyParts.length; i++) {
+        let currentBodyPart = this.bodyParts[i];
+        if (currentBodyPart.selected) {
+          // discover the select instruction
+          if (currentBodyPart.colorizedAtoms > 0) {
+            if (!decolorizeInstruction.discovered) {
+              decolorizeInstruction.discovered = true;
+            }
+          }
+
+          // up the percentage of colorized atoms for this bodypart
+          currentBodyPart.colorizedAtoms -= 0.05;
+          currentBodyPart.colorizedAtoms = constrain(
+            currentBodyPart.colorizedAtoms,
+            0,
+            1
+          );
+        }
       }
     }
   }

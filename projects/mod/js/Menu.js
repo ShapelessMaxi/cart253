@@ -21,7 +21,7 @@ class Menu extends State {
       x2: 800,
     };
 
-    // all the keycodes for the letters are stored here
+    // all the keycodes associated with letters are stored here
     this.validKeyCodes = [
       65,
       66,
@@ -200,7 +200,7 @@ class Menu extends State {
     let vg = createVector(-10, 725);
     let perimeter = [va, vb, vc, vd, ve, vf, vi, vg];
 
-    this.ui = new Ui(perimeter);
+    this.ui = new UiShape(perimeter);
 
     // change the color
     this.ui.color.r = 0;
@@ -217,7 +217,7 @@ class Menu extends State {
     let vd = createVector(0, 645);
     let perimeter = [va, vb, vc, vd];
 
-    this.secondUi = new Ui(perimeter);
+    this.secondUi = new UiShape(perimeter);
 
     // change the color
     this.secondUi.color.r = 50;

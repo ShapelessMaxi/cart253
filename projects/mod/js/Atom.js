@@ -9,11 +9,19 @@ class Atom {
       max: maxSize,
     };
 
-    // define the color of the atoms, eventualy make (r, g and b) a variable to be able to play with em
-    this.color = {
+    // define the basic color of the atoms
+    this.basicColor = {
       r: 125,
       g: 255,
       b: 0,
+      a: 150,
+    };
+
+    // define the colorized color of the atoms
+    this.userColor = {
+      r: nameColor.r,
+      g: nameColor.g,
+      b: nameColor.b,
       a: 150,
     };
 
@@ -24,12 +32,32 @@ class Atom {
   }
 
   // diplay atoms
-  display() {
+  display(colorizedAmount) {
     let size = random(this.size.min, this.size.max);
-    push();
-    fill(this.color.r, this.color.g, this.color.b, this.color.a);
-    noStroke();
-    ellipse(this.x, this.y, size);
-    pop();
+
+    let chance = random(0, 1);
+    if (chance > colorizedAmount) {
+      push();
+      fill(
+        this.basicColor.r,
+        this.basicColor.g,
+        this.basicColor.b,
+        this.basicColor.a
+      );
+      noStroke();
+      ellipse(this.x, this.y, size);
+      pop();
+    } else {
+      push();
+      fill(
+        this.userColor.r,
+        this.userColor.g,
+        this.userColor.b,
+        this.userColor.a
+      );
+      noStroke();
+      ellipse(this.x, this.y, size);
+      pop();
+    }
   }
 }

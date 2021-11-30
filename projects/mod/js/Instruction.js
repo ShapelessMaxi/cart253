@@ -6,6 +6,7 @@ class Instruction {
     this.y = y;
 
     // define the formating of the text
+    this.font = fontSansThin;
     this.size = 20;
     this.align = alignMode;
     this.color = {
@@ -34,7 +35,7 @@ class Instruction {
     push();
     textAlign(this.align);
     textSize(this.size);
-    textFont(fontSansThin);
+    textFont(this.font);
     fill(this.color.r, this.color.g, this.color.b, this.color.a);
     text(string, this.x, this.y);
     pop();
