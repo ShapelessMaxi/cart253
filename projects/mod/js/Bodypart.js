@@ -175,7 +175,7 @@ class BodyPart {
     push();
     fill(this.color.r, this.color.g, this.color.b, this.color.a);
     noStroke();
-    beginShape(QUAD_STRIP);
+    beginShape();
     // line below is from collide2D librairy documentation -> https://github.com/bmoren/p5.collide2D#collidelinepoly
     for (let { x, y } of this.perimeter) vertex(x, y);
     endShape(CLOSE);
