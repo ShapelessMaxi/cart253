@@ -1,6 +1,6 @@
-# Reflection letter
+## **Reflection letter**
 
-## Addressed to Pippin and Sharon
+## _Addressed to Pippin and Sharon_
 
 We’re already at the end of the semester… these few months we’re a blur for me. It was a big transition phase as multiple things happened in my work, emotional/personal and university life (I’ll spare you the details...).
 Even though I wish I was in a better mental space this semester, I think this specific class was a great way for me to focus my head on something that was not anxiety inducing. It’s so easy to get lost in code, and to hyper focus on debugging! I think programming has become somewhat of a meditative process for me and somewhat of an escape.
@@ -9,4 +9,4 @@ I’m really happy and impressed with this class. It was personal, even though i
 Another thing I appreciated a lot is your openness to different people and projects. I loved the fact that no matter how ‘normal’ or unusual, no matter how simple or complex, no matter what the project was, really, you were there to encourage us. Some of the things I particularly enjoy in art is experimentation, being all over the place and making the weirdest things. In the context of educational institutions, this trait isn’t particularly appreciated by many.
 Overall, the JavaScript journey was way more fun than I thought it would be, challenging and rewarding. I’m looking forward to the next coding class and, for sure, this is a skill I want to continue developing and using in the future.
 
-# - see ya! maxi
+# _- see ya! maxi_
