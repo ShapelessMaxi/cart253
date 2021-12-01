@@ -21,8 +21,8 @@ Overall, I wanted the mood of this game to be dark, mysterious, and unpredictabl
 ---
 
 libraries used:
-p5.js
-p5.sound
+p5.js  
+p5.sound  
 p5.2dcollide
 
 ---
