@@ -6,7 +6,7 @@ let textData = {
     str: `Oi !`,
   },
   line2: {
-    str: `hey yea you! if you're here, reading this, chances are you're the owner of a body.`,
+    str: `hey yea you! if you're here, reading this, chances are, you're the owner of a body.`,
   },
   line3: {
     str: `do you like it ?`,
@@ -15,19 +15,19 @@ let textData = {
     str: `uh? what was that?`,
   },
   line5: {
-    str: `yeah i get it.. .`,
+    str: `yeah.... i get it.. .`,
   },
   line6: {
-    str: `sometimes, it feels heavy, right? but also sometimes SOoo light, rigth?!`,
+    str: `it feels heavy sometimes, right? but other times it can be sooO light! rigth?!`,
   },
   line7: {
-    str: `did you also think this body would be the ship you navigate the world with,`,
+    str: `did you also think this body would be the ship you navigate the world with?`,
   },
   line8: {
     str: `u know, doing things.. like grabbing stuff and all that?`,
   },
   line9: {
-    str: `every so often you feel it is in fact limiting you.... right?`,
+    str: `every so often, you feel it's actually limiting you.... right?`,
   },
   line10: {
     str: `oh! like going places! can you GO Places if you dont have a physical body?`,
@@ -39,7 +39,7 @@ let textData = {
     str: `anyway, the only thing i can tell you with confidence is that,`,
   },
   line13: {
-    str: `ur body, it should be yours. and you should be able to control it? YEA! maybe?`,
+    str: `ur body, it should be yours. and you should be able to control it? yea? maybe?`,
   },
   line14: {
     str: `that would be fun! right?`,

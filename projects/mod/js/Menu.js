@@ -100,16 +100,22 @@ class Menu extends State {
       },
     };
 
+    // define variables for the overlay
+    this.overlay = {
+      color: { r: 0, g: 0, b: 0, a: 255 },
+      revealSpeed: 0.4,
+    };
+
     // create the ui
     this.createUi();
 
     //play the noise sound
     menuNoise.play();
-    menuNoise.amp(0.023);
+    menuNoise.amp(0.032);
     menuNoise.loop();
 
     // lower the intro music volume
-    introSoundtrack.amp(0.014);
+    introSoundtrack.amp(0.025);
   }
 
   update() {
@@ -139,6 +145,29 @@ class Menu extends State {
 
     // apply the flashing method
     this.flash();
+
+    // draw the overlay
+    if (this.overlay.color.a > 0) {
+      this.drawOverlay();
+    }
+  }
+
+  // draw an overlay rectangle
+  drawOverlay() {
+    push();
+    rectMode(CENTER);
+    noStroke();
+    fill(
+      this.overlay.color.r,
+      this.overlay.color.g,
+      this.overlay.color.b,
+      this.overlay.color.a
+    );
+    rect(width / 2, height / 2, width, height);
+    pop();
+
+    // decrease the alpha to reveal the menu
+    this.overlay.color.a -= this.overlay.revealSpeed;
   }
 
   // create some lines with Frameline class

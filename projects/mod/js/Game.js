@@ -71,6 +71,12 @@ class Game extends State {
     //define variables for the user's name
     this.nameText; // Instruction object
 
+    // define variables for the overlay
+    this.overlay = {
+      color: { r: 0, g: 0, b: 0, a: 255 },
+      revealSpeed: 0.4,
+    };
+
     // define variables for the conversion of the name
     this.alphabet = [
       `a`,
@@ -111,7 +117,7 @@ class Game extends State {
 
     // play soundtrack
     gameSoundtrack.play();
-    gameSoundtrack.amp(0.15);
+    gameSoundtrack.amp(0.1);
     gameSoundtrack.loop();
 
     // fade out intro music
@@ -167,7 +173,7 @@ class Game extends State {
 
   // create the 2 beats with delays forming the heartbeat
   createHeartbeat() {
-    let generalAmp = 0.8; // this affects the 2 heartbeats and the 2 delays
+    let generalAmp = 0.5; // this affects the 2 heartbeats and the 2 delays
     this.createFirstBeat(generalAmp);
     this.createSecondBeat(generalAmp);
   }
@@ -527,6 +533,24 @@ class Game extends State {
     return mean;
   }
 
+  // draw an overlay rectangle
+  drawOverlay() {
+    push();
+    rectMode(CENTER);
+    noStroke();
+    fill(
+      this.overlay.color.r,
+      this.overlay.color.g,
+      this.overlay.color.b,
+      this.overlay.color.a
+    );
+    rect(width / 2, height / 2, width, height);
+    pop();
+
+    // decrease the alpha to reveal the menu
+    this.overlay.color.a -= this.overlay.revealSpeed;
+  }
+
   // draw the background, the ui, the body and the atoms
   // start the selection highlight animation
   update() {
@@ -601,6 +625,11 @@ class Game extends State {
 
     // makes the highlighted bodypart blink slowly
     this.highlightAnimation();
+
+    // draw the overlay
+    if (this.overlay.color.a > 0) {
+      this.drawOverlay();
+    }
   }
 
   // select/deselect
