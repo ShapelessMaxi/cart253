@@ -1,3 +1,10 @@
 # Assets folder
 
-The assets folder should contain all the non-code parts of your project. For now there are folders for image files and sound files. If you needed to use font files, for example, you would create another folder called `fonts` and put them in there.
+_fonts are from googlefonts:_
+Chivo - [https://fonts.google.com/specimen/Chivo]
+Zilla Slab - [https://fonts.google.com/specimen/Zilla+Slab]
+
+_sounds are from (edited by maxi afterwards):_
+noise.wav - [(Radio noise static and crackles) https://mixkit.co/free-sound-effects/white-noise/]
+guitar.wav - [(Guitar melancholy intro by NaturesEye) https://pixabay.com/music/solo-guitar-guitar-melancholy-intro-3713/]
+soundtrack.wav - [(Relax in the Forest background music for video by Lesfm) https://pixabay.com/music/ambient-relax-in-the-forest-background-music-for-video-9145/]
