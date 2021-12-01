@@ -32,9 +32,26 @@ class Game extends State {
     left leg - bodyParts[12]
     left foot - bodyParts[13]
 */
+    // store all the vertices forming the current body shape here
+    this.fullPerimeter = {
+      array: [],
+      xMaxBorder: undefined,
+      xMinBorder: undefined,
+      yMaxBorder: undefined,
+      yMinBorder: undefined,
+      xCenter: undefined,
+      yCenter: undefined,
+    };
 
     // create all the body parts
     this.createBodyParts();
+
+    // define variables for the full echo algorithm
+    this.fullEcho = {
+      scale: 1.35, // possible scale values : 1.35, 1.5, 2
+      translateRatio: -3, // possible ratios : -3, -2, -1
+      color: { r: nameColor.r, g: nameColor.g, b: nameColor.b, a: 200 },
+    };
 
     // define variables for the extend algorithm
     this.angle = 1;
@@ -74,7 +91,7 @@ class Game extends State {
     // define variables for the overlay
     this.overlay = {
       color: { r: 0, g: 0, b: 0, a: 255 },
-      revealSpeed: 0.4,
+      revealSpeed: 50,
     };
 
     // define variables for the conversion of the name
@@ -417,6 +434,7 @@ class Game extends State {
     // second column, key used : 5-9
     this.createInstruction(secondColumn, secondRow, RIGHT, `5`, `colorize`);
     this.createInstruction(secondColumn, thirdRow, RIGHT, `6`, `decolorize`);
+    this.createInstruction(secondColumn, fourthRow, RIGHT, `7`, `fully echo`);
   }
 
   // create an instruction using parameters given in the createInstructions() method
@@ -630,6 +648,11 @@ class Game extends State {
     if (this.overlay.color.a > 0) {
       this.drawOverlay();
     }
+
+    //display the new polygon
+    if (this.fullPerimeter.array.length > 0) {
+      this.displayFullEcho();
+    }
   }
 
   // select/deselect
@@ -662,8 +685,12 @@ class Game extends State {
     // interactive method that makes the atoms change color (defined by user name)
     // press '5' to colorize some of the atoms
     this.colorize();
-    // press '65' to dcolorize some of the atoms
+    // press '6' to decolorize some of the atoms
     this.decolorize();
+
+    // generative algorithm that creates instances of the current body shape
+    // press '7' to produce a full body echo
+    this.fullBodyEcho();
   }
 
   // select the next bodypart, or deselect the current selected bodypart
@@ -1191,6 +1218,97 @@ class Game extends State {
         }
       }
     }
+  }
+
+  // algorithm that creates a echoing outline of the current body shape
+  fullBodyEcho() {
+    // single out the extend instruction from instructions array
+    let fullEchoInstruction = this.instructions[9];
+
+    // 55 and 103 -> `7` key
+    if (keyCode === 55 || keyCode === 103) {
+      // discover the full body echo instruction
+      if (!fullEchoInstruction.discovered) {
+        fullEchoInstruction.discovered = true;
+      }
+
+      // loop through the array containing all the body parts
+      for (let i = 0; i < this.bodyParts.length; i++) {
+        let currentBodyPart = this.bodyParts[i];
+        // loop through the perimeter array of each body parts
+        for (let j = 0; j < currentBodyPart.perimeter.length; j++) {
+          let currentVector = currentBodyPart.perimeter[j];
+          this.fullPerimeter.array.push(currentVector);
+        }
+      }
+
+      // find the center of the current body shape
+      this.calculateBodyCenter(this.fullPerimeter.array);
+    }
+    // create an instance of the all the perimeters combined (full body shape)
+    // have the color be user name value
+    // actually have multiple instances, each one is a bit bigger than the privous
+    // animate the alpha of the instance to decrease as soon as created
+    // when the alpha of the first instance is down to like 5, display the next instance
+  }
+
+  // calculate the approiximate center point of the current body to act as the origin point
+  calculateBodyCenter(perimeter) {
+    // create an array of the x coordinate from the perimeter array
+    let xValues = [];
+    for (let v = 0; v < perimeter.length; v++) {
+      let currentVertX = perimeter[v].x;
+      xValues.push(currentVertX);
+    }
+
+    // spread operator(...) to unpack values inside the arrays, used with Math.min() and Math.max() -> https://medium.com/coding-at-dawn/the-fastest-way-to-find-minimum-and-maximum-values-in-an-array-in-javascript-2511115f8621
+    // get the min and max value from the x coordinate array
+    this.fullPerimeter.xMinBorder = Math.min(...xValues);
+    this.fullPerimeter.xMaxBorder = Math.max(...xValues);
+
+    // create an array of the y coordinate from the perimeter array
+    let yValues = [];
+    for (let v = 0; v < perimeter.length; v++) {
+      let currentVertY = perimeter[v].y;
+      yValues.push(currentVertY);
+    }
+
+    // get the min and max value from the y coordinate array
+    this.fullPerimeter.yMinBorder = Math.min(...yValues);
+    this.fullPerimeter.yMaxBorder = Math.max(...yValues);
+
+    // find the center of the box
+    this.fullPerimeter.xCenter =
+      (this.fullPerimeter.xMaxBorder + this.fullPerimeter.xMinBorder) / 2;
+    this.fullPerimeter.yCenter =
+      (this.fullPerimeter.yMaxBorder + this.fullPerimeter.yMinBorder) / 2;
+  }
+
+  // display the echoing full body outline
+  displayFullEcho() {
+    push();
+    fill(
+      this.fullEcho.color.r,
+      this.fullEcho.color.g,
+      this.fullEcho.color.b,
+      this.fullEcho.color.a
+    );
+    noStroke();
+    translate(
+      this.fullPerimeter.xCenter / this.fullEcho.translateRatio,
+      this.fullPerimeter.yCenter / this.fullEcho.translateRatio
+    );
+    scale(this.fullEcho.scale);
+    beginShape(TRIANGLES);
+    // line below is from collide2D librairy documentation -> https://github.com/bmoren/p5.collide2D#collidelinepoly
+    for (let { x, y } of this.fullPerimeter.array) vertex(x, y);
+    endShape(CLOSE);
+    pop();
+  }
+
+  // algorithm that creates a echoing outline of the selected body part
+  localEcho() {
+    // same as full body, but for the selected part only
   }
 
   // check if a point is left or right of another point
