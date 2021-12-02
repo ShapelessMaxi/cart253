@@ -63,7 +63,7 @@ function setup() {
   userStartAudio();
 
   // create a new state object, the program starts with the intro state
-  currentState = new Menu();
+  currentState = new Intro();
 }
 
 // display elements (specified in the the state classes)
