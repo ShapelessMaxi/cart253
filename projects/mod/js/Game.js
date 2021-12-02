@@ -424,6 +424,7 @@ class Game extends State {
     this.createInstruction(secondColumn, secondRow, RIGHT, `5`, `colorize`);
     this.createInstruction(secondColumn, thirdRow, RIGHT, `6`, `decolorize`);
     this.createInstruction(secondColumn, fourthRow, RIGHT, `7`, `fully echo`);
+    this.createInstruction(secondColumn, fifthRow, RIGHT, `8`, `partly echo`);
   }
 
   // create an instruction using parameters given in the createInstructions() method
@@ -638,13 +639,17 @@ class Game extends State {
       this.drawOverlay();
     }
 
-    //display the new polygons
+    //display the echoing full body outline shapes
     for (let i = 0; i < this.fullOutlines.length; i++) {
       let currentOutline = this.fullOutlines[i];
       currentOutline.displayFullOutline();
     }
 
-    console.log(this.fullOutlines.length);
+    //display the echoing local body part outline shapes
+    for (let i = 0; i < this.selectedOutlines.length; i++) {
+      let currentOutline = this.selectedOutlines[i];
+      currentOutline.displaySelectedOutline();
+    }
   }
 
   // select/deselect
@@ -683,6 +688,8 @@ class Game extends State {
     // generative algorithm that creates instances of the current body shape
     // press '7' to produce a full body echo
     this.fullBodyEcho();
+    // press '8' to produce a local echo
+    this.localEcho();
   }
 
   // select the next bodypart, or deselect the current selected bodypart
@@ -1239,26 +1246,8 @@ class Game extends State {
         }
       }
 
-      let bigScale = 2;
-      let bigOutline = new BodyOutline(this.fullPerimeter, undefined, bigScale);
-      this.fullOutlines.push(bigOutline);
-
-      let mediumScale = 1.5;
-      let mediumOutline = new BodyOutline(
-        this.fullPerimeter,
-        undefined,
-        mediumScale
-      );
-      this.fullOutlines.push(mediumOutline);
-
-      // create the outline objects
-      let smallScale = 1.35;
-      let smallOutline = new BodyOutline(
-        this.fullPerimeter,
-        undefined,
-        smallScale
-      );
-      this.fullOutlines.push(smallOutline);
+      // create the full body outlines
+      this.createFullOutlines();
 
       // start the alpha animation for the echos at different times
       let delay = 500; // delay between the individual outlines in miliseconds
@@ -1268,12 +1257,92 @@ class Game extends State {
         setTimeout(this.createEchoInterval.bind(this), timing, currentOutline);
       }
     }
-    // actually have multiple instances, each one is a bit bigger than the privous
-    // animate the alpha of the instance to decrease as soon as created
-    // when the alpha of the first instance is down to like 5, display the next instance
   }
 
-  // create the interval for the echo animation
+  // create outlines of the current full body shape
+  createFullOutlines() {
+    // create an full body outline with a bigger scale
+    let bigScale = 2;
+    let bigOutline = new BodyOutline(this.fullPerimeter, undefined, bigScale);
+    this.fullOutlines.push(bigOutline);
+
+    // create an full body outline with a medium scale
+    let mediumScale = 1.5;
+    let mediumOutline = new BodyOutline(
+      this.fullPerimeter,
+      undefined,
+      mediumScale
+    );
+    this.fullOutlines.push(mediumOutline);
+
+    // create an full body outline with a small scale
+    let smallScale = 1.35;
+    let smallOutline = new BodyOutline(
+      this.fullPerimeter,
+      undefined,
+      smallScale
+    );
+    this.fullOutlines.push(smallOutline);
+  }
+
+  // algorithm that creates a echoing outline of the selected body part
+  localEcho() {
+    // single out the extend instruction from instructions array
+    let localEchoInstruction = this.instructions[10];
+
+    // 56 and 104 -> `8` key
+    if (keyCode === 56 || keyCode === 104) {
+      for (let i = 0; i < this.bodyParts.length; i++) {
+        let currentBodyPart = this.bodyParts[i];
+        if (currentBodyPart.selected) {
+          // discover the full body echo instruction
+          if (!localEchoInstruction.discovered) {
+            localEchoInstruction.discovered = true;
+          }
+
+          // reset the array containing the echo outlines
+          if (this.selectedOutlines.length > 0) {
+            this.selectedOutlines = [];
+          }
+
+          // create the full body outlines
+          this.createLocalOutlines(currentBodyPart.perimeter);
+        }
+
+        // start the alpha animation for the echos at different times
+        let delay = 500; // delay between the individual outlines in miliseconds
+        for (let i = 0; i < this.selectedOutlines.length; i++) {
+          let currentOutline = this.selectedOutlines[i];
+          let timing = i * delay;
+          setTimeout(
+            this.createEchoInterval.bind(this),
+            timing,
+            currentOutline
+          );
+        }
+      }
+    }
+  }
+
+  // create outlines of the current full body shape
+  createLocalOutlines(localPerimeter) {
+    // create an full body outline with a bigger scale
+    let bigScale = 3;
+    let bigOutline = new BodyOutline(undefined, localPerimeter, bigScale);
+    this.selectedOutlines.push(bigOutline);
+
+    // create an full body outline with a medium scale
+    let mediumScale = 2;
+    let mediumOutline = new BodyOutline(undefined, localPerimeter, mediumScale);
+    this.selectedOutlines.push(mediumOutline);
+
+    // create an full body outline with a small scale
+    let smallScale = 1.35;
+    let smallOutline = new BodyOutline(undefined, localPerimeter, smallScale);
+    this.selectedOutlines.push(smallOutline);
+  }
+
+  // create the interval for the outline's alpha animation
   createEchoInterval(outline) {
     outline.visible = true;
     setInterval(this.hideOutline.bind(this), 2, outline);
@@ -1282,11 +1351,6 @@ class Game extends State {
   // make the alpha diminish until the outline is invisible
   hideOutline(outline) {
     outline.color.a -= outline.hideSpeed;
-  }
-
-  // algorithm that creates a echoing outline of the selected body part
-  localEcho() {
-    // same as full body, but for the selected part only
   }
 
   // check if a point is left or right of another point
