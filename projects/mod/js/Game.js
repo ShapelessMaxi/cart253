@@ -32,26 +32,15 @@ class Game extends State {
     left leg - bodyParts[12]
     left foot - bodyParts[13]
 */
+
+    // define variables for the eho algorithms
+    this.fullOutlines = [];
+    this.selectedOutlines = [];
     // store all the vertices forming the current body shape here
-    this.fullPerimeter = {
-      array: [],
-      xMaxBorder: undefined,
-      xMinBorder: undefined,
-      yMaxBorder: undefined,
-      yMinBorder: undefined,
-      xCenter: undefined,
-      yCenter: undefined,
-    };
+    this.fullPerimeter = [];
 
     // create all the body parts
     this.createBodyParts();
-
-    // define variables for the full echo algorithm
-    this.fullEcho = {
-      scale: 1.35, // possible scale values : 1.35, 1.5, 2
-      translateRatio: -3, // possible ratios : -3, -2, -1
-      color: { r: nameColor.r, g: nameColor.g, b: nameColor.b, a: 200 },
-    };
 
     // define variables for the extend algorithm
     this.angle = 1;
@@ -649,9 +638,11 @@ class Game extends State {
       this.drawOverlay();
     }
 
-    //display the new polygon
-    if (this.fullPerimeter.array.length > 0) {
-      this.displayFullEcho();
+    //display the new polygons
+    for (let i = 0; i < this.fullOutlines.length; i++) {
+      let currentOutline = this.fullOutlines[i];
+      currentOutline.displayFullOutline();
+      console.log(currentOutline.fullPerimeter.xCenter);
     }
   }
 
@@ -1238,72 +1229,24 @@ class Game extends State {
         // loop through the perimeter array of each body parts
         for (let j = 0; j < currentBodyPart.perimeter.length; j++) {
           let currentVector = currentBodyPart.perimeter[j];
-          this.fullPerimeter.array.push(currentVector);
+          this.fullPerimeter.push(currentVector);
         }
       }
 
-      // find the center of the current body shape
-      this.calculateBodyCenter(this.fullPerimeter.array);
+      // create the outline objects
+      let smallScale = 1.35;
+      let smallOutline = new BodyOutline(
+        this.fullPerimeter,
+        undefined,
+        smallScale
+      );
+      this.fullOutlines.push(smallOutline);
     }
     // create an instance of the all the perimeters combined (full body shape)
     // have the color be user name value
     // actually have multiple instances, each one is a bit bigger than the privous
     // animate the alpha of the instance to decrease as soon as created
     // when the alpha of the first instance is down to like 5, display the next instance
-  }
-
-  // calculate the approiximate center point of the current body to act as the origin point
-  calculateBodyCenter(perimeter) {
-    // create an array of the x coordinate from the perimeter array
-    let xValues = [];
-    for (let v = 0; v < perimeter.length; v++) {
-      let currentVertX = perimeter[v].x;
-      xValues.push(currentVertX);
-    }
-
-    // spread operator(...) to unpack values inside the arrays, used with Math.min() and Math.max() -> https://medium.com/coding-at-dawn/the-fastest-way-to-find-minimum-and-maximum-values-in-an-array-in-javascript-2511115f8621
-    // get the min and max value from the x coordinate array
-    this.fullPerimeter.xMinBorder = Math.min(...xValues);
-    this.fullPerimeter.xMaxBorder = Math.max(...xValues);
-
-    // create an array of the y coordinate from the perimeter array
-    let yValues = [];
-    for (let v = 0; v < perimeter.length; v++) {
-      let currentVertY = perimeter[v].y;
-      yValues.push(currentVertY);
-    }
-
-    // get the min and max value from the y coordinate array
-    this.fullPerimeter.yMinBorder = Math.min(...yValues);
-    this.fullPerimeter.yMaxBorder = Math.max(...yValues);
-
-    // find the center of the box
-    this.fullPerimeter.xCenter =
-      (this.fullPerimeter.xMaxBorder + this.fullPerimeter.xMinBorder) / 2;
-    this.fullPerimeter.yCenter =
-      (this.fullPerimeter.yMaxBorder + this.fullPerimeter.yMinBorder) / 2;
-  }
-
-  // display the echoing full body outline
-  displayFullEcho() {
-    push();
-    fill(
-      this.fullEcho.color.r,
-      this.fullEcho.color.g,
-      this.fullEcho.color.b,
-      this.fullEcho.color.a
-    );
-    noStroke();
-    translate(
-      this.fullPerimeter.xCenter / this.fullEcho.translateRatio,
-      this.fullPerimeter.yCenter / this.fullEcho.translateRatio
-    );
-    scale(this.fullEcho.scale);
-    beginShape(TRIANGLES);
-    // line below is from collide2D librairy documentation -> https://github.com/bmoren/p5.collide2D#collidelinepoly
-    for (let { x, y } of this.fullPerimeter.array) vertex(x, y);
-    endShape(CLOSE);
-    pop();
   }
 
   // algorithm that creates a echoing outline of the selected body part
