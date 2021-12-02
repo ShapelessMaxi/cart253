@@ -103,7 +103,7 @@ class Menu extends State {
     // define variables for the overlay
     this.overlay = {
       color: { r: 0, g: 0, b: 0, a: 255 },
-      revealSpeed: 0.4,
+      revealSpeed: 40,
     };
 
     // create the ui

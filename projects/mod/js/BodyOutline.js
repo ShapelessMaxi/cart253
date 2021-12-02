@@ -2,7 +2,7 @@
 class BodyOutline {
   constructor(fullPerimeter, localPerimeter, scale) {
     // define the color
-    this.color = { r: nameColor.r, g: nameColor.g, b: nameColor.b, a: 200 };
+    this.color = { r: nameColor.r, g: nameColor.g, b: nameColor.b, a: 180 };
 
     // define variables for the full body outline
     this.fullPerimeter = {
@@ -28,6 +28,10 @@ class BodyOutline {
 
     this.scale = scale; // possible scale values : 1.35, 1.5, 2
     this.translateRatio = undefined; // possible ratios : -3, -2, -1
+
+    this.hideSpeed = 1;
+
+    this.visible = false;
 
     // set the appropriate translate ratio
     this.setTranslateRatio();
@@ -92,22 +96,25 @@ class BodyOutline {
     }
   }
 
-  // display the echoing full body outline
+  // display a full body outline
   displayFullOutline() {
-    push();
-    fill(this.color.r, this.color.g, this.color.b, this.color.a);
-    noStroke();
-    translate(
-      this.fullPerimeter.xCenter / this.translateRatio,
-      this.fullPerimeter.yCenter / this.translateRatio
-    );
-    scale(this.scale);
-    beginShape(TRIANGLES);
-    // line below is from collide2D librairy documentation -> https://github.com/bmoren/p5.collide2D#collidelinepoly
-    for (let { x, y } of this.fullPerimeter.array) vertex(x, y);
-    endShape(CLOSE);
-    pop();
+    if (this.visible) {
+      push();
+      fill(this.color.r, this.color.g, this.color.b, this.color.a);
+      noStroke();
+      translate(
+        this.fullPerimeter.xCenter / this.translateRatio,
+        this.fullPerimeter.yCenter / this.translateRatio
+      );
+      scale(this.scale);
+      beginShape(TRIANGLES);
+      // line below is from collide2D librairy documentation -> https://github.com/bmoren/p5.collide2D#collidelinepoly
+      for (let { x, y } of this.fullPerimeter.array) vertex(x, y);
+      endShape(CLOSE);
+      pop();
+    }
   }
 
+  // display a selected body part outline
   displaySelectedOutline() {}
 }

@@ -642,8 +642,9 @@ class Game extends State {
     for (let i = 0; i < this.fullOutlines.length; i++) {
       let currentOutline = this.fullOutlines[i];
       currentOutline.displayFullOutline();
-      console.log(currentOutline.fullPerimeter.xCenter);
     }
+
+    console.log(this.fullOutlines.length);
   }
 
   // select/deselect
@@ -1223,6 +1224,11 @@ class Game extends State {
         fullEchoInstruction.discovered = true;
       }
 
+      // reset the array containing the echo outlines
+      if (this.fullOutlines.length > 0) {
+        this.fullOutlines = [];
+      }
+
       // loop through the array containing all the body parts
       for (let i = 0; i < this.bodyParts.length; i++) {
         let currentBodyPart = this.bodyParts[i];
@@ -1233,6 +1239,18 @@ class Game extends State {
         }
       }
 
+      let bigScale = 2;
+      let bigOutline = new BodyOutline(this.fullPerimeter, undefined, bigScale);
+      this.fullOutlines.push(bigOutline);
+
+      let mediumScale = 1.5;
+      let mediumOutline = new BodyOutline(
+        this.fullPerimeter,
+        undefined,
+        mediumScale
+      );
+      this.fullOutlines.push(mediumOutline);
+
       // create the outline objects
       let smallScale = 1.35;
       let smallOutline = new BodyOutline(
@@ -1241,12 +1259,29 @@ class Game extends State {
         smallScale
       );
       this.fullOutlines.push(smallOutline);
+
+      // start the alpha animation for the echos at different times
+      let delay = 500; // delay between the individual outlines in miliseconds
+      for (let i = 0; i < this.fullOutlines.length; i++) {
+        let currentOutline = this.fullOutlines[i];
+        let timing = i * delay;
+        setTimeout(this.createEchoInterval.bind(this), timing, currentOutline);
+      }
     }
-    // create an instance of the all the perimeters combined (full body shape)
-    // have the color be user name value
     // actually have multiple instances, each one is a bit bigger than the privous
     // animate the alpha of the instance to decrease as soon as created
     // when the alpha of the first instance is down to like 5, display the next instance
+  }
+
+  // create the interval for the echo animation
+  createEchoInterval(outline) {
+    outline.visible = true;
+    setInterval(this.hideOutline.bind(this), 2, outline);
+  }
+
+  // make the alpha diminish until the outline is invisible
+  hideOutline(outline) {
+    outline.color.a -= outline.hideSpeed;
   }
 
   // algorithm that creates a echoing outline of the selected body part
