@@ -68,7 +68,7 @@ class Menu extends State {
     // define variables for the button
     this.button = {
       x: 455,
-      y: 450,
+      y: 452,
       w: 500,
       h: 100,
       corner: 10,
@@ -103,7 +103,7 @@ class Menu extends State {
     // define variables for the overlay
     this.overlay = {
       color: { r: 0, g: 0, b: 0, a: 255 },
-      revealSpeed: 40,
+      revealSpeed: 3,
     };
 
     // create the ui
@@ -319,10 +319,9 @@ class Menu extends State {
     // draw the 'continue' text
     push();
     textAlign(LEFT, CENTER);
-    textSize(46);
+    textSize(43.5);
     textFont(fontSans);
     fill(0, 0, 0, 100);
-    let triangle = `\u25B6`;
     text(`— CONTINUE`, this.button.text.x, this.button.text.y);
     pop();
   }
@@ -367,11 +366,11 @@ class Menu extends State {
 
     if (isHovering) {
       this.button.x = 457;
-      this.button.y = 451;
+      this.button.y = 453;
       this.button.color.a = 255;
     } else {
       this.button.x = 455;
-      this.button.y = 450;
+      this.button.y = 452;
       this.button.color.a = 180;
     }
   }
@@ -394,7 +393,7 @@ class Menu extends State {
   displayText() {
     push();
     textAlign(LEFT);
-    textSize(100);
+    textSize(94);
     textFont(fontSans);
     fill(200, 200, 200, 100);
     text(`ENTER UR NAME`, -16, 300);

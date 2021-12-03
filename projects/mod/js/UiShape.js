@@ -5,17 +5,17 @@ class UiShape {
     this.perimeter = perimeter;
     // define the border color of the shape
     this.borderColor = {
-      r: 180,
-      g: 130,
-      b: 180,
-      a: 25,
+      r: 160,
+      g: 110,
+      b: 160,
+      a: 15,
     };
     // define the color of the shape
     this.color = {
-      r: 75,
-      g: 75,
-      b: 75,
-      a: 50,
+      r: 55,
+      g: 55,
+      b: 55,
+      a: 25,
     };
     // define the border thickness
     this.borderThickness = 8;

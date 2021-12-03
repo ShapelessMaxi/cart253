@@ -20,7 +20,7 @@ class Intro extends State {
         r: 240,
         g: 255,
         b: 240,
-        a: 150,
+        a: 0,
       },
       firstShadow: {
         x: undefined,
@@ -29,7 +29,7 @@ class Intro extends State {
         h: undefined,
         corner: 10,
         color: 0,
-        alpha: 50,
+        alpha: 0,
       },
       secondShadow: {
         x: undefined,
@@ -40,8 +40,9 @@ class Intro extends State {
       },
       text: {
         x: 755,
-        y: 600,
+        y: 615,
       },
+      appearingSpeed: 0.2,
     };
 
     // define variables for flickering answers
@@ -184,6 +185,10 @@ class Intro extends State {
     if (this.clickCount === 0) {
       this.startInstructions();
       this.alphaAnimation();
+    } else if (this.clickCount > 0) {
+      // draw continue button
+      this.drawIntroButton();
+      this.buttonAppear();
     }
 
     // display the story
@@ -193,7 +198,7 @@ class Intro extends State {
       // 1- string, 2- flickering answer, 3- string
       if (i === this.storylines.length - 1) {
         let currentLine = this.storylines[i];
-        currentLine.display(200);
+        currentLine.display(203);
         currentLine.appear();
       } else {
         let currentLine = this.storylines[i];
@@ -212,25 +217,20 @@ class Intro extends State {
     // make the second answer appear
     if (this.secondAnswer.created) {
       let x = 191;
-      let y = 159;
+      let y = 160;
       this.displayAnswer(this.secondAnswer, x, y);
       this.answerAppear(this.secondAnswer);
     }
     // make the third answer appear
     if (this.thirdAnswer.created) {
       let x = 133;
-      let y = 665;
+      let y = 666;
       this.displayAnswer(this.thirdAnswer, x, y);
       this.answerAppear(this.thirdAnswer);
     }
 
     // apply text animation
     this.flicker();
-
-    // draw continue button
-    if (this.clickCount > 0) {
-      this.drawIntroButton();
-    }
 
     // display the background leaves every 1, 12, and 51 frames for a flickering effect
     // (there's 3x 51 to have the leaves brigther at that step)
@@ -337,9 +337,9 @@ class Intro extends State {
     // draw the 'continue' text
     push();
     textAlign(LEFT, CENTER);
-    textSize(46);
+    textSize(43.5);
     textFont(fontSans);
-    fill(0, 0, 0, 100);
+    fill(0, 0, 0, this.button.color.a);
     text(`— CONTINUE`, this.button.text.x, this.button.text.y);
     pop();
 
@@ -347,10 +347,27 @@ class Intro extends State {
     this.hoverButton();
   }
 
+  // make the button appear after clicking to start
+  buttonAppear() {
+    this.button.color.a += this.button.appearingSpeed;
+    this.button.firstShadow.alpha += this.button.appearingSpeed;
+    // constraining it so it doesn't get fully opaque
+    this.button.color.a = constrain(this.button.color.a, 0, 150);
+    this.button.firstShadow.alpha = constrain(
+      this.button.firstShadow.alpha,
+      0,
+      50
+    );
+  }
+
   // click the button to go to next state
   mousePressed() {
+    // keep track of the user clicking (only the first click starts the narrative)
     this.clickCount += 1;
-    if (this.clickCount === 1) {
+    if (this.clickCount === 0) {
+      this.clickCount += 1;
+    } else if (this.clickCount === 1) {
+      // make the story appear succesively
       setTimeout(this.createParagraph1.bind(this), 1000);
       setTimeout(this.createAnswer.bind(this), 1000, this.firstAnswer);
       setTimeout(this.createAnswer.bind(this), 1000, this.secondAnswer);
@@ -361,12 +378,11 @@ class Intro extends State {
       setTimeout(this.createParagraph6.bind(this), 51000);
       setTimeout(this.createAnswer.bind(this), 51000, this.thirdAnswer);
 
-      this.clickCount += 1;
-    } else {
+      // keep track of the user clicking (only the first click starts the narrative)
       this.clickCount += 1;
     }
 
-    // check if mouse is hovering
+    // check if mouse is hovering the button when clicking (got to menu)
     let isHovering = this.checkHover();
     if (isHovering) {
       currentState = new Menu();
@@ -379,14 +395,19 @@ class Intro extends State {
     // assumes rectMode(CORNER)
     let isHovering = this.checkHover();
 
-    if (isHovering) {
+    if (isHovering && this.button.color.a === 150) {
       this.button.x = 457;
-      this.button.y = 652;
-      this.button.color.a = 255;
+      this.button.y = 657;
+      this.button.color.b = 225;
+    } else if (!isHovering && this.button.color.a === 150) {
+      this.button.x = 455;
+      this.button.y = 655;
+      this.button.color.b = 240;
+      this.button.color.a = 150;
     } else {
       this.button.x = 455;
-      this.button.y = 650;
-      this.button.color.a = 180;
+      this.button.y = 655;
+      this.button.color.a = this.button.color.a;
     }
   }
 

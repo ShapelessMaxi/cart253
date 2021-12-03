@@ -7,13 +7,13 @@ class Instruction {
 
     // define the formating of the text
     this.font = fontSansThin;
-    this.size = 20;
+    this.size = 16;
     this.align = alignMode;
     this.color = {
-      r: 255,
-      g: 255,
-      b: 255,
-      a: 100,
+      r: 150,
+      g: 150,
+      b: 150,
+      a: 150,
     };
 
     // define what the instruction says before discovery

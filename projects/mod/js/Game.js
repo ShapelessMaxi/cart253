@@ -80,7 +80,7 @@ class Game extends State {
     // define variables for the overlay
     this.overlay = {
       color: { r: 0, g: 0, b: 0, a: 255 },
-      revealSpeed: 50,
+      revealSpeed: 2,
     };
 
     // define variables for the conversion of the name
@@ -319,7 +319,7 @@ class Game extends State {
     }
   }
 
-  // create the ui
+  // create the ui (shape, name, framiling lines)
   createUi() {
     // create the framing lines
     let x1 = 75;
@@ -386,28 +386,34 @@ class Game extends State {
     let stringAfter = undefined;
     let alignMode = CENTER;
     let x = width / 2;
-    let y = 35;
+    let y = 37;
     this.nameText = new Instruction(x, y, alignMode, stringBefore, stringAfter);
 
     // change the size, the font and the color of the text
-    this.nameText.size = 22;
+    this.nameText.size = 24;
     this.nameText.font = fontSans;
     this.nameText.color.r = nameColor.r;
     this.nameText.color.g = nameColor.g;
     this.nameText.color.b = nameColor.b;
+    this.nameText.color.a = 120;
   }
 
   // create instructions
   createInstructions() {
-    let firstColumn = 75;
-    let secondColumn = 675;
+    let verticalSpacing = 25; // spacing between the lines
+    let margin = 105; // margin from the left/right
 
-    let firstRow = 500; // first row has bigger spacing
-    let secondRow = 550;
-    let thirdRow = 575;
-    let fourthRow = 600;
-    let fifthRow = 625;
-    let sixthRow = 650;
+    // x values of each columns
+    let firstColumn = margin;
+    let secondColumn = width - margin;
+
+    // y values of each rows
+    let firstRow = 525; // first row has bigger spacing
+    let secondRow = 590;
+    let thirdRow = secondRow + verticalSpacing;
+    let fourthRow = secondRow + verticalSpacing * 2;
+    let fifthRow = secondRow + verticalSpacing * 3;
+    let sixthRow = secondRow + verticalSpacing * 4;
 
     // first row, 'main' instructions (if you dont have anything selected, you cant interact)
     this.createInstruction(firstColumn, firstRow, LEFT, `S`, `select`);
@@ -422,9 +428,10 @@ class Game extends State {
 
     // second column, key used : 5-9
     this.createInstruction(secondColumn, secondRow, RIGHT, `5`, `colorize`);
-    this.createInstruction(secondColumn, thirdRow, RIGHT, `6`, `decolorize`);
-    this.createInstruction(secondColumn, fourthRow, RIGHT, `7`, `fully echo`);
-    this.createInstruction(secondColumn, fifthRow, RIGHT, `8`, `partly echo`);
+    this.createInstruction(secondColumn, thirdRow, RIGHT, `6`, `fade`);
+    this.createInstruction(secondColumn, fourthRow, RIGHT, `7`, `echo`);
+    this.createInstruction(secondColumn, fifthRow, RIGHT, `8`, `pulse`);
+    this.createInstruction(secondColumn, sixthRow, RIGHT, `9`, `dingdong`);
   }
 
   // create an instruction using parameters given in the createInstructions() method
@@ -1256,6 +1263,15 @@ class Game extends State {
         let timing = i * delay;
         setTimeout(this.createEchoInterval.bind(this), timing, currentOutline);
       }
+
+      // speed up the heartbeat (make a function soon)
+      if (this.heartbeatPace.current > 800) {
+        let speedUp = 1.8;
+        this.changePace(speedUp);
+      }
+
+      // make the ui frame lines a bit more vibrant
+      this.frameLightUp();
     }
   }
 
@@ -1307,39 +1323,48 @@ class Game extends State {
 
           // create the full body outlines
           this.createLocalOutlines(currentBodyPart.perimeter);
-        }
 
-        // start the alpha animation for the echos at different times
-        let delay = 500; // delay between the individual outlines in miliseconds
-        for (let i = 0; i < this.selectedOutlines.length; i++) {
-          let currentOutline = this.selectedOutlines[i];
-          let timing = i * delay;
-          setTimeout(
-            this.createEchoInterval.bind(this),
-            timing,
-            currentOutline
-          );
+          // start the alpha animation for the echos at different times
+          let delay = 500; // delay between the individual outlines in miliseconds
+          for (let i = 0; i < this.selectedOutlines.length; i++) {
+            let currentOutline = this.selectedOutlines[i];
+            let timing = i * delay;
+            setTimeout(
+              this.createEchoInterval.bind(this),
+              timing,
+              currentOutline
+            );
+          }
+
+          // speed up the heartbeat (make a function soon)
+          if (this.heartbeatPace.current > 800) {
+            let speedUp = 1.8;
+            this.changePace(speedUp);
+          }
+
+          // make the ui frame lines a bit more vibrant
+          this.frameLightUp();
         }
       }
     }
   }
 
-  // create outlines of the current full body shape
+  // create outlines of the currently selected body part
   createLocalOutlines(localPerimeter) {
-    // create an full body outline with a bigger scale
-    let bigScale = 3;
-    let bigOutline = new BodyOutline(undefined, localPerimeter, bigScale);
-    this.selectedOutlines.push(bigOutline);
+    // create an outline of the selected bodypart with a small scale
+    let smallScale = 1.35;
+    let smallOutline = new BodyOutline(undefined, localPerimeter, smallScale);
+    this.selectedOutlines.push(smallOutline);
 
-    // create an full body outline with a medium scale
+    // create an outline of the selected bodypart with a medium scale
     let mediumScale = 2;
     let mediumOutline = new BodyOutline(undefined, localPerimeter, mediumScale);
     this.selectedOutlines.push(mediumOutline);
 
-    // create an full body outline with a small scale
-    let smallScale = 1.35;
-    let smallOutline = new BodyOutline(undefined, localPerimeter, smallScale);
-    this.selectedOutlines.push(smallOutline);
+    // create an outline of the selected bodypart with a bigger scale
+    let bigScale = 3;
+    let bigOutline = new BodyOutline(undefined, localPerimeter, bigScale);
+    this.selectedOutlines.push(bigOutline);
   }
 
   // create the interval for the outline's alpha animation

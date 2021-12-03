@@ -49,7 +49,7 @@ function preload() {
 
   // fonts
   fontSerif = loadFont(`assets/fonts/ZillaSlab-Regular.ttf`);
-  fontSans = loadFont(`assets/fonts/Chivo-Bold.ttf`);
+  fontSans = loadFont(`assets/fonts/AzoSans-Black.ttf`);
   fontSansThin = loadFont(`assets/fonts/Chivo-Light.ttf`);
 }
 
