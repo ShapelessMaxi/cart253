@@ -1,6 +1,28 @@
 /* this is the Game class extending the State class */
 /* it takes care of creating the different elements in that specific state*/
 
+/* plan for last algorithm: orbit?
+
+1- get these points:
+  highest point of the bodypart : (x, ymin)
+  lowest point : (x, ymax)
+  most left point : (xmin, y)
+  most right point : (xmax, y)
+  approx center point (xcenter, ycenter)
+
+2- draw a circle at the center point and set speed, xvelocity and yvelocity. set color to user color
+
+3- make it travel from center to most right point : xvel=xmax-xcenter; yvel=y-ycenter
+4- make it travel from most right to lowest : xvel=x-xmax; yvel=ymax-y
+5- make it travel from lowest to highest : xvel=x-x; yvel=ymin-ymax
+6- make it travel from highest to most left : xvel=xmin-x; yvel=y-ymin
+7- make it travel from most left to center : xvel=xcenter-xmin; yvel=ycenter-y
+
+8- delete traveling circle
+9- it takes a while for the circle to complete the travel, so you can press 9 agian and itll create a new circle
+10- have a limit of circle travelling at the same time in the same bodypart
+*/
+
 class Game extends State {
   // create the ui and the body parts
   // create the sounds (heartbeats)
