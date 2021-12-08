@@ -16,7 +16,7 @@ Overall, I wanted the mood of this game to be dark, mysterious, and unpredictabl
 
 ---
 
-> Here are some things I wish I had time to work on:
+> _Here are some things I wish I had time to work on:_
 >
 > - fix the 'shoot' algorithm
 > - make the visual language more coherent with the concept
@@ -27,7 +27,7 @@ Overall, I wanted the mood of this game to be dark, mysterious, and unpredictabl
 
 ---
 
-> Just for fun!
+> _Just for fun!_
 >
 > - number of classes: 16
 > - number of methods: 143
@@ -37,7 +37,7 @@ Overall, I wanted the mood of this game to be dark, mysterious, and unpredictabl
 
 ---
 
-> libraries used:
+> _libraries used:_
 >
 > p5.js  
 > p5.sound  
