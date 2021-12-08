@@ -3,7 +3,7 @@
 
 class BodyPart {
   // the constructor is given a perimeter when object is created in the game state
-  constructor(perimeter, data) {
+  constructor(perimeter) {
     // define the color of the shape
     this.color = {
       r: 88,

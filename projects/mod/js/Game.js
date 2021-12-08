@@ -176,7 +176,7 @@ class Game extends State {
       let vertex = createVector(data[i].x, data[i].y);
       perimeter.push(vertex);
     }
-    let currentBodyPart = new BodyPart(perimeter, data);
+    let currentBodyPart = new BodyPart(perimeter);
     this.bodyParts.push(currentBodyPart);
   }
 
