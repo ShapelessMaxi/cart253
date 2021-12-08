@@ -3,7 +3,7 @@
 
 class BodyPart {
   // the constructor is given a perimeter when object is created in the game state
-  constructor(perimeter) {
+  constructor(perimeter, data) {
     // define the color of the shape
     this.color = {
       r: 88,
@@ -14,6 +14,9 @@ class BodyPart {
 
     // vertices created with createVector() in main script
     this.perimeter = perimeter;
+
+    // keep track of the data used to create the perimeter
+    this.data = data;
 
     // define spawn box related variables
     this.spawnBox = {

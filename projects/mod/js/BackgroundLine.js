@@ -1,11 +1,13 @@
 // create a moving line in the background of intro state
 class BackgroundLine {
   constructor(x, y) {
-    // position is defined in the game state (createBackgroundLines method)
-    this.x1 = x;
-    this.y1 = y;
-    this.x2 = x;
-    this.y2;
+    // position is defined in the game state
+    this.position = {
+      x1: x,
+      y1: y,
+      x2: x,
+      y2: undefined,
+    };
 
     // define the size, thickness and color of the lines
     this.size = random(50, 115);
@@ -29,22 +31,27 @@ class BackgroundLine {
     // spawns at the bottom of the screen when it reaches the top
     // the 'top' is a really small value, creating a delay before the lines respawn
     let delay = -3500;
-    if (this.y2 < delay) {
-      this.y1 = height;
-      this.x1 = random(0, width);
-      this.x2 = this.x1;
+    if (this.position.y2 < delay) {
+      this.position.y1 = height;
+      this.position.x1 = random(0, width);
+      this.position.x2 = this.position.x1;
     }
   }
 
   // display the background line
   display() {
-    this.y2 = this.y1 + this.size;
+    this.position.y2 = this.position.y1 + this.size;
     push();
     noFill();
     strokeCap(SQUARE);
     strokeWeight(this.thickness);
     stroke(this.color.r, this.color.g, this.color.b, this.color.a);
-    line(this.x1, this.y1, this.x2, this.y2);
+    line(
+      this.position.x1,
+      this.position.y1,
+      this.position.x2,
+      this.position.y2
+    );
     pop();
   }
 }

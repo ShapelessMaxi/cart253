@@ -1,11 +1,15 @@
-// create a falling leaf in the background of intro state
+// create a falling 'leaf' in the background of the intro state
 class BackgroundLeaf {
   constructor(x, y, w, h) {
-    // position and size is defined in intro state (createLeaf method)
-    this.x = x;
-    this.y = y;
-    this.w = w;
-    this.h = h;
+    // position and size is defined in intro state
+    this.position = {
+      x: x,
+      y: y,
+    };
+    this.size = {
+      w: w,
+      h: h,
+    };
 
     // define the color of the leaf
     this.color = {
@@ -16,31 +20,33 @@ class BackgroundLeaf {
     };
 
     // define the speed of the movement
-    this.verticalSpeed = random(0.8, 1.4);
-    this.horizontalSpeed = random(0, 2);
+    this.speed = {
+      vertical: random(0.8, 1.4),
+      horizontal: random(0, 2),
+    };
   }
 
   // takes care of moving the leaves
   movement() {
     // move from top to bottom
-    this.y += this.verticalSpeed;
+    this.y += this.speed.vertical;
 
     // if the leaves moves from left to right, bigger chance of continuing moving in that direction
     if (this.horizontalSpeed < 0) {
       let chance = random(0, 1);
       if (chance < 0.95) {
-        this.x -= this.horizontalSpeed;
+        this.x -= this.speed.horizontal;
       } else {
-        this.x += this.horizontalSpeed;
+        this.x += this.speed.horizontal;
       }
     } else {
-      this.x += this.horizontalSpeed;
+      this.x += this.speed.horizontal;
     }
 
     // changes the horizontal direction half of the time
     let chance = random(0, 1);
     if (chance < 0.5) {
-      this.x -= this.horizontalSpeed;
+      this.x -= this.speed.horizontal;
     }
 
     // spawns at the top of the screen when it reaches the bottom
@@ -55,7 +61,7 @@ class BackgroundLeaf {
     push();
     noStroke();
     fill(this.color.r, this.color.g, this.color.b, this.color.a);
-    ellipse(this.x, this.y, this.w, this.h);
+    ellipse(this.position.x, this.position.y, this.size.w, this.size.h);
     pop();
   }
 }

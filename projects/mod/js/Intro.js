@@ -117,55 +117,55 @@ class Intro extends State {
 
   // create the first paragraph
   createParagraph1() {
-    this.createStoryLine(textData.line1.str, 1);
-    this.createStoryLine(textData.line2.str, 2);
-    this.createStoryLine(textData.line3.str, 3);
+    this.createStoryLine(textData.line1, 1);
+    this.createStoryLine(textData.line2, 2);
+    this.createStoryLine(textData.line3, 3);
 
-    this.createStoryLine(textData.line4.str, 4);
-    this.createStoryLine(textData.line5.str, 5);
-    this.createStoryLine(textData.line6.str, 6);
+    this.createStoryLine(textData.line4, 4);
+    this.createStoryLine(textData.line5, 5);
+    this.createStoryLine(textData.line6, 6);
     this.createStoryLine(``, 7);
   }
 
   // ceate the second paragraph
   createParagraph2() {
-    this.createStoryLine(textData.line7.str, 8);
-    this.createStoryLine(textData.line8.str, 9);
-    this.createStoryLine(textData.line9.str, 10);
-    this.createStoryLine(textData.line10.str, 11);
-    this.createStoryLine(textData.line11.str, 12);
+    this.createStoryLine(textData.line7, 8);
+    this.createStoryLine(textData.line8, 9);
+    this.createStoryLine(textData.line9, 10);
+    this.createStoryLine(textData.line10, 11);
+    this.createStoryLine(textData.line11, 12);
     this.createStoryLine(``, 13);
   }
 
   // create the third paragraph
   createParagraph3() {
-    this.createStoryLine(textData.line12.str, 14);
-    this.createStoryLine(textData.line13.str, 15);
-    this.createStoryLine(textData.line14.str, 16);
+    this.createStoryLine(textData.line12, 14);
+    this.createStoryLine(textData.line13, 15);
+    this.createStoryLine(textData.line14, 16);
     this.createStoryLine(``, 17);
   }
 
   // create the fourth paragraph
   createParagraph4() {
-    this.createStoryLine(textData.line15.str, 18);
-    this.createStoryLine(textData.line16.str, 19);
-    this.createStoryLine(textData.line17.str, 20);
+    this.createStoryLine(textData.line15, 18);
+    this.createStoryLine(textData.line16, 19);
+    this.createStoryLine(textData.line17, 20);
     this.createStoryLine(``, 21);
   }
 
   // create the fifth paragraph
   createParagraph5() {
-    this.createStoryLine(textData.line18.str, 22);
-    this.createStoryLine(textData.line19.str, 23);
-    this.createStoryLine(textData.line20.str, 24);
+    this.createStoryLine(textData.line18, 22);
+    this.createStoryLine(textData.line19, 23);
+    this.createStoryLine(textData.line20, 24);
     this.createStoryLine(``, 25);
   }
 
   // create the sixth paragraph
   createParagraph6() {
-    this.createStoryLine(textData.line21.str, 26);
-    this.createStoryLine(textData.line22.str, 27);
-    this.createStoryLine(textData.line23.str, 27);
+    this.createStoryLine(textData.line21, 26);
+    this.createStoryLine(textData.line22, 27);
+    this.createStoryLine(textData.line23, 27);
   }
 
   //create a line of the text

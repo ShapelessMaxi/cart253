@@ -1,28 +1,6 @@
 /* this is the Game class extending the State class */
 /* it takes care of creating the different elements in that specific state*/
 
-/* plan for last algorithm: orbit?
-
-1- get these points:
-  highest point of the bodypart : (x, ymin)
-  lowest point : (x, ymax)
-  most left point : (xmin, y)
-  most right point : (xmax, y)
-  approx center point (xcenter, ycenter)
-
-2- draw a circle at the center point and set speed, xvelocity and yvelocity. set color to user color
-
-3- make it travel from center to most right point : xvel=xmax-xcenter; yvel=y-ycenter
-4- make it travel from most right to lowest : xvel=x-xmax; yvel=ymax-y
-5- make it travel from lowest to highest : xvel=x-x; yvel=ymin-ymax
-6- make it travel from highest to most left : xvel=xmin-x; yvel=y-ymin
-7- make it travel from most left to center : xvel=xcenter-xmin; yvel=ycenter-y
-
-8- delete traveling circle
-9- it takes a while for the circle to complete the travel, so you can press 9 agian and itll create a new circle
-10- have a limit of circle travelling at the same time in the same bodypart
-*/
-
 class Game extends State {
   // create the ui and the body parts
   // create the sounds (heartbeats)
@@ -55,7 +33,7 @@ class Game extends State {
     left foot - bodyParts[13]
 */
 
-    // define variables for the eho algorithms
+    // define variables for the echo algorithms
     this.fullOutlines = [];
     this.selectedOutlines = [];
     // store all the vertices forming the current body shape here
@@ -67,7 +45,7 @@ class Game extends State {
     // define variables for the extend algorithm
     this.angle = 1;
     this.x = 0;
-    this.particleArray = [];
+    this.newGrowthAtoms = [];
 
     // define variables used for the heartbeat oscillators
     this.firstBeat;
@@ -88,6 +66,9 @@ class Game extends State {
     this.t = 1;
     this.highlightWave;
     this.highlightedIndex = 0;
+
+    // store the travelling atoms here
+    this.travellingAtoms = [];
 
     // define variables for the background
     this.backgroundLines = [];
@@ -195,7 +176,7 @@ class Game extends State {
       let vertex = createVector(data[i].x, data[i].y);
       perimeter.push(vertex);
     }
-    let currentBodyPart = new BodyPart(perimeter);
+    let currentBodyPart = new BodyPart(perimeter, data);
     this.bodyParts.push(currentBodyPart);
   }
 
@@ -453,7 +434,7 @@ class Game extends State {
     this.createInstruction(secondColumn, thirdRow, RIGHT, `6`, `fade`);
     this.createInstruction(secondColumn, fourthRow, RIGHT, `7`, `echo`);
     this.createInstruction(secondColumn, fifthRow, RIGHT, `8`, `pulse`);
-    this.createInstruction(secondColumn, sixthRow, RIGHT, `9`, `dingdong`);
+    this.createInstruction(secondColumn, sixthRow, RIGHT, `9`, `shoot`);
   }
 
   // create an instruction using parameters given in the createInstructions() method
@@ -654,10 +635,10 @@ class Game extends State {
 
     // display the particles in the particle array
     // array is filled with extend() method
-    for (let i = 0; i < this.particleArray.length; i++) {
-      let currentParticle = this.particleArray[i];
-      currentParticle.display();
-      currentParticle.flicker();
+    for (let i = 0; i < this.newGrowthAtoms.length; i++) {
+      let currentAtom = this.newGrowthAtoms[i];
+      currentAtom.display();
+      currentAtom.flicker();
     }
 
     // makes the highlighted bodypart blink slowly
@@ -668,16 +649,23 @@ class Game extends State {
       this.drawOverlay();
     }
 
-    //display the echoing full body outline shapes
+    // display the echoing full body outline shapes
     for (let i = 0; i < this.fullOutlines.length; i++) {
       let currentOutline = this.fullOutlines[i];
       currentOutline.displayFullOutline();
     }
 
-    //display the echoing local body part outline shapes
+    // display the echoing local body part outline shapes
     for (let i = 0; i < this.selectedOutlines.length; i++) {
       let currentOutline = this.selectedOutlines[i];
       currentOutline.displaySelectedOutline();
+    }
+
+    // display the travelling atoms
+    for (let i = 0; i < this.travellingAtoms.length; i++) {
+      let currentAtom = this.travellingAtoms[i];
+      currentAtom.display();
+      currentAtom.movement();
     }
   }
 
@@ -686,6 +674,8 @@ class Game extends State {
   // internal growth / shrinkage method
   // extend algorithm / remove extension method
   // colorize / decolorize
+  // full echo / local echo
+  // shoot
   keyPressed() {
     // select a body part with `S` key, deselect with `D` key
     this.selectDeselect();
@@ -719,6 +709,10 @@ class Game extends State {
     this.fullBodyEcho();
     // press '8' to produce a local echo
     this.localEcho();
+
+    // generative algorithm that creates a special atom that will travel in-between points of the body part
+    // press '9' to shoot the atom
+    this.shootActivation();
   }
 
   // select the next bodypart, or deselect the current selected bodypart
@@ -1085,7 +1079,7 @@ class Game extends State {
             numOfSteps,
             currentBodyPart,
             intensity,
-            this.particleArray
+            this.newGrowthAtoms
           );
 
           // speed up the heartbeat (make a function soon)
@@ -1128,14 +1122,14 @@ class Game extends State {
         // r needs to be negative
         if (isTop) {
           let newY = -r;
-          let currentStep = new Particle(origin.x, origin.y, newX, newY);
+          let currentStep = new NewGrowthAtom(origin.x, origin.y, newX, newY);
           storageArray.push(currentStep);
 
           // if the vertex selected is lower than the center of the body part, draw the curve from bottom to top
           // r needs to be negative
         } else {
           let newY = r;
-          let currentStep = new Particle(origin.x, origin.y, newX, newY);
+          let currentStep = new NewGrowthAtom(origin.x, origin.y, newX, newY);
           storageArray.push(currentStep);
         }
 
@@ -1148,14 +1142,14 @@ class Game extends State {
         // r needs to be negative
         if (isTop) {
           let newY = -r;
-          let currentStep = new Particle(origin.x, origin.y, newX, newY);
+          let currentStep = new NewGrowthAtom(origin.x, origin.y, newX, newY);
           storageArray.push(currentStep);
 
           // if the vertex selected is lower than the center of the body part, draw the curve from bottom to top
           // r needs to be negative
         } else {
           let newY = r;
-          let currentStep = new Particle(origin.x, origin.y, newX, newY);
+          let currentStep = new NewGrowthAtom(origin.x, origin.y, newX, newY);
           storageArray.push(currentStep);
         }
       }
@@ -1169,7 +1163,7 @@ class Game extends State {
   removeExtension(numOfSteps) {
     // 52 and 100 -> `4` key
     if (keyCode === 52 || keyCode === 100) {
-      if (this.particleArray.length > 0) {
+      if (this.newGrowthAtoms.length > 0) {
         // single out the removeExtension instruction from instructions array
         let removeExtensionInstruction = this.instructions[6];
         // discover the select instruction
@@ -1178,7 +1172,7 @@ class Game extends State {
         }
       }
       for (let i = 0; i < numOfSteps; i++) {
-        this.particleArray.shift();
+        this.newGrowthAtoms.shift();
       }
     }
   }
@@ -1398,6 +1392,101 @@ class Game extends State {
   // make the alpha diminish until the outline is invisible
   hideOutline(outline) {
     outline.color.a -= outline.hideSpeed;
+  }
+
+  // algorithm that creates an atom that travels in-between vertices and eventualy leave the screen
+  shootActivation() {
+    // single out the cruise instruction from instructions array
+    let cruiseInstruction = this.instructions[11];
+
+    // 57 and 105 -> `9` key
+    if (keyCode === 57 || keyCode === 105) {
+      for (let i = 0; i < this.bodyParts.length; i++) {
+        let currentBodyPart = this.bodyParts[i];
+        if (currentBodyPart.selected) {
+          // discover the select instruction
+          if (!cruiseInstruction.discovered) {
+            cruiseInstruction.discovered = true;
+          }
+
+          // activate the cruise algorithm
+          this.shoot(currentBodyPart);
+
+          // speed up the heartbeat (make a function soon)
+          if (this.heartbeatPace.current > 800) {
+            let speedUp = 1.8;
+            this.changePace(speedUp);
+          }
+
+          // make the ui frame lines a bit more vibrant
+          this.frameLightUp();
+        }
+      }
+    }
+  }
+
+  // select vertices and create an atom to be shot outwards
+  shoot(bodypart) {
+    // store the available vertices here
+    let availableVertices = [];
+    // copy the current bodypart's vertices in this new array
+    this.createDeepCopyArray(bodypart.perimeter, availableVertices);
+
+    // get 4 different vertices used as the ending points of the travel paths
+    // get the first vertex and delete it from the available vertices array
+    let vertex1 = random(availableVertices);
+    this.deleteArrayItem(availableVertices, vertex1);
+
+    // get the second vertex and delete it from the available vertices array
+    let vertex2 = random(availableVertices);
+    this.deleteArrayItem(availableVertices, vertex2);
+
+    // get the third vertex and delete it from the available vertices array
+    let vertex3 = random(availableVertices);
+    this.deleteArrayItem(availableVertices, vertex3);
+
+    // get the fourth vertex
+    let vertex4 = random(availableVertices);
+
+    // get the center of the 4 points
+    let xValues = [vertex1.x, vertex2.x, vertex3.x, vertex4.x];
+    let xMin = Math.min(...xValues);
+    let xMax = Math.max(...xValues);
+    let yValues = [vertex1.y, vertex2.y, vertex3.y, vertex4.y];
+    let yMin = Math.min(...yValues);
+    let yMax = Math.max(...yValues);
+
+    let xCenter = (xMax + xMin) / 2;
+    let yCenter = (yMax + yMin) / 2;
+
+    // create the travelling atom
+    let travellingAtom = new TravellingAtom(
+      xCenter,
+      yCenter,
+      vertex1,
+      vertex2,
+      vertex3,
+      vertex4
+    );
+    this.travellingAtoms.push(travellingAtom);
+  }
+
+  // create a deep copy of an array
+  createDeepCopyArray(originalArray, copyArray) {
+    for (let j = 0; j < originalArray.length; j++) {
+      let currentItem = originalArray[j];
+      copyArray.push(currentItem);
+    }
+  }
+
+  // check for a specific item in an array and delete it from the array
+  deleteArrayItem(array, item) {
+    for (let i = 0; i < array.length; i++) {
+      let currentItem = array[i];
+      if (item === currentItem) {
+        array.splice(i, 1);
+      }
+    }
   }
 
   // check if a point is left or right of another point

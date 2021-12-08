@@ -1,9 +1,11 @@
-// create an atom object, form a particle system inside the bodyparts
+// create an atom object, form a particle system inside each bodypart
 class Atom {
   constructor(x, y, minSize, maxSize) {
     // position and size is defined in the populate() method of the Body class
-    this.x = x;
-    this.y = y;
+    this.position = {
+      x: x,
+      y: y,
+    };
     this.size = {
       min: minSize,
       max: maxSize,
@@ -33,10 +35,13 @@ class Atom {
 
   // diplay atoms
   display(colorizedAmount) {
+    // set the atom size to a random value
     let size = random(this.size.min, this.size.max);
 
+    // colorized atoms variable is a percentage value set by the colorized method
     let chance = random(0, 1);
     if (chance > colorizedAmount) {
+      // display the atom with the basic color
       push();
       fill(
         this.basicColor.r,
@@ -48,6 +53,7 @@ class Atom {
       ellipse(this.x, this.y, size);
       pop();
     } else {
+      // display the atom with the user color
       push();
       fill(
         this.userColor.r,
@@ -56,7 +62,7 @@ class Atom {
         this.userColor.a
       );
       noStroke();
-      ellipse(this.x, this.y, size);
+      ellipse(this.position.x, this.position.y, size);
       pop();
     }
   }

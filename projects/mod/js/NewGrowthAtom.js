@@ -1,5 +1,5 @@
 // create a particle used to draw the acosh curve in the extend method of the game state
-class Particle {
+class NewGrowthAtom {
   constructor(originX, originY, newX, r) {
     // position defined in the extend method
     this.origin = {
