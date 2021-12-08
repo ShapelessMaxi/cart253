@@ -1101,6 +1101,9 @@ class Game extends State {
     // select a random vertex to be the origin of the growth
     let origin = random(bodypart.perimeter);
 
+    // set a size ration that will grow each time a new part of the curve is drawn
+    let sizeRatio = 0.8;
+
     // reset the angle every time the method is called
     this.angle = 1;
 
@@ -1122,14 +1125,26 @@ class Game extends State {
         // r needs to be negative
         if (isTop) {
           let newY = -r;
-          let currentStep = new NewGrowthAtom(origin.x, origin.y, newX, newY);
+          let currentStep = new NewGrowthAtom(
+            origin.x,
+            origin.y,
+            newX,
+            newY,
+            sizeRatio
+          );
           storageArray.push(currentStep);
 
           // if the vertex selected is lower than the center of the body part, draw the curve from bottom to top
           // r needs to be negative
         } else {
           let newY = r;
-          let currentStep = new NewGrowthAtom(origin.x, origin.y, newX, newY);
+          let currentStep = new NewGrowthAtom(
+            origin.x,
+            origin.y,
+            newX,
+            newY,
+            sizeRatio
+          );
           storageArray.push(currentStep);
         }
 
@@ -1142,20 +1157,34 @@ class Game extends State {
         // r needs to be negative
         if (isTop) {
           let newY = -r;
-          let currentStep = new NewGrowthAtom(origin.x, origin.y, newX, newY);
+          let currentStep = new NewGrowthAtom(
+            origin.x,
+            origin.y,
+            newX,
+            newY,
+            sizeRatio
+          );
           storageArray.push(currentStep);
 
           // if the vertex selected is lower than the center of the body part, draw the curve from bottom to top
           // r needs to be negative
         } else {
           let newY = r;
-          let currentStep = new NewGrowthAtom(origin.x, origin.y, newX, newY);
+          let currentStep = new NewGrowthAtom(
+            origin.x,
+            origin.y,
+            newX,
+            newY,
+            sizeRatio
+          );
           storageArray.push(currentStep);
         }
       }
 
       // increase the angle given to the acosh equation
       this.angle += 0.05;
+      // increase the size ratio
+      sizeRatio += 0.02;
     }
   }
 

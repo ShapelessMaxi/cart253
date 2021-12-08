@@ -29,30 +29,30 @@ class BackgroundLeaf {
   // takes care of moving the leaves
   movement() {
     // move from top to bottom
-    this.y += this.speed.vertical;
+    this.position.y += this.speed.vertical;
 
     // if the leaves moves from left to right, bigger chance of continuing moving in that direction
     if (this.horizontalSpeed < 0) {
       let chance = random(0, 1);
       if (chance < 0.95) {
-        this.x -= this.speed.horizontal;
+        this.position.x -= this.speed.horizontal;
       } else {
-        this.x += this.speed.horizontal;
+        this.position.x += this.speed.horizontal;
       }
     } else {
-      this.x += this.speed.horizontal;
+      this.position.x += this.speed.horizontal;
     }
 
     // changes the horizontal direction half of the time
     let chance = random(0, 1);
     if (chance < 0.5) {
-      this.x -= this.speed.horizontal;
+      this.position.x -= this.speed.horizontal;
     }
 
     // spawns at the top of the screen when it reaches the bottom
-    if (this.y > height) {
-      this.y = 0;
-      this.x = random(0, width);
+    if (this.position.y > height) {
+      this.position.y = 0;
+      this.position.x = random(0, width);
     }
   }
 

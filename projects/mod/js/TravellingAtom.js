@@ -38,7 +38,7 @@ class TravellingAtom {
     };
 
     // define the speed
-    this.speed = 0.1;
+    this.speed = 0.08;
 
     // calculate the 5 directions
     this.currentDirection = {

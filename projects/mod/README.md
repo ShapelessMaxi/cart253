@@ -29,16 +29,16 @@ Overall, I wanted the mood of this game to be dark, mysterious, and unpredictabl
 
 > Just for fun!
 >
-> number of classes: 16
-> number of methods: 143
-> number of js lines: 3,668
+> - number of classes: 16
+> - number of methods: 143
+> - number of js lines: 3,668
 >
 > (btw, I do think this program could be more condensed. Some classes, like TravellingAtom, NewGrowthAtom and Atom are just asking to be grouped into one, or have a parent class or something.. >but! I have made the choice of counting the lines instead!)
 
 ---
 
 > libraries used:
-
+>
 > p5.js  
 > p5.sound  
 > p5.2dcollide

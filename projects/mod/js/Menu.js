@@ -111,7 +111,7 @@ class Menu extends State {
 
     //play the noise sound
     menuNoise.play();
-    menuNoise.amp(0.032);
+    menuNoise.amp(0.028);
     menuNoise.loop();
 
     // lower the intro music volume

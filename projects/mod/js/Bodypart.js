@@ -29,7 +29,7 @@ class BodyPart {
     // store the atoms inside an array
     this.atomArray = [];
     // define the density of atoms
-    this.atomRatio = 0.015;
+    this.atomRatio = 0.013;
     // define the size of atoms in this body part
     this.atomSize = {
       min: 3,

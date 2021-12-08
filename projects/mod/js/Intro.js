@@ -98,7 +98,7 @@ class Intro extends State {
 
     // play the intro music
     introSoundtrack.play();
-    introSoundtrack.amp(0.045);
+    introSoundtrack.amp(0.035);
     introSoundtrack.loop();
   }
 

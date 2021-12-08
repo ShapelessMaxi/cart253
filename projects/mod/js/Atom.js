@@ -2,10 +2,8 @@
 class Atom {
   constructor(x, y, minSize, maxSize) {
     // position and size is defined in the populate() method of the Body class
-    this.position = {
-      x: x,
-      y: y,
-    };
+    this.x = x;
+    this.y = y;
     this.size = {
       min: minSize,
       max: maxSize,
@@ -62,7 +60,7 @@ class Atom {
         this.userColor.a
       );
       noStroke();
-      ellipse(this.position.x, this.position.y, size);
+      ellipse(this.x, this.y, size);
       pop();
     }
   }

@@ -26,7 +26,7 @@ class BackgroundLine {
   // takes care of the movement of the lines
   movement() {
     // move bottom to top
-    this.y1 -= this.speed;
+    this.position.y1 -= this.speed;
 
     // spawns at the bottom of the screen when it reaches the top
     // the 'top' is a really small value, creating a delay before the lines respawn
