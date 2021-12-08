@@ -10,7 +10,7 @@ let circle = {
 };
 
 function setup() {
-  createCanvas(638, 825);
+  createCanvas(600, 700);
 }
 
 function draw() {
@@ -29,15 +29,15 @@ function draw() {
 
   push();
   textStyle(BOLD);
-  textAlign(CENTER);
+  textAlign(CENTER, TOP);
   textFont("Helvetica");
   fill(255);
-  textSize(85);
-  text(`MOUSE INPUT`, width / 2, 100);
+  textSize(80);
+  text(`MOUSE INPUT`, width / 2, 25);
   pop();
 
   push();
-  textAlign(LEFT);
+  textAlign(LEFT, TOP);
   fill(255);
   textStyle(NORMAL);
   textFont("Helvetica");
@@ -45,12 +45,13 @@ function draw() {
   text(
     `In my mixed digital media practice, I make use of various tools.
 I think one of the most important one that is often taken for granted
-is the mouse input. I work mostly on computers, and without a mouse
-or a trackpad, I wouldn’t be close to being able to produce the images
-and animations I love to create. It’s also a great way to have people
+is the mouse input.
+I work mostly on computers, and without a mouse or a trackpad,
+I wouldn’t be close to being able to produce the images and animations
+I love to create. It’s also a great and easy way to have people
 interact with the programs I write. `,
     28,
-    150
+    125
   );
   pop();
 
@@ -59,12 +60,12 @@ interact with the programs I write. `,
   fill(255);
   textStyle(NORMAL);
   textFont("Helvetica");
-  textSize(15);
+  textSize(14);
   text(
     `What you see here in the background is a small
-interactive program I coded to display the position of my mouse`,
+interactive program I coded to display the position of your mouse`,
     width / 2,
-    780
+    height - 50
   );
   pop();
 }
