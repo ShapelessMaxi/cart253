@@ -26,11 +26,13 @@ class BodyOutline {
       yCenter: undefined,
     };
 
+    // define the scale of the outlines
     this.scale = scale; // possible scale values : 1.35, 1.5, 2
     this.translateRatio = undefined; // possible ratios : -3, -2, -1
 
+    // define the speed the outlines disapear
     this.hideSpeed = 1;
-
+    // keep track of the visibility
     this.visible = false;
 
     // set the appropriate translate ratio
@@ -139,7 +141,6 @@ class BodyOutline {
       );
       scale(this.scale);
       beginShape(TRIANGLES);
-      // line below is from collide2D librairy documentation -> https://github.com/bmoren/p5.collide2D#collidelinepoly
       for (let { x, y } of this.fullPerimeter.array) vertex(x, y);
       endShape(CLOSE);
       pop();

@@ -2,18 +2,11 @@
 mod()
 Maxime Perreault
 
-this is the project 2 prototype (name is a placeholder).
-
-probably a narrative sandbox game that makes you think about what it means to
-have a body, to have authority over it, and to modify it.
+this is a narrative sandbox game that makes you think about what it means to
+have a body, to have agency over it, and to modify it.
 
 to learn more about the program plan, the concept, the story and everything
-in-between, see the proposal's pdf.
-
-also im using p5.2dcollide librairy to confine atoms into the bodyparts (complex polygons).
-
-6- assign a part of the atoms array this color (probabilistic approach)
-  this is run only once at startup of game state.
+in-between, see the readme.md file.
 */
 
 "use strict";

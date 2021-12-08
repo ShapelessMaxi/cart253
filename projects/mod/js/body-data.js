@@ -1,6 +1,4 @@
 /* This file stores the vertex data for every body part */
-/* body parts order is important */
-/* vertex order is important */
 
 let bodyData = {
   head: [

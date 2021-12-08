@@ -51,7 +51,7 @@ class Menu extends State {
       90,
     ];
     // variables used for the name box and text display
-    this.name = {
+    this.nameFormat = {
       x: 20,
       y: 385,
       size: 40,
@@ -416,10 +416,10 @@ class Menu extends State {
     // draw the name
     push();
     textAlign(LEFT);
-    textSize(this.name.size);
+    textSize(this.nameFormat.size);
     textFont(fontSans);
-    fill(this.name.color);
-    text(nameString, this.name.x, this.name.y);
+    fill(this.nameFormat.color);
+    text(nameString, this.nameFormat.x, this.nameFormat.y);
     pop();
   }
 

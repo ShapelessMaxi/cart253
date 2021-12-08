@@ -15,9 +15,6 @@ class BodyPart {
     // vertices created with createVector() in main script
     this.perimeter = perimeter;
 
-    // keep track of the data used to create the perimeter
-    this.data = data;
-
     // define spawn box related variables
     this.spawnBox = {
       boxArea: undefined,
