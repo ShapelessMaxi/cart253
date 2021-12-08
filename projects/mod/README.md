@@ -1,4 +1,4 @@
-## _mod()_
+# _mod()_
 
 _an experimental game by maxi_
 
